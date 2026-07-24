@@ -1100,7 +1100,7 @@
         const yAxis = chart.scales.y;
         
         ctx.save();
-        ctx.fillStyle = '#aaaaaa';
+        //ctx.fillStyle = '#aaaaaa';
         ctx.font = 'bold 50px sans-serif';
         
         trenutniZadatak.faze.forEach((faza, indeks) => {
@@ -1951,7 +1951,8 @@
                     pointRadius: 5,
                     pointBackgroundColor: '#0f172a',
                     fill: false,
-                    tension: 0
+                    tension: 0,
+                    clip: false
                 }]
             },
             options: {
@@ -1980,7 +1981,6 @@
     }
 
     // --- OSTALI GRAFOVI ---
-
     // Izračunava set točaka (x = vrijeme, y = vrijednost) za zadanu vrstu grafa
     // koristeći već izračunatu kinematiku po fazama (s0, v0, a po fazi).
     function izracunajTockeZaGraf(faze, vrsta, brojTocaka = 100) {
