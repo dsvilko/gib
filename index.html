@@ -1742,7 +1742,7 @@ const skolskaOsPlugin = {
         ctx.textBaseline = 'top';
         xAxis.ticks.forEach(tick => {
             const xPos = xAxis.getPixelForValue(tick.value);
-            if (tick.value !== 0) { 
+            if (tick.value > 0) { 
                 ctx.fillText(tick.value, xPos, yNula + 8);
                 ctx.beginPath();
                 ctx.moveTo(xPos, yNula - 4);
@@ -1753,8 +1753,8 @@ const skolskaOsPlugin = {
             }
         });
 
-        ctx.textAlign = 'right';
-        ctx.fillText('0', xNula - 6, yNula + 6);
+        //ctx.textAlign = 'right';
+        //ctx.fillText('0', xNula - 6, yNula + 6);
         
         // Dodatni tekst u sredini grafa (ako je definiran)
         const tekstSredina = chart.options.plugins?.skolskaOs?.tekstSredina;
@@ -2051,8 +2051,21 @@ function nacrtajOznakeFaza(chart) {
         const ySredina = (faza.y0 + faza.y1) / 2;
         const px = xAxis.getPixelForValue(tSredina) - 15;
         const py = yAxis.getPixelForValue(ySredina) - 5; 
-        if(indeks == oznaciDio) { ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); } else { ctx.fillStyle = (DM ? '#ffffff44' : '#00000055'); }
-        ctx.fillText(`${indeks + 1}`, px, py);
+        if(indeks == oznaciDio) { 
+            ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); 
+            ctx.fillText(`${indeks + 1}`, px, py);
+            /*  // zaokruži broj
+            ctx.beginPath();
+            ctx.arc(px+14, py-18, 25, 0, 2 * Math.PI);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = (DM ? '#26FB' : '#083eaaCC'); // Set your circle color
+            ctx.stroke();
+            */
+        } else { 
+            ctx.fillStyle = (DM ? '#ffffff44' : '#00000055'); 
+            ctx.fillText(`${indeks + 1}`, px, py);
+        }
+        
     });
     ctx.restore();
 }
@@ -2136,7 +2149,7 @@ function prikaziGraf(zadatak) {
                 },
                 y: {
                     border: { display: false },
-                    ticks: { stepSize: 1, precision: 0 },
+                    ticks: { stepSize: 1, precision: 0, color: (DM ? '#fff' : '#000') },
                     grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' : (DM ? '#ffffff33' : '#00000022') },
                     beginAtZero: true
                 }
