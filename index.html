@@ -1822,6 +1822,7 @@ const vizualniAsistentPlugin = {
         const DISK_RADIUS = 12;   // polumjer diska (px)
 
         function crtajStrelicu(x1, y1, x2, y2, boja, dijeloviTeksta = null, vrijednosti = null) {
+                       
             if(x1 !== x2 || y1 !== y2) {
                 ctx.beginPath();
                 let y2short = y2 === y1 ? y2 : y2 > y1 ? y2 - 10 : y2 + 10;
@@ -1880,6 +1881,8 @@ const vizualniAsistentPlugin = {
 
                 crtajDiskSVrijednosti(pocX, pocY, boja, pocetna);
                 crtajDiskSVrijednosti(krajX, krajY, boja, krajnja);
+                dopisiYVrijednost(pocX, pocY, boja, pocetna);
+                dopisiYVrijednost(krajX, krajY, boja, krajnja);
             }
         }
 
@@ -1888,15 +1891,15 @@ const vizualniAsistentPlugin = {
             ctx.arc(x, y, DISK_RADIUS, 0, Math.PI * 2);
             ctx.fillStyle = boja;
             ctx.fill();
-
+        }
+        
+        function dopisiYVrijednost(x,y,boja,vrijednost) {
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(vrijednost, x, y);
         }
-        
-        
         
         
         
