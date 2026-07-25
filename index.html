@@ -2002,11 +2002,11 @@ const vizualniAsistentPlugin = {
             }
         }
         if (state.tip === 'povrsina') {
-            const px0 = xAxis.getPixelForValue(Faze[i].t0);
-            const px1 = xAxis.getPixelForValue(Faze[i].t1);
-            const py0 = yAxis.getPixelForValue(Faze[i].y0);
-            const py1 = yAxis.getPixelForValue(Faze[i].y1);
-            
+            const px0 = xAxis.getPixelForValue(state.t0);
+            const px1 = xAxis.getPixelForValue(state.t1);
+            const py0 = yAxis.getPixelForValue(state.y0);
+            const py1 = yAxis.getPixelForValue(state.y1);
+            ctx.globalAlpha = 0.3;
             if (state.y0 === state.y1) {
                 if (state.y0 >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
                 ctx.fillRect(px0, Math.min(py0, yNula), px1 - px0, Math.abs(py0 - yNula));
