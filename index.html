@@ -1460,28 +1460,46 @@ function oblikujPitanjeIZadatak(zadatak) {
         const f = faze[1]; const dt = f.t1 - f.t0;
         oznaciDio = 1;
         if (vrstaGrafa === 'v/t') {
-            tekst = `Koliki je <b>pomak (Δ<i>s</i>)</b> tijelo napravilo u  <span class="highlight-blue">2. dijelu</span> gibanja (između ${f.t0}. i ${f.t1}. sekunde)?`;
-            if (f.y0 === f.y1) {
-                tocanOdgovor = f.y0 * dt;
-                let dy = Math.abs(f.y0);
-                let P = Math.abs(tocanOdgovor);
-                let neg = tocanOdgovor < 0 ? "Ako je ta površina ispod x-osi (kada je brzina negativna), pomak je negativan.<br>" : "";
-                infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o površini pravokutnika.<br>P = ${dy} · ${dt} = <b>${P}</b>.<br>${neg} Pomak je zato <b>${tocanOdgovor} metara</b>.`;
-                                    infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja.`;
+            if(Math.random(1)<0.3) {
+                if(Math.random(1)<0.5) {
+                    tekst = `Koliko se završni položaj razlikuje pod početnog, ako promatramo cijelo prikazano gibanje?`;
+                    tocanOdgovor = (faze[0].y1)*(faze[0].t1-faze[0].t0)+(faze[1].y1)*(faze[1].t1-faze[1].t0)+(faze[2].y1)*(faze[2].t1-faze[2].t0);
+                    infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o nizu površina pravokutnika. Površine iznad x-osi (zelena boja) odgovaraju pomacima naprijed (pozitivan pomak) dok površine ispod x-osi (ljubičasta boja) odgovaraju pomacima unazad (negativni pomaci). <br>Konačan odgovor na postavljeno pitanje dobijemo ako zbrojimo sve te površine, pazeći na njihove predznake.`;
+                } else {
+                    tekst = `Koliki je <b>ukupan put</b> tijelo prešlo (koju promjenu bi odometar automobila pokazao)?`;
+                    tocanOdgovor = Math.abs(faze[0].y1)*(faze[0].t1-faze[0].t0)+Math.abs(faze[1].y1)*(faze[1].t1-faze[1].t0)+Math.abs(faze[2].y1)*(faze[2].t1-faze[2].t0);
+                    infoObjasnjene = `Ukupan prijeđen put ovdje je jednak zbroju svih površina obojanih pravokutnika. Da se pitalo o pomaku (udaljenosti konačnog mjesto od početnog), morali bismo uzeti u obzir i predznake - ljubičaste pravokutnike bismo oduzimali. Kako nam u ovom zadatku nije bitan smjer gibanja (odometar sve to bilježi kao gibanje), sve površine samo zbrojimo kao pozitivne.`;
+                }
+                infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu pojedinog pravokutnika mi zapravo računamo pomak tijela kod ovakvog niza jednolikih gibanja.`;
+                oznaciDio=5;
                 svgs.push('pov');
+                zadatak.pomocData = { tip: 'povrsina-sve', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
             } else {
-                const minV = Math.min(f.y0, f.y1); const razlikaV = Math.abs(f.y1 - f.y0);
-                const povPravokutnika = minV * dt; const povTrokuta = (razlikaV * dt) / 2;
-                tocanOdgovor = povPravokutnika + povTrokuta;
-                                    //if(povTrokuta != 0) {
-                                    //} 
-                                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>/<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span style="background: #D7F5BB">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span style="background: #F9F2B3"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
-                                    infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="background: #D7F5BB"><i>v₁</i> · Δ<i>t</i></span> + <span style="background: #F9F2B3">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
-                                    infoObjasnjene += `<p><b>Za ZNATIŽELJNE:</b><br>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>/<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.`;  
-                svgs.push('pov2');
+                tekst = `Koliki je <b>pomak (Δ<i>s</i>)</b> tijelo napravilo u  <span class="highlight-blue">2. dijelu</span> gibanja?`;
+                if (f.y0 === f.y1) {
+                    tocanOdgovor = f.y0 * dt;
+                    let dy = Math.abs(f.y0);
+                    let P = Math.abs(tocanOdgovor);
+                    let neg = tocanOdgovor < 0 ? "Ako je ta površina ispod x-osi (kada je brzina negativna), pomak je negativan.<br>" : "";
+                    infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o površini pravokutnika.<br>P = ${dy} · ${dt} = <b>${P}</b>.<br>${neg} Pomak je zato <b>${tocanOdgovor} metara</b>.`;
+                    infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja.`;
+                    zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
+                    svgs.push('pov');
+                } else {
+                    const minV = Math.min(f.y0, f.y1); const razlikaV = Math.abs(f.y1 - f.y0);
+                    const povPravokutnika = minV * dt; const povTrokuta = (razlikaV * dt) / 2;
+                    tocanOdgovor = povPravokutnika + povTrokuta;
+                    //if(povTrokuta != 0) {
+                    //} 
+                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>/<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span style="background: #D7F5BB">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span style="background: #F9F2B3"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
+                    infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="background: #D7F5BB"><i>v₁</i> · Δ<i>t</i></span> + <span style="background: #F9F2B3">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
+                    infoObjasnjene += `<p><b>Za ZNATIŽELJNE:</b><br>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>/<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.`;  
+                    svgs.push('pov2');
+                    zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
+                }
             }
         } else {
-            tekst = `Koliko iznosi <b>promjena brzine (Δ<i>v</i>)</b> tijela u  <span class="highlight-blue">2. dijelu</span> gibanja (između ${f.t0}. i ${f.t1}. sekunde)?`;
+            tekst = `Koliko iznosi <b>promjena brzine (Δ<i>v</i>)</b> tijela u  <span class="highlight-blue">2. dijelu</span> gibanja?`;
             oznaciDio = 1;
             tocanOdgovor = f.y0 * dt;
             if (tocanOdgovor == 0) {
@@ -1497,10 +1515,10 @@ function oblikujPitanjeIZadatak(zadatak) {
                 infoObjasnjene += `<p><b>Zašto je Δ<i>v</i> = površina (u <i>a</i>/<i>t</i> grafu)?</b><br>Iz osnovne formule za akceleraciju:<br>&ensp;&emsp;<b><i>a</i> = Δ<i>v</i> / Δ<i>t</i></b><br>... formula za promjenu brzine je:<br>&ensp;&emsp;<b>Δ<i>v</i> = <i>a</i> · Δ<i>t</i></b><br>Računajući površinu pravokutnika (gore označenog drugom bojom) mi upravo množimo te dvije veličine ("visina" je iznos akceleracije, a "širina" je proteklo vrijeme) pa tako zapravo računamo promjenu brzine!`;
             }
             svgs.push('pov');
+            zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
         }
-        zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
     }
-        if(zadatak.gradivo === 'jednoliko' || vrstaGrafa === 's/t') { infoObjasnjene += nefizikalno; }
+    if(zadatak.gradivo === 'jednoliko' || vrstaGrafa === 's/t') { infoObjasnjene += nefizikalno; }
 
     // SPREMANJE PODATAKA U OBJEKT ZADATKA
     zadatak.tekstObjasnjena = infoObjasnjene;
@@ -1978,17 +1996,19 @@ const vizualniAsistentPlugin = {
                 );
             }
         }
-
+        if (state.tip === 'povrsina-sve') {
+            for (let i=0;i<=2;i++) {
+                nacrtajPovrsinu(Faze[i].t0,Faze[i].t1,Faze[i].y0,Faze[i].y1);
+            }
+        }
         if (state.tip === 'povrsina') {
             const px0 = xAxis.getPixelForValue(state.t0);
             const px1 = xAxis.getPixelForValue(state.t1);
             const py0 = yAxis.getPixelForValue(state.y0);
             const py1 = yAxis.getPixelForValue(state.y1);
-
             ctx.globalAlpha = 0.3;
             if (state.y0 === state.y1) {
-                if (state.y0 >= 0) ctx.fillStyle = '#79DB1A';
-                else ctx.fillStyle = '#B51CE3';
+                if (state.y0 >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
                 ctx.fillRect(px0, Math.min(py0, yNula), px1 - px0, Math.abs(py0 - yNula));
             } else {
                     const minV = Math.min(state.y0, state.y1);
@@ -2025,17 +2045,38 @@ const vizualniAsistentPlugin = {
             for (let i=0; i<=2; i++) {
                 if (Faze[i].y0 !== Faze[i].y1) {   // ima pomaka
                     const px0 = xAxis.getPixelForValue(Faze[i].t0);
+                    const px1 = xAxis.getPixelForValue(Faze[i].t1);
                     const py0 = yAxis.getPixelForValue(Faze[i].y0);
                     const py1 = yAxis.getPixelForValue(Faze[i].y1);
                     
+                    ctx.save();
+                    ctx.setLineDash([6, 4]);
+                    ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.strokeStyle = '#dc2626'; 
+                    ctx.stroke();
+                    ctx.restore();
+                    
                     crtajStrelicu(px0, py0, px0, py1, '#dc2626', [
                      { t: ` ${Math.abs(Faze[i].y0 - Faze[i].y1).toString()} m`, i: false }], { pocetna: Faze[i].y0, krajnja: Faze[i].y1 }
-                );
+                    );
                 }
             }
         }
                
         ctx.restore();
+        
+        function nacrtajPovrsinu(t0,t1,y0,y1) {
+            const px0 = xAxis.getPixelForValue(t0);
+            const px1 = xAxis.getPixelForValue(t1);
+            const py0 = yAxis.getPixelForValue(y0);
+            const py1 = yAxis.getPixelForValue(y1);
+            ctx.globalAlpha = 0.3;
+            if (y0 === y1) {
+                if (y0 >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
+                ctx.fillRect(px0, Math.min(py0, yNula), px1 - px0, Math.abs(py0 - yNula));
+            } 
+        }
+        
     }
 };
 
