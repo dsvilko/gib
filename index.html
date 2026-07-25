@@ -734,8 +734,24 @@
 
     const isMobile = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
    
+    let Faze = {};
 
-
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
 
 
 ///////////////////////////////////////
@@ -942,6 +958,7 @@ function generirajZadatak() {
             }
         }
 
+        
         if (!isDobarGraf) continue;
 
         // --- IZRAČUN KINEMATIKE ZA SIMULACIJU ---
@@ -1055,6 +1072,13 @@ function getYAtT(faze, t) {
 function formatirajVrstuGrafa(vrsta) {
     return '<i>' + vrsta.replace('/', '</i>/<i>') + '</i>';
 }
+
+
+
+
+
+
+
 
 function oblikujPitanjeIZadatak(zadatak) {
     const { vrstaGrafa, faze, tezina } = zadatak;
@@ -1294,7 +1318,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     infoObjasnjene += `&ensp;&emsp;</i>(${i+1}.)</i>&ensp;${faze[i].y1} m - ${foo} m = <b>${adelta} m</b>&emsp;${sm}</b><br>`;
                 }
                 infoObjasnjene += `Ukupan prijeđen put je zato zbroj tih pojedinih prijeđenih puteva!`;
-                //zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[0].x0, t1: faze[0].x1, y0: faze[0].y0, y1: faze[0].y1, prikaziDx: false, prikaziDy: true, vrstaGrafa };
+                zadatak.pomocData = { tip: 'sve_delte', t0: faze[0].x0, t1: faze[0].x1, y0: faze[0].y0, y1: faze[0].y1, prikaziDx: false, prikaziDy: true, vrstaGrafa };
                 svgs.push('dy');
             } else {
                 if (startIdx === 0 && endIdx === 2) tekst = `Koliko se završni položaj razlikuje od početnog, ako pomatramo cijelo prikazano gibanje?`;
@@ -1504,6 +1528,8 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     mjernaJedinica.textContent = jedinicaText;
     tekstPitanja.innerHTML = `${tekst}`;
+    
+    Faze = faze;
 }
 
 
@@ -1991,6 +2017,21 @@ const vizualniAsistentPlugin = {
                     ctx.restore();
             }
         }
+        
+        if (state.tip === 'sve_delte' ) {
+            for (let i=0; i<=2; i++) {
+                if (Faze[i].y0 !== Faze[i].y1) {   // ima pomaka
+                    const px0 = xAxis.getPixelForValue(Faze[i].t0);
+                    const py0 = yAxis.getPixelForValue(Faze[i].y0);
+                    const py1 = yAxis.getPixelForValue(Faze[i].y1);
+                    
+                    crtajStrelicu(px0, py0, px0, py1, '#dc2626', [
+                     { t: ` ${Math.abs(Faze[i].y0 - Faze[i].y1).toString()} m`, i: false }], { pocetna: Faze[i].y0, krajnja: Faze[i].y1 }
+                );
+                }
+            }
+        }
+               
         ctx.restore();
     }
 };
@@ -2288,6 +2329,23 @@ feedbackBox.addEventListener('click', (e) => {
         overlay.remove();
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
