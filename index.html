@@ -147,15 +147,32 @@
             border: 1px solid var(--border);
         }
 
+        .feedback-container {
+            display: flex;
+            gap: 6px;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 8px;
+        }
+        
+        .shalabahter {
+            background-color: #DDD;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.5em;
+            transition: background 0.2s;
+        }
+        
         .feedback {
-            padding: 8px;
+            padding: 8px 0 8px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 1.4em;
-            margin-bottom: 8px;
             display: block;
             text-align: center;
-            
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between; /* Pushes arrows to edges, keeps text centered */
@@ -636,10 +653,12 @@
     <div id="zadatakSekcija" class="hidden">
         <div id="tekstPitanja" class="question-box"></div>
         
-        <div id="feedbackBox" class="feedback">---</div>
+        <div class="feedback-container">
+            <div id="feedbackBox" class="feedback" style="width: 100%">---</div>
+            <button id="btnShalabahter" class="shalabahter" style="width: 50px">?</button>
+        </div>
         
         <div class="interaction-box">
-            
             <div id="unosBrojaBox" style="display: flex; align-items: center; gap: 8px;">
                 <input type="number" id="inputOdgovor" step="any" placeholder="Broj" style="width: 80px;">
                 <span id="mjernaJedinica" style="font-weight: 700; color: var(--text-secondary); font-size: 1.1rem; min-width: 30px;"></span>
@@ -1402,10 +1421,11 @@ function oblikujPitanjeIZadatak(zadatak) {
             }
         } else {
             tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
-            infoObjasnjene = `Akceleracija na <i>v</i>/<i>t</i> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.<p><b>Zašto?</b>`; 
+            infoObjasnjene = `Akceleracija na <i>v</i>/<i>t</i> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
             infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>/<i>t</i> grafu zato <b>je</b> akceleracija!`;
         }
         zadatak.pomocData = null;
+        svgs.push('u-desno');
         svgs.push('strmije');
     }
     
@@ -1457,10 +1477,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[index].t0, t1: faze[index+1].t1, y0: faze[index].y0, y1: faze[index+1].y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
         else
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faza.t0, t1: faza.t1, y0: faza.y0, y1: faza.y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
+        svgs.push('u-desno');
         svgs.push('nagib2');
         svgs.push('krivo-v');
-
-
     } 
     else if (tezina === 5) {
         // RAČUNANJE POVRŠINE
@@ -1479,6 +1498,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 }
                 infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu pojedinog pravokutnika mi zapravo računamo pomak tijela kod ovakvog niza jednolikih gibanja.`;
                 oznaciDio=5;
+                svgs.push('u-lijevo');
                 svgs.push('pov');
                 zadatak.pomocData = { tip: 'povrsina-sve', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
                 sakrijMinMax = 1;
@@ -1492,6 +1512,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o površini pravokutnika.<br>P = ${dy} · ${dt} = <b>${P}</b>.<br>${neg} Pomak je zato <b>${tocanOdgovor} metara</b>.`;
                     infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja.`;
                     zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
+                    svgs.push('u-lijevo');
                     svgs.push('pov');
                 } else {
                     const minV = Math.min(f.y0, f.y1); const razlikaV = Math.abs(f.y1 - f.y0);
@@ -1502,6 +1523,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>/<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>/<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span style="background: #D7F5BB">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span style="background: #F9F2B3"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
                     infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="background: #D7F5BB"><i>v₁</i> · Δ<i>t</i></span> + <span style="background: #F9F2B3">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
                     infoObjasnjene += `<p><b>Za ZNATIŽELJNE:</b><br>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>/<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.`;  
+                    svgs.push('u-lijevo');
                     svgs.push('pov2');
                     zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
                 }
@@ -1522,6 +1544,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 infoObjasnjene = `Promjena brzine na <i>a</i>/<i>t</i> grafu odgovara <b>površini ispod grafa</b> (površini pravokutnika između linije koja predstavlja gibanje i x-osi).<br>Ta je površina ovdje:<br>&ensp;&emsp;<b>P = ${dy} · ${dt} = ${P}</b><br>${negText} pa je <br>&ensp;&emsp;<b>Δ<i>v</i> = ${tocanOdgovor} m/s</b>`;
                 infoObjasnjene += `<p><b>Zašto je Δ<i>v</i> = površina (u <i>a</i>/<i>t</i> grafu)?</b><br>Iz osnovne formule za akceleraciju:<br>&ensp;&emsp;<b><i>a</i> = Δ<i>v</i> / Δ<i>t</i></b><br>... formula za promjenu brzine je:<br>&ensp;&emsp;<b>Δ<i>v</i> = <i>a</i> · Δ<i>t</i></b><br>Računajući površinu pravokutnika (gore označenog drugom bojom) mi upravo množimo te dvije veličine ("visina" je iznos akceleracije, a "širina" je proteklo vrijeme) pa tako zapravo računamo promjenu brzine!`;
             }
+            svgs.push('u-lijevo');
             svgs.push('pov');
             zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
         }
@@ -1911,8 +1934,8 @@ const vizualniAsistentPlugin = {
                     krajX = x2; krajY = y2 + DISK_OFFSET;
                 }
 
-                crtajDiskSVrijednosti(pocX, pocY, boja, pocetna);
-                crtajDiskSVrijednosti(krajX, krajY, boja, krajnja);
+                crtajDiskSVrijednosti(pocX, pocY, boja, '');
+                crtajDiskSVrijednosti(krajX, krajY, boja, '');
                 dopisiYVrijednost(pocX, pocY, boja, pocetna);
                 dopisiYVrijednost(krajX, krajY, boja, krajnja);
             }
