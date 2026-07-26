@@ -121,7 +121,7 @@
         .mini-chart-container {
             position: relative;
             width: calc(50% - 1px);
-            height: 190px;
+            height: 155px;
         }
 
         .question-box {
@@ -155,15 +155,60 @@
             margin-bottom: 8px;
         }
         
-        .shalabahter {
-            background-color: #DDD;
+        .shalabahterBtn {
+            background-color: #ffffff;
             color: black;
             border: none;
             cursor: pointer;
             font-weight: 600;
             font-size: 1.5em;
             transition: background 0.2s;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
+        
+        .shalabahterOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+         /* This box sizes to the image, not the screen */
+        .shalabahterOverlay-content {
+            display: inline-block;   /* shrink-wraps to content */
+            padding: 16px;           /* space between image and box edge */
+            margin: 24px;            /* space between box and viewport edge */
+            background: white;
+            border-radius: 8px;      /* optional styling */
+            border: 2px solid #555;
+            box-sizing: border-box;
+            max-width: calc(100vw - 48px);   /* 100vw minus 2x margin */
+            max-height: calc(100vh - 48px);  /* 100vh minus 2x margin */
+        }
+
+        .shalabahterOverlay-content img {
+            display: block;
+            max-width: 100%;
+            max-height: calc(100vh - 48px - 32px); /* account for margin + padding */
+            
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        
+
+        .shalabahterOverlay.active {
+            display: flex;
+        }
+
         
         .feedback {
             padding: 8px 0 8px;
@@ -655,7 +700,13 @@
         
         <div class="feedback-container">
             <div id="feedbackBox" class="feedback" style="width: 100%">---</div>
-            <button id="btnShalabahter" class="shalabahter" style="width: 50px">?</button>
+            <button id="shalabahterBtn" class="shalabahterBtn" style="width: 50px">?</button>
+        </div>
+        
+        <div class="shalabahterOverlay" id="shalabahterOverlay">
+            <div class="shalabahterOverlay-content">
+                <img src="svg/salabahter.svg" alt="Overlay image" id="shalabahterOverlayImg">
+            </div>
         </div>
         
         <div class="interaction-box">
@@ -1394,7 +1445,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         } else {
             const f = faze[1];
             oznaciDio = 1;
-            tekst = `Koliko je <b>sekundi trajao</b> <span class="highlight-blue">2. dio gibanja</span> (vremenski interval Δ<i>t</i>)?`;
+            tekst = `Koliko je <b>sekundi trajao (Δ<i>t</i>)</b> <span class="highlight-blue">2. dio</span> gibanja?`;
             tocanOdgovor = f.t1 - f.t0;
             infoObjasnjene = `Trajanje očitavamo na vremenskoj osi. Interval iznosi:<br>&ensp;&emsp;Δ<i>t</i> = <i>t</i>₂ - <i>t</i>₁ = ${f.t1} s - ${f.t0} s = <b>${tocanOdgovor} s</b>.<br>Grafički si to možemo predstaviti pomakom "u desno" (vidi plavu strelicu gore na grafu).`;
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y0, prikaziDx: true, prikaziDy: false, vrstaGrafa };
@@ -1645,7 +1696,7 @@ function provjeriOdgovor() {
         let tocno = "";
         
         if (trenutniZadatak.tezina !== 0) {
-            tocno = ` Točan odgovor je <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
+            tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
             let vrstaText = "";
@@ -1655,7 +1706,7 @@ function provjeriOdgovor() {
             else if(tocanVrsta === 'jednoliko') vrstaText = 'jednoliko gibanje';
             else vrstaText = 'mirovanje';
             if(sm === "nepoznat") { sm = ""; }
-            tocno = `<span style="font-size: 0.8em">To je ${vrstaText} ${sm}</span>`;
+            tocno = `<span style="font-size: 0.8em">${vrstaText} ${sm}</span>`;
         }
 
         feedbackBox.innerHTML = `<span class="arrow">&#x2193;</span><span class="text" style="width: 80%;display: inline-block;">${tocno}</span><span class="arrow">&#x2193;</span>`;
@@ -2114,6 +2165,20 @@ const vizualniAsistentPlugin = {
                 //ctx.lineTo(px0+2, py0-2);
                 ctx.closePath(); 
                 ctx.fill();
+                
+                ctx.save();
+                ctx.setLineDash([6, 4]);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#000';
+                ctx.beginPath();
+                ctx.moveTo(px0, py0);
+                ctx.lineTo(px0, py1);
+                ctx.lineTo(px1, py1);
+                //ctx.moveTo(px0, py);
+                //ctx.lineTo(px1, py);
+                ctx.stroke();
+                //ctx.setLineDash([]);
+                ctx.restore();
             }
             
             // oznake
@@ -2122,7 +2187,7 @@ const vizualniAsistentPlugin = {
             if (y0 && y1) {   // PRAVOKUTNIK  (postoji ako su oba y razlicita od 0)
                 crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
                 crtajDiskSVrijednosti(px0,(py0+p0)/2,'#000000aa','');
-                crtajDiskSVrijednosti((px0+px1)/2,(py0+p0)/2,'#000',22);
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+p0)/2,'#000',20);
                 
                 dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
                 dopisiYVrijednost(px0,(py0+p0)/2,'#000',Math.abs(y));
@@ -2138,7 +2203,7 @@ const vizualniAsistentPlugin = {
                     crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
                 crtajDiskSVrijednosti(px0,(py0+py1)/2,'#000000aa','');
                 crtajDiskSVrijednosti((px0+px1)/2-20,(py0+py1)/2-20,'#F00',12);
-                crtajDiskSVrijednosti((px0+px1)/2,(py0+py1)/2,'#000',22);
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+py1)/2,'#000',20);
                 
                 if (!dxOznacen) 
                     dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
@@ -2322,7 +2387,7 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
             datasets: [{
                 label: `Graf ${vrsta}`,
                 data: podaci,
-                borderColor: (DM ? '#ffffff' : '#0f172a'),
+                borderColor: (DM ? '#ffffffaa' : '#0f172aaa'),
                 borderWidth: 4,
                 pointRadius: 0,
                 fill: false,
@@ -2338,14 +2403,14 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
                     type: 'linear',
                     border: { display: false },
                     ticks: { display: false, stepSize: 1, precision: 0 },
-                    grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' :  (DM ? '#555555' : '#e2e8f0')},
+                    grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' :  (DM ? '#ffffff33' : '#00000022')},
                     min: 0,
                     max: zadatak.faze[2].t1
                 },
                 y: {
                     border: { display: false },
                     ticks: { stepSize: 1, precision: 0 },
-                    grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' : (DM ? '#555555' : '#e2e8f0') },
+                    grid: { color: (ctx) => ctx.tick.value === 0 ? 'transparent' : (DM ? '#ffffff33' : '#00000022') },
                     beginAtZero: true
                 }
             },
@@ -2461,9 +2526,17 @@ feedbackBox.addEventListener('click', (e) => {
 });
 
 
+const shalabahterBtn = document.getElementById('shalabahterBtn');
+const shalabahterOverlay = document.getElementById('shalabahterOverlay');
+const shalabahterOverlayImg = document.getElementById('shalabahterOverlayImg');
 
+shalabahterBtn.addEventListener('click', () => {
+      shalabahterOverlay.classList.add('active');
+});
 
-
+shalabahterOverlayImg.addEventListener('click', () => {
+      shalabahterOverlay.classList.remove('active');
+});
 
 
 
