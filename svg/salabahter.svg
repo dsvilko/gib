@@ -25,13 +25,13 @@
      showgrid="false"
      inkscape:zoom="0.91276596"
      inkscape:cx="267.31935"
-     inkscape:cy="576.27039"
+     inkscape:cy="663.91608"
      inkscape:window-width="3750"
      inkscape:window-height="2096"
      inkscape:window-x="0"
      inkscape:window-y="64"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g209237"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -883,12 +883,12 @@
     </g>
     <path
        style="fill:none;stroke:#059fc8;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 123.68079,361.49456 67.04128,-48.4786"
+       d="m 105.89346,343.63589 67.04128,-48.4786"
        id="path22732-9-2-2"
        sodipodi:nodetypes="cc" />
     <g
        id="g162800"
-       transform="translate(5.2326921,-20.730605)">
+       transform="translate(-12.554597,-38.589161)">
       <g
          id="g161764-9"
          transform="translate(-3.8685528,222.41297)">
@@ -1006,11 +1006,11 @@
     </g>
     <path
        style="fill:none;stroke:#059fc8;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 229.81266,337.75759 57.39833,-0.27093"
+       d="m 212.02533,319.89892 57.39833,-0.27093"
        id="path22732-6-2-3" />
     <g
        id="g162809"
-       transform="translate(-10.583333,-21.695845)">
+       transform="translate(-28.370626,-39.554401)">
       <g
          id="g75907-41-4"
          transform="translate(22.961821,426.05075)">
@@ -1049,11 +1049,11 @@
     </g>
     <path
        style="fill:none;stroke:#f87efb;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 230.52189,361.62448 57.39833,-0.27093"
+       d="m 212.73456,343.76581 57.39833,-0.27093"
        id="path22732-6-2-3-9" />
     <path
        style="fill:none;stroke:#f87efb;stroke-width:2.93105;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 124.25245,342.18613 64.75895,-0.26985"
+       d="m 106.46512,324.32746 64.75895,-0.26985"
        id="path22732-6-2-3-0" />
     <g
        id="g75907-4"
@@ -1113,12 +1113,12 @@
     </g>
     <path
        style="fill:none;stroke:#f87efb;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12.434171,350.18342 83.789583,323.22486"
+       d="M -5.3531197,332.32475 66.00229,305.36619"
        id="path22732-9-2-2-0"
        sodipodi:nodetypes="cc" />
     <g
        id="g162789"
-       transform="translate(-1.8106737,-21.988044)">
+       transform="translate(-19.597963,-39.8466)">
       <g
          id="g162590">
         <g
@@ -1555,17 +1555,19 @@
          y="12.793088">a/t</tspan></text>
     <g
        id="g209237"
-       transform="translate(0.52916667,-3.1750001)">
+       transform="translate(-6.3500003,-23.812509)"
+       style="stroke:#ff3333;stroke-opacity:1">
       <g
          id="g209224"
-         transform="translate(20.10834,-0.52916667)">
+         transform="translate(9.2002176,2.2497907)"
+         style="stroke:#ff3333;stroke-opacity:1">
         <path
-           style="fill:none;stroke:#bfd7ff;stroke-width:19.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:none;stroke:#ff3333;stroke-width:19.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
            d="M 28.019308,294.36988 H 236.22846"
            id="path184670" />
         <path
            sodipodi:type="star"
-           style="fill:#b1da81;fill-opacity:1;stroke:#bfd7ff;stroke-width:72.8126;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#b1da81;fill-opacity:1;stroke:#ff3333;stroke-width:72.8126;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
            id="path208956-7"
            inkscape:flatsided="false"
            sodipodi:sides="3"
@@ -1583,37 +1585,27 @@
       </g>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-         x="58.193283"
-         y="298.81802"
+         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.264583;stroke-opacity:1"
+         x="47.28516"
+         y="301.59698"
          id="text190293"><tspan
            sodipodi:role="line"
            id="tspan190291"
-           style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.1111px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
-           x="58.193283"
-           y="298.81802">RAČUNAMO NAGIB!</tspan></text>
+           style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.1111px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.264583;stroke-opacity:1"
+           x="47.28516"
+           y="301.59698">RAČUNAMO NAGIB!</tspan></text>
     </g>
     <g
-       id="g209230"
-       transform="translate(0,4.7625002)">
+       id="g2945"
+       style="fill:#9387ff;fill-opacity:1;stroke:#5366e7;stroke-opacity:1"
+       transform="translate(-10.908122,2.7789574)">
       <path
-         style="fill:#b1da81;fill-opacity:1;stroke:#b1da81;stroke-width:19.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 295.97232,380.45091 H 87.763058"
+         style="fill:#9387ff;fill-opacity:1;stroke:#5366e7;stroke-width:19.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 289.09315,364.57591 H 80.883891"
          id="path184670-4" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-         x="134.11166"
-         y="385.57053"
-         id="text190293-0"><tspan
-           sodipodi:role="line"
-           id="tspan190291-1"
-           style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.1111px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
-           x="134.11166"
-           y="385.57053">RAČUNAMO POVRŠINU!</tspan></text>
       <path
          sodipodi:type="star"
-         style="fill:#b1da81;fill-opacity:1;stroke:#b1da81;stroke-width:72.8126;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#9387ff;fill-opacity:1;stroke:#5366e7;stroke-width:72.8126;stroke-miterlimit:2.4;stroke-dasharray:none;stroke-opacity:1"
          id="path208956"
          inkscape:flatsided="false"
          sodipodi:sides="3"
@@ -1625,9 +1617,20 @@
          sodipodi:arg2="2.0943951"
          inkscape:rounded="0"
          inkscape:randomized="0"
-         d="m -609.7553,123.65508 -16.13967,-9.31825 -16.13966,-9.31824 16.13966,-9.318239 16.13967,-9.318242 0,18.636481 z"
-         transform="matrix(0.26458333,0,0,0.26458333,257.63472,352.66474)"
-         inkscape:transform-center-x="1.423427" />
+         transform="matrix(0.26458333,0,0,0.26458333,250.75555,336.78974)"
+         inkscape:transform-center-x="1.423427"
+         d="m -609.7553,123.65508 -16.13967,-9.31825 -16.13966,-9.31824 16.13966,-9.318239 16.13967,-9.318242 0,18.636481 z" />
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.264583;stroke-opacity:1"
+       x="116.32438"
+       y="372.47449"
+       id="text190293-0"><tspan
+         sodipodi:role="line"
+         id="tspan190291-1"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14.1111px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.264583;stroke-opacity:1"
+         x="116.32438"
+         y="372.47449">RAČUNAMO POVRŠINU!</tspan></text>
   </g>
 </svg>
