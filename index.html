@@ -729,13 +729,14 @@
     let oznaciDio = 10;
     let danOdgovor = 0;
     let v0Zadan = 0;
-
+    let sakrijMinMax = 0;
+    
     let DM = 0; // Dark mode
 
     const isMobile = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
    
-    let Faze = {};
-
+    //let Faze = {};
+    
    
    
    
@@ -769,6 +770,7 @@ function generirajZadatak() {
     inputOdgovor.value = "";
     inputOdgovor.disabled = false;
     danOdgovor = 0;
+    sakrijMinMax = 0;
     zaustaviSimulaciju(); // Resetiraj animaciju
 
     // Varijable za simulaciju
@@ -1056,8 +1058,13 @@ function generirajZadatak() {
     if (maxAkceleracija === 0) maxAkceleracija = 1; // Osigurač protiv dijeljenja s 0
 
     trenutniZadatak.simulacijaProps = { minS, maxS, maxBrzina, maxAkceleracija };
-    cestaMin.textContent = Math.round(minS) + 'm';
-    cestaMax.textContent = Math.round(maxS) + 'm';
+    if(!sakrijMinMax) {
+        cestaMin.textContent = Math.round(minS) + 'm';
+        cestaMax.textContent = Math.round(maxS) + 'm';
+    } else {
+        cestaMin.textContent = '?';
+        cestaMax.textContent = '?';
+    }
     azurirajAuto(0);
 }
 
@@ -1459,8 +1466,8 @@ function oblikujPitanjeIZadatak(zadatak) {
         // RAČUNANJE POVRŠINE
         const f = faze[1]; const dt = f.t1 - f.t0;
         oznaciDio = 1;
-        if (vrstaGrafa === 'v/t') {
-            if(Math.random(1)<0.3) {
+        if (vrstaGrafa === 'v/t' ) {
+            if(Math.random(1)<0.3 && trenutniZadatak.gradivo === 'jednoliko') {
                 if(Math.random(1)<0.5) {
                     tekst = `Koliko se završni položaj razlikuje pod početnog, ako promatramo cijelo prikazano gibanje?`;
                     tocanOdgovor = (faze[0].y1)*(faze[0].t1-faze[0].t0)+(faze[1].y1)*(faze[1].t1-faze[1].t0)+(faze[2].y1)*(faze[2].t1-faze[2].t0);
@@ -1474,6 +1481,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 oznaciDio=5;
                 svgs.push('pov');
                 zadatak.pomocData = { tip: 'povrsina-sve', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
+                sakrijMinMax = 1;
             } else {
                 tekst = `Koliki je <b>pomak (Δ<i>s</i>)</b> tijelo napravilo u  <span class="highlight-blue">2. dijelu</span> gibanja?`;
                 if (f.y0 === f.y1) {
@@ -1547,7 +1555,14 @@ function oblikujPitanjeIZadatak(zadatak) {
     mjernaJedinica.textContent = jedinicaText;
     tekstPitanja.innerHTML = `${tekst}`;
     
-    Faze = faze;
+    //Faze = faze;
+    if(sakrijMinMax) {
+        document.getElementById('cestaMin').opacity=0;
+        document.getElementById('cestaMax').opacity=0;
+    } else {
+        document.getElementById('cestaMin').opacity=1;
+        document.getElementById('cestaMax').opacity=1;
+    }
 }
 
 
@@ -1840,7 +1855,6 @@ const vizualniAsistentPlugin = {
         const DISK_RADIUS = 12;   // polumjer diska (px)
 
         function crtajStrelicu(x1, y1, x2, y2, boja, dijeloviTeksta = null, vrijednosti = null) {
-                       
             if(x1 !== x2 || y1 !== y2) {
                 ctx.beginPath();
                 let y2short = y2 === y1 ? y2 : y2 > y1 ? y2 - 10 : y2 + 10;
@@ -1906,7 +1920,8 @@ const vizualniAsistentPlugin = {
 
         function crtajDiskSVrijednosti(x, y, boja, vrijednost) {
             ctx.beginPath();
-            ctx.arc(x, y, DISK_RADIUS, 0, Math.PI * 2);
+            ctx.setLineDash([]);
+            ctx.arc(x, y, vrijednost ? vrijednost : DISK_RADIUS, 0, Math.PI * 2);
             ctx.fillStyle = boja;
             ctx.fill();
         }
@@ -1996,58 +2011,15 @@ const vizualniAsistentPlugin = {
                 );
             }
         }
-        if (state.tip === 'povrsina-sve') {
-            for (let i=0;i<=2;i++) {
-                nacrtajPovrsinu(Faze[i].t0,Faze[i].t1,Faze[i].y0,Faze[i].y1);
-            }
-        }
-        if (state.tip === 'povrsina') {
-            const px0 = xAxis.getPixelForValue(state.t0);
-            const px1 = xAxis.getPixelForValue(state.t1);
-            const py0 = yAxis.getPixelForValue(state.y0);
-            const py1 = yAxis.getPixelForValue(state.y1);
-            ctx.globalAlpha = 0.3;
-            if (state.y0 === state.y1) {
-                if (state.y0 >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
-                ctx.fillRect(px0, Math.min(py0, yNula), px1 - px0, Math.abs(py0 - yNula));
-            } else {
-                    const minV = Math.min(state.y0, state.y1);
-                    const pMinV = yAxis.getPixelForValue(minV);
-
-                    // Lower green rectangle
-                    ctx.fillStyle = '#79DB1A'; 
-                    ctx.fillRect(px0, pMinV, px1 - px0, yNula - pMinV);
-
-                    // Upper yellow triangle
-                    ctx.fillStyle = '#ead300'; 
-                    ctx.beginPath(); 
-                    ctx.moveTo(px0, pMinV); 
-                    ctx.lineTo(px1, pMinV);
-                    if (state.y0 > state.y1) ctx.lineTo(px0, py0);
-                    else ctx.lineTo(px1, py1);
-                    ctx.closePath(); 
-                    ctx.fill();
-
-                    // Black dashed boundary line
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.setLineDash([5, 5]); // [dash length, gap length]
-                    ctx.strokeStyle = (DM ? '#ffffff' : '#000000');
-                    ctx.lineWidth = 3;
-                    ctx.moveTo(px0, pMinV);
-                    ctx.lineTo(px1, pMinV);
-                    ctx.stroke();
-                    ctx.restore();
-            }
-        }
         
         if (state.tip === 'sve_delte' ) {
+            let faze = trenutniZadatak.faze;
             for (let i=0; i<=2; i++) {
-                if (Faze[i].y0 !== Faze[i].y1) {   // ima pomaka
-                    const px0 = xAxis.getPixelForValue(Faze[i].t0);
-                    const px1 = xAxis.getPixelForValue(Faze[i].t1);
-                    const py0 = yAxis.getPixelForValue(Faze[i].y0);
-                    const py1 = yAxis.getPixelForValue(Faze[i].y1);
+                if (faze[i].y0 !== faze[i].y1) {   // ima pomaka
+                    const px0 = xAxis.getPixelForValue(faze[i].t0);
+                    const px1 = xAxis.getPixelForValue(faze[i].t1);
+                    const py0 = yAxis.getPixelForValue(faze[i].y0);
+                    const py1 = yAxis.getPixelForValue(faze[i].y1);
                     
                     ctx.save();
                     ctx.setLineDash([6, 4]);
@@ -2057,26 +2029,104 @@ const vizualniAsistentPlugin = {
                     ctx.restore();
                     
                     crtajStrelicu(px0, py0, px0, py1, '#dc2626', [
-                     { t: ` ${Math.abs(Faze[i].y0 - Faze[i].y1).toString()} m`, i: false }], { pocetna: Faze[i].y0, krajnja: Faze[i].y1 }
+                     { t: ` ${Math.abs(faze[i].y0 - faze[i].y1).toString()} m`, i: false }], { pocetna: faze[i].y0, krajnja: faze[i].y1 }
                     );
                 }
             }
         }
-               
-        ctx.restore();
+        
+        
+        
+        if (state.tip === 'povrsina') {
+            nacrtajPovrsinu(state.t0,state.t1,state.y0,state.y1);
+        }
+        
+        if (state.tip === 'povrsina-sve') {
+            for (let i=0;i<=2;i++) {
+                let f = trenutniZadatak.faze[i];
+                nacrtajPovrsinu(f.t0,f.t1,f.y0,f.y1);
+            }
+        }
         
         function nacrtajPovrsinu(t0,t1,y0,y1) {
+            if(!y0 && !y1) return;
+            
             const px0 = xAxis.getPixelForValue(t0);
             const px1 = xAxis.getPixelForValue(t1);
             const py0 = yAxis.getPixelForValue(y0);
             const py1 = yAxis.getPixelForValue(y1);
+            const p0 = yAxis.getPixelForValue(0);
+            const y = Math.abs(y0)<Math.abs(y1) ? y0 : y1;  // y koordinata stranice kvadra 
+            const py = yAxis.getPixelForValue(y);
             ctx.globalAlpha = 0.3;
-            if (y0 === y1) {
-                if (y0 >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
-                ctx.fillRect(px0, Math.min(py0, yNula), px1 - px0, Math.abs(py0 - yNula));
-            } 
+            let dxOznacen = 0;
+            
+            // pozadina
+            if (y0 && y1) {   // PRAVOKUTNIK  (postoji ako su oba y razlicita od 0)
+                if (y >= 0) ctx.fillStyle = '#79DB1A'; else ctx.fillStyle = '#B51CE3';
+                ctx.fillRect(px0, Math.min(py, p0), px1 - px0, Math.abs(py - p0));
+                ctx.globalAlpha = 1;
+                ctx.save();
+                ctx.setLineDash([6, 4]);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#000';
+                ctx.beginPath();
+                ctx.moveTo(px0, p0);
+                ctx.lineTo(px0, py0);
+                ctx.moveTo(px1, p0);
+                ctx.lineTo(px1, py1);
+                ctx.moveTo(px0, py);
+                ctx.lineTo(px1, py);
+                ctx.stroke();
+                //ctx.setLineDash([]);
+                ctx.restore();
+            }
+            if (y0 !== y1) {    // TROKUT  (ako postoji delta_y)
+                ctx.fillStyle = '#cccc0066'; 
+                ctx.beginPath(); 
+                ctx.moveTo(px0, py); 
+                ctx.lineTo(px0, py0);
+                ctx.lineTo(px1, py1);
+                ctx.lineTo(px1, py);
+                //ctx.lineTo(px0+2, py0-2);
+                ctx.closePath(); 
+                ctx.fill();
+            }
+            
+            // oznake
+            ctx.globalAlpha = 1;
+            
+            if (y0 && y1) {   // PRAVOKUTNIK  (postoji ako su oba y razlicita od 0)
+                crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
+                crtajDiskSVrijednosti(px0,(py0+p0)/2,'#000000aa','');
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+p0)/2,'#000',22);
+                
+                dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
+                dopisiYVrijednost(px0,(py0+p0)/2,'#000',Math.abs(y1));
+                dopisiYVrijednost((px0+px1)/2,(py0+p0)/2,'#000','= '+Math.abs(y1)*(t1-t0));
+                
+                dxOznacen = 1;  // da ne dupliciramo za trokut, ako postoji
+            }
+            if (y0 !== y1) {    // TROKUT  (ako postoji delta_y)
+                const minV = Math.min(y0, y1);
+                const pMinV = yAxis.getPixelForValue(minV);
+                
+                if (!dxOznacen) 
+                    crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
+                crtajDiskSVrijednosti(px0,(py0+py1)/2,'#000000aa','');
+                crtajDiskSVrijednosti((px0+px1)/2-20,(py0+py1)/2-20,'#F00',12);
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+py1)/2,'#000',22);
+                
+                if (!dxOznacen) 
+                    dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
+                dopisiYVrijednost(px0,(py0+py1)/2,'#000',Math.abs(y0-y1));
+                dopisiYVrijednost((px0+px1)/2-20,(py0+py1)/2-20,'','/ 2');
+                dopisiYVrijednost((px0+px1)/2,(py0+py1)/2,'#000','= '+Math.abs(y1-y0)*(t1-t0)/2);
+            }
+                
         }
-        
+
+        ctx.restore();
     }
 };
 
