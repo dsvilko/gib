@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openmoji/15.1.0/openmoji.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --border: #cbd5e1;
+
+            /* Vertical position of the road within the bg/fg images, as a % of scene height.
+               Tune this to match where the road actually sits in bg2.jpg / fg.png. */
+            --gib-cesta-pozicija: 66%;
+        }
+
+        @font-face {
+            font-family: "OpenMoji";
+            src: url("https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/font/OpenMoji-color-glyf_colr_0/OpenMoji-color-glyf_colr_0.woff2") format("woff2");
+        }
+
+        body {
+            font-family: 'Noto Color Emoji', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11pt;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        /* --- Scena: sve slojeve stavlja jedan iznad drugog --- */
+        .gib-scena {
+            position: relative;
+            width: 100%;
+            overflow: hidden; /* reže brzinomjer koji viri ispod donjeg ruba */
+            border-radius: 8px;
+            line-height: 0; /* uklanja whitespace ispod inline slike */
+        }
+
+        /* Sloj 1: pozadinska slika (cesta, nebo, drveće u daljini...) - određuje visinu scene */
+        .gib-pozadina-slika {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Sloj 2: vozilo + strelica smjera kretanja, poravnat preko cijele scene */
+        .gib-vozilo-sloj {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .gib-auto {
+            position: absolute;
+            top: var(--gib-cesta-pozicija);
+            left: 0%; /* mijenja se JS-om */
+            height: 20%; /* postotak visine pozadinske slike */
+            width: auto;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            transition: top 0.15s ease;
+        }
+
+        .gib-strelica-smjera {
+            position: absolute;
+            top: var(--gib-cesta-pozicija);
+            left: 0%; /* mijenja se JS-om, sinkrono s autom */
+            height: 12%; /* postotak visine pozadinske slike, autoskalira se */
+            width: auto;
+            aspect-ratio: 10 / 1; /* odgovara viewBox-u 200x20 */
+            transform: translate(-50%, -50%);
+            overflow: visible;
+            pointer-events: none;
+            z-index: 1; /* ispod auta */
+            transition: top 0.15s ease;
+            opacity: 0;
+        }
+
+        /* Sloj 3: prednji plan (PNG s prozirnošću - grmlje, ograde i sl. ispred ceste) */
+        .gib-prednji-plan-slika {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Sloj 4: brzinomjer, iznad svega, dijelom odrezan donjim rubom scene, autoskalira se */
+        .gib-brzinomjer {
+            position: absolute;
+            left: 0%; /* mijenja se JS-om, sinkrono s autom */
+            bottom: -8px; /* dio kruga ispod ruba scene */
+            height: 20%; /* postotak visine pozadinske slike */
+            aspect-ratio: 1 / 1;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 2px solid #334155;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            z-index: 4;
+            transition: left 0.15s ease;
+        }
+        .gib-brzinomjer svg {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #gibBrzinomjerKazaljka {
+            transition: x2 0.05s linear, y2 0.05s linear;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Demo novih cesta</h1>
+
+    <div class="gib-scena" id="gibScena">
+        <img id= "gibPozadina" class="gib-pozadina-slika" src="https://dsvilko.github.io/gib/pozadine/France/bg2.jpg" alt="Pozadina ceste">
+
+        <div class="gib-vozilo-sloj" id="gibVoziloSloj">
+            <svg id="gibStrelicaSmjera" class="gib-strelica-smjera" viewBox="0 0 200 20">
+                <line id="gibStrelicaLinija" x1="60" y1="10" x2="140" y2="10" stroke="#facc15" stroke-width="4" stroke-linecap="butt" />
+                <polygon id="gibStrelicaVrh" points="140,2 156,10 140,18" fill="#facc15" />
+            </svg>
+            <img id="gibAuto" class="gib-auto" src="https://dsvilko.github.io/gib/vozila/mini.png" alt="Vozilo">
+        </div>
+
+        <img id="gibPrednji" class="gib-prednji-plan-slika" src="https://dsvilko.github.io/gib/pozadine/France/fg.png" alt="Prednji plan">
+
+        <div class="gib-brzinomjer" id="gibBrzinomjerSloj">
+            <svg viewBox="0 0 100 100">
+                <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#cbd5e1" stroke-width="9" stroke-linecap="round" />
+                <line id="gibBrzinomjerKazaljka" x1="50" y1="50" x2="12" y2="50" stroke="#dc2626" stroke-width="5" stroke-linecap="round" />
+                <circle cx="50" cy="50" r="5.5" fill="#0f172a" />
+            </svg>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function nasumice(min, max) {
+        return min + Math.random() * (max - min);
+    }
+    var VOZILA = ['mini.png', 'beetle.png', 'mustang.png'];
+    var POZADINE = ['Istra', 'pored-mora', 'France', 'sumska-cesta', 'jesen', 'Constable'];
+    
+    // --- Postavi kazaljku brzinomjera na fiksni položaj (konstantna brzina) ---
+    function postaviKazaljku() {
+        var kutStupnjevi = 55; // 180° = 0 brzine, 0° = maksimalna brzina
+        var rad = kutStupnjevi * Math.PI / 180;
+        var x = 50 + 38 * Math.cos(rad);
+        var y = 50 - 38 * Math.sin(rad);
+        var kazaljka = document.getElementById('gibBrzinomjerKazaljka');
+        kazaljka.setAttribute('x2', x.toFixed(1));
+        kazaljka.setAttribute('y2', y.toFixed(1));
+    }
+    postaviKazaljku();
+
+    // --- Animacija gibanja automobila: konstantna brzina, 10s s lijeva na desno, zatim ispočetka ---
+    var auto = document.getElementById('gibAuto');
+    var brzinomjerSloj = document.getElementById('gibBrzinomjerSloj');
+    var strelica = document.getElementById('gibStrelicaSmjera');
+    var TRAJANJE = 10000; // ms za prijelaz cijele ceste
+    var pocetak = null;
+
+    auto.src = 'https://dsvilko.github.io/gib/vozila/' + VOZILA[Math.floor(Math.random() * VOZILA.length)];
+    let poz = POZADINE[Math.floor(Math.random() * POZADINE.length)];
+    gibPozadina.src = 'pozadine/' + poz + '/bg.jpg';
+    gibPrednji.src = 'pozadine/' + poz + '/fg.png';
+    
+    
+    function korak(vrijeme) {
+        if (pocetak === null) pocetak = vrijeme;
+        var proteklo = (vrijeme - pocetak) % TRAJANJE;
+        var udio = proteklo / TRAJANJE; // 0 .. 1
+        var lijevo = udio * 100;
+
+        auto.style.left = lijevo + '%';
+        brzinomjerSloj.style.left = lijevo + '%';
+        strelica.style.left = lijevo + '%';
+
+        requestAnimationFrame(korak);
+    }
+    requestAnimationFrame(korak);
+
+</script>
+</body>
+</html>
