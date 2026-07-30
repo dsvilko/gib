@@ -122,11 +122,11 @@
             aspect-ratio: 1 / 1;
             transform: translateX(-50%);
             border-radius: 50%;
-            background-color: #ffffff;
-            border: 2px solid #334155;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            background-color: #000;
+            border: 0px solid #fff;
+            box-shadow: 0 1px 4px rgba(255, 255, 255, 0.2);
             z-index: 4;
-            transition: left 0.15s ease;
+            /*transition: left 0.15s ease;*/
         }
         .gib-brzinomjer svg {
             width: 100%;
@@ -153,12 +153,12 @@
             <img id="gibAuto" class="gib-auto" src="https://dsvilko.github.io/gib/vozila/mini.png" alt="Vozilo">
         </div>
 
-        <img id="gibPrednji" class="gib-prednji-plan-slika" src="https://dsvilko.github.io/gib/pozadine/France/fg.png" alt="Prednji plan">
+        <img id="gibPrednji" class="gib-prednji-plan-slika" src="https://dsvilko.github.io/gib/pozadine/France/fg.png" alt="Prednji plan" onerror="this.style.display='none';">
 
         <div class="gib-brzinomjer" id="gibBrzinomjerSloj">
             <svg viewBox="0 0 100 100">
-                <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#cbd5e1" stroke-width="9" stroke-linecap="round" />
-                <line id="gibBrzinomjerKazaljka" x1="50" y1="50" x2="12" y2="50" stroke="#dc2626" stroke-width="5" stroke-linecap="round" />
+                <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#444" stroke-width="9" stroke-linecap="round" />
+                <line id="gibBrzinomjerKazaljka" x1="50" y1="50" x2="12" y2="50" stroke="#ff2626" stroke-width="7" stroke-linecap="round" />
                 <circle cx="50" cy="50" r="5.5" fill="#0f172a" />
             </svg>
         </div>
@@ -170,8 +170,8 @@
     function nasumice(min, max) {
         return min + Math.random() * (max - min);
     }
-    var VOZILA = ['mini.png', 'beetle.png', 'mustang.png'];
-    var POZADINE = ['Istra', 'pored-mora', 'France', 'sumska-cesta', 'jesen', 'Constable'];
+    var VOZILA = ['mini', 'beetle', 'mustang','vw-van','yaris','yazz'];
+    var POZADINE = ['Istra2', 'vinograd', 'pored-mora', 'France', 'sumska-cesta', 'jesen', 'Constable','English-village', 'Alps','Dalmacija','Nizozemska','Plitvice'];
     
     // --- Postavi kazaljku brzinomjera na fiksni položaj (konstantna brzina) ---
     function postaviKazaljku() {
@@ -192,7 +192,7 @@
     var TRAJANJE = 10000; // ms za prijelaz cijele ceste
     var pocetak = null;
 
-    auto.src = 'https://dsvilko.github.io/gib/vozila/' + VOZILA[Math.floor(Math.random() * VOZILA.length)];
+    auto.src = 'vozila/' + VOZILA[Math.floor(Math.random() * VOZILA.length)]+ '.png';
     let poz = POZADINE[Math.floor(Math.random() * POZADINE.length)];
     gibPozadina.src = 'pozadine/' + poz + '/bg.jpg';
     gibPrednji.src = 'pozadine/' + poz + '/fg.png';
