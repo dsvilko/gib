@@ -501,6 +501,37 @@
             display: block;
         }
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+/*
+                                                             
+88        88  888888888888  88b           d88  88           
+88        88       88       888b         d888  88           
+88        88       88       88`8b       d8'88  88           
+88aaaaaaaa88       88       88 `8b     d8' 88  88           
+88""""""""88       88       88  `8b   d8'  88  88           
+88        88       88       88   `8b d8'   88  88           
+88        88       88       88    `888'    88  88           
+88        88       88       88     `8'     88  88888888888  
+                                                            
+*/                                                                   
+        
+        
+        
+        
+        
     </style>
 </head>
 <body>
@@ -528,6 +559,7 @@
                 <option value="3">3. Max?</option>
                 <option value="4">4. Nagib?</option>
                 <option value="5">5. Površina?</option>
+                <option value="6" id="zavijaOpcija">6. Zavija?</option>
             </select>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -585,37 +617,6 @@
     </div>
 
     
-    <div id="simulacijaBox" class="simulacija-container">
-        <div class="suma-pozadina" id="sumaPozadina"></div>
-        <div class="cesta-wrap" id="cestaWrap">
-            <div class="cesta" id="cestaTrak"></div>
-                <svg id="akceleracijaStrelica" class="strelica-akceleracije" viewBox="0 0 200 20">
-                    <line id="akcLinija" x1="100" y1="10" x2="100" y2="10" stroke="#facc15" stroke-width="4" stroke-linecap="butt" />
-                    <polygon id="akcVrh" points="100,10 100,10 100,10" fill="#facc15" />
-                </svg>
-            <div id="emojiAuto" class="auto">🚗</div>
-            <div class="stabla-prednja" id="stablaPrednja"></div>
-        </div>
-
-        <div class="brzinomjer-trak">
-            <div id="brzinomjer" class="brzinomjer">
-                <svg viewBox="0 0 100 100">
-                    <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#cbd5e1" stroke-width="9" stroke-linecap="round" />
-                    <line id="brzinomjerKazaljka" x1="50" y1="50" x2="12" y2="50" stroke="#ff2c2c" stroke-width="6" stroke-linecap="round" />
-                    <circle cx="50" cy="50" r="5.5" fill="#0f172a" />
-                </svg>
-            </div>
-        </div>
-        <div class="oznake-ceste">
-            <span id="cestaMin">0m</span>
-            <span id="simulacijaHint" class="simulacija-hint">konstantna brzina &mdash; krug ceste svakih 10 s</span>
-            <span id="cestaMax">10m</span>
-        </div>
-
-    </div>
-
-    
-    
     <div id="zadatakSekcija" class="hidden">
         <div id="tekstPitanja" class="question-box"></div>
         
@@ -663,6 +664,28 @@
     </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
     let chartInstance = null;
     let trenutniZadatak = null;
@@ -676,6 +699,7 @@
 
     const gradivoSelect = document.getElementById('gradivoSelect');
     const tezinaSelect = document.getElementById('tezinaSelect');
+    const zavijaOpcija = document.getElementById('zavijaOpcija');
     const chkLakse = document.getElementById('chkLakse');
     
     const btnGeneriraj = document.getElementById('btnGeneriraj');
@@ -711,14 +735,14 @@
     
     // stari krajolik
     
-    const simulacijaBox = document.getElementById('simulacijaBox');
-    const simulacijaHint = document.getElementById('simulacijaHint');
-    const emojiAuto = document.getElementById('emojiAuto');
-    const cestaMin = document.getElementById('cestaMin');
-    const cestaMax = document.getElementById('cestaMax');
-    const brzinomjer = document.getElementById('brzinomjer');
-    const brzinomjerKazaljka = document.getElementById('brzinomjerKazaljka');
-    const cestaTrak = document.getElementById('cestaTrak');
+    //const simulacijaBox = document.getElementById('simulacijaBox');
+    //const simulacijaHint = document.getElementById('simulacijaHint');
+    //const emojiAuto = document.getElementById('emojiAuto');
+    //const cestaMin = document.getElementById('cestaMin');
+    //const cestaMax = document.getElementById('cestaMax');
+    //const brzinomjer = document.getElementById('brzinomjer');
+    //const brzinomjerKazaljka = document.getElementById('brzinomjerKazaljka');
+    //const cestaTrak = document.getElementById('cestaTrak');
     const akceleracijaStrelica = document.getElementById('akceleracijaStrelica');
     const akcLinija = document.getElementById('akcLinija');
     const akcVrh = document.getElementById('akcVrh');
@@ -755,17 +779,21 @@
    
    
    
-   
-   
-   
+/*   
+                                                   
+888888888888         db         88888888ba,        
+         ,88        d88b        88      `"8b       
+       ,88"        d8'`8b       88        `8b      
+     ,88"         d8'  `8b      88         88      
+   ,88"          d8YaaaaY8b     88         88      
+ ,88"           d8""""""""8b    88         8P      
+88"            d8'        `8b   88      .a8P  888  
+888888888888  d8'          `8b  88888888Y"'   888  
+                                                   
+                                                      
+*/   
    
 
-
-///////////////////////////////////////
-//                                   //
-//   GENERIRANJE  NOVOG  ZADATKA     //      
-//                                   //
-///////////////////////////////////////
 
 
 
@@ -842,6 +870,7 @@ function generirajZadatak() {
         else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
         else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
         else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
+        else if (tezina === 6) dopusteniGrafovi = ['s/t-krivo'];   // NOVO
     }
 
     const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
@@ -887,7 +916,7 @@ function generirajZadatak() {
                 if (gradivo === 'jednoliko' && v === 0 && i === 1) v = 1; 
                 yKraj = yTrenutno + (v * dt);
             } 
-            else if (vrstaGrafa === 'v/t') {
+            else if (vrstaGrafa === 'v/t' || vrstaGrafa === 's/t-krivo') {
                 if (gradivo === 'jednoliko') {
                     let v;
                     if (jednolikeBrzine) {
@@ -909,7 +938,7 @@ function generirajZadatak() {
                     // Zabrana prelaska preko nule usred jedne faze - potrebno samo kada se
                     // pita za vrstu/smjer gibanja (težina 0) ili se računa površina/pomak
                     // (težina 5), gdje smjer/predznak mora biti jednoznačan unutar segmenta.
-                    if ((tezina === 0 || tezina === 5) && yTrenutno * yKraj < 0) isDobarGraf = false; 
+                    if ((tezina === 0 || tezina === 5 || tezina === 6) && yTrenutno * yKraj < 0) isDobarGraf = false; 
                 }
             } 
             else if (vrstaGrafa === 'a/t') {
@@ -941,7 +970,7 @@ function generirajZadatak() {
                     if (Math.abs(nagibi[i] - nagibi[j]) < 1e-9) { isDobarGraf = false; break; }
                 }
             }
-        } else if (isDobarGraf && vrstaGrafa === 'v/t') {
+        } else if (isDobarGraf && (vrstaGrafa === 'v/t' || vrstaGrafa === 's/t-krivo')) {
             if (gradivo === 'jednoliko') {
                 const vrijednosti = faze.map(f => f.y0);
                 for (let i = 0; i < vrijednosti.length && isDobarGraf; i++) {
@@ -982,7 +1011,7 @@ function generirajZadatak() {
                 if (relV < minV) minV = relV;
             });
             // 50% šansa da je min brzina 0, 50% da je 1 ili 2 m/s
-            let targetMinV = (Math.random() < 0.5) ? 0 : Math.floor(Math.random() * 2) + 1;
+            let targetMinV = (Math.random() < 0.3) ? 0 : Math.floor(Math.random() * 3) + 1;
             trenutniV = targetMinV - minV;
         }
 
@@ -993,7 +1022,7 @@ function generirajZadatak() {
                 a = 0;
                 v0 = (f.y1 - f.y0) / dt;
                 trenutniS = f.y0; // s/t graf strogo diktira položaj
-            } else if (vrstaGrafa === 'v/t') {
+            } else if (vrstaGrafa === 'v/t' || vrstaGrafa === 's/t-krivo') {
                 a = (f.y1 - f.y0) / dt;
                 v0 = f.y0;
             } else if (vrstaGrafa === 'a/t') {
@@ -1016,6 +1045,15 @@ function generirajZadatak() {
         const brojMirovanja = faze.filter(f => Math.abs(f.kinematika.v0) < 1e-9 && Math.abs(f.kinematika.a) < 1e-9).length;
         if (brojMirovanja > 1) isDobarGraf = false;
 
+        if (isDobarGraf && vrstaGrafa === 's/t-krivo') {
+            for (const f of faze) {
+                const dt = f.t1 - f.t0;
+                const aAbs = Math.abs(f.kinematika.a);
+                const citljivo = (dt >= 3) || (dt >= 2 && aAbs >= 2);
+                if (!citljivo) { isDobarGraf = false; break; }
+            }
+        }
+        
         // Za a/t + težina 0: brzina ne smije promijeniti predznak unutar jedne faze,
         // inače vrsta/smjer gibanja u toj fazi ne bi bili jednoznačno određeni.
         if (isDobarGraf && vrstaGrafa === 'a/t' && tezina === 0) {
@@ -1026,13 +1064,15 @@ function generirajZadatak() {
             }
         }
     }
-
+    if (!isDobarGraf) {
+        console.warn('Nije pronađen valjan graf nakon', pokusaji, 'pokušaja za', vrstaGrafa, gradivo, tezina);
+    }   
 
     trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina };
     oblikujPitanjeIZadatak(trenutniZadatak);
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
-    if (tezina === 0) {
+    if (tezina === 0 || tezina === 6) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
     } else {
@@ -1044,8 +1084,8 @@ function generirajZadatak() {
     zadatakSekcija.classList.remove('hidden');
 
     // Pripremi UI za simulaciju
-    simulacijaBox.style.display = 'none';
-    simulacijaHint.style.visibility = 'visible';
+    //simulacijaBox.style.display = 'none';
+    //simulacijaHint.style.visibility = 'visible';
 
     // Postavi oznake na rubovima ceste (min i max s)
     let tocke = izracunajTockeZaGraf(faze,'s/t',100);
@@ -1068,6 +1108,7 @@ function generirajZadatak() {
     if (maxAkceleracija === 0) maxAkceleracija = 1; // Osigurač protiv dijeljenja s 0
 
     trenutniZadatak.simulacijaProps = { minS, maxS, maxBrzina, maxAkceleracija };
+    /*
     if(!sakrijMinMax) {
         cestaMin.textContent = Math.round(minS) + 'm';
         cestaMax.textContent = Math.round(maxS) + 'm';
@@ -1075,6 +1116,7 @@ function generirajZadatak() {
         cestaMin.textContent = '?';
         cestaMax.textContent = '?';
     }
+    */
     azurirajAuto(0);
 }
 
@@ -1112,7 +1154,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
         // --------------- VRSTA --------------
     
-    if (tezina === 0) {
+    if (tezina === 0 || tezina === 6) {
         // NULTA VJEŠTINA: Prepoznavanje gibanja
         const fIndeks = Math.floor(Math.random() * 3);
         const faza = faze[fIndeks];
@@ -1139,7 +1181,7 @@ function oblikujPitanjeIZadatak(zadatak) {
             }
         } else if (vrstaGrafa === 'v/t') {
                             
-                        svgHide='left';
+            if(vrstaGrafa === 'v/t') svgHide='left'; else svgHide='right';
             if (faza.y0 === faza.y1) {
                 if (faza.y0 === 0) {
                     tocanVrsta = 'mirovanje';
@@ -1151,6 +1193,15 @@ function oblikujPitanjeIZadatak(zadatak) {
             } else {
                 tocanVrsta = (Math.abs(faza.y1) > Math.abs(faza.y0)) ? 'ubrzano' : 'usporeno';
                 const vMid = (faza.y0 + faza.y1) / 2; 
+                tocanSmjer = (vMid > 0) ? 'naprijed' : 'unazad';
+            }
+        } else if (vrstaGrafa === 's/t-krivo') {
+            if (faza.y0 === faza.y1) {
+                if (faza.y0 === 0) { tocanVrsta = 'mirovanje'; tocanSmjer = 'nepoznat'; }
+                else { tocanVrsta = 'jednoliko'; tocanSmjer = (faza.y0 > 0) ? 'naprijed' : 'unazad'; }
+            } else {
+                tocanVrsta = (Math.abs(faza.y1) > Math.abs(faza.y0)) ? 'ubrzano' : 'usporeno';
+                const vMid = (faza.y0 + faza.y1) / 2;
                 tocanSmjer = (vMid > 0) ? 'naprijed' : 'unazad';
             }
         } else if (vrstaGrafa === 'a/t') {
@@ -1172,7 +1223,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 const vMid = (v0 + v1) / 2;
                 tocanSmjer = (vMid > 0) ? 'naprijed' : 'unazad';
             }
-        }
+        }  
         
         zadatak.tocanOdgovor = { vrsta: tocanVrsta, smjer: tocanSmjer };
         
@@ -1186,41 +1237,50 @@ function oblikujPitanjeIZadatak(zadatak) {
         let smjerText = tocanSmjer;
 
         let praviloPodsjetnik = "";
-        if (vrstaGrafa === 's/t') {
-            praviloPodsjetnik = "<b>Podsjetnik:</b> ";
-                            if(tocanVrsta === 'mirovanje') { 
-                                svgs = ['jednoliko'];
-                                praviloPodsjetnik += "<span class='mirovanje'>U <i>s</i>/<i>t</i> grafu, svaka vodoravna linija predstavlja mirovanje</span>. Vrijeme teče, no položaj (<b><i>s</i></b> na y-osi) se ne mijenja.";
-                            } else if(tocanSmjer === 'naprijed') {
-                                svgs = ['jednoliko','smjer'];
-                                praviloPodsjetnik += "<span class='jednoliko'>U <i>s</i>/<i>t</i> grafu, kosa linija predstavlja jednoliko gibanje,</span> <span class='naprijed'><p>Ako je uzlazna (prema gore), gibanje je prema naprijed (svake se sekunde položaj poveća za isti iznos).</span> ";
-                            } else {
-                                svgs = ['jednoliko','smjer'];
-                                praviloPodsjetnik += "<span class='jednoliko'>U <i>s</i>/<i>t</i> grafu, kosa linija predstavlja jednoliko gibanje,</span> <span class='unazad'><p>Ako je silazna (nagnuta prema dolje), tijelo se giba unazad (svake se sekunde položaj smanji za isti iznos).</span> ";
-            }
-                            
+        if (vrstaGrafa === 's/t' || vrstaGrafa === 's/t-krivo') {
+                    praviloPodsjetnik = "<b>Podsjetnik:</b> ";
+                    if(tocanVrsta === 'mirovanje') { 
+                            svgs = ['jednoliko'];
+                            praviloPodsjetnik += "<span class='mirovanje'>U <i>s</i>/<i>t</i> grafu, svaka vodoravna linija predstavlja mirovanje</span>. Vrijeme teče, no položaj (<b><i>s</i></b> na y-osi) se ne mijenja.";
+                    }  else if(tocanVrsta === 'jednoliko') {
+                            svgs = ['jednoliko'];
+                            praviloPodsjetnik += "<span class='jednoliko'>U <i>s</i>/<i>t</i> grafu, kosa linija predstavlja jednoliko gibanje,</span>";
+                    } else if(tocanVrsta === 'ubrzano') {
+                            svgs = ['ubrzano'];
+                            praviloPodsjetnik += "<span class='ubrzano'>U <i>s</i>/<i>t</i> grafu, iznos brzine je jednak nagibu. Zakrivljene linije predstavljaju ubrzana ili usporena gibanja (nagib se mijenja pa se brzina mijenja). Ako se <b>nagib povećava</b> (zavija na strmije), kao u ovom slučaju, radi se o <b>ubrzanom</b> gibanju.</span>";
+                    } else if(tocanVrsta === 'usporeno') {
+                            svgs = ['ubrzano'];
+                            praviloPodsjetnik += "<span class='usporeno'>U <i>s</i>/<i>t</i> grafu, iznos brzine je jednak nagibu. Zakrivljene linije predstavljaju ubrzana ili usporena gibanja (nagib se mijenja pa se brzina mijenja). Ako se <b>nagib smanjuje</b> (prema manje strmom), kao u ovom slučaju, radi se o <b>usporenom</b> gibanju.</span>";
+                    } 
+                    if(tocanSmjer === 'naprijed') {
+                            praviloPodsjetnik += "<p><span class='naprijed'>Ako linija uzlazna (prema gore), gibanje je prema naprijed.</span> ";
+                    } else if(tocanSmjer === 'unazad') {
+                            praviloPodsjetnik += "<p><span class='unazad'>Ako je linija silazna (nagnuta prema dolje), tijelo se giba unazad.</span> ";
+                    } 
+                    if(tocanVrsta !== 'mirovanje') svgs.push('smjer');
+            
         } else if (vrstaGrafa === 'v/t') {
-            praviloPodsjetnik = "<b>Podsjetnik:</b> ";
-                            if(tocanVrsta === 'mirovanje') {
-                                svgs = ['jednoliko'];
-                                praviloPodsjetnik += "<span class='mirovanje'>U <i>v</i>/<i>t</i> grafu, mirovanje je vodoravna linija na nuli (kada mirujemo, brzina nam je stalno nula).</span><span class='jednoliko'> Ostale vodoravne linije u <i>v</i>/<i>t</i> grafu nisu mirovanja nego jednolika gibanja (stalno ista pozitivna ili negativna brzina).</span>";
-                            } else if(tocanVrsta === 'jednoliko') {
-                                    svgs = ['jednoliko'];
-                                    praviloPodsjetnik += "<span class='jednoliko'>U <i>v</i>/<i>t</i> grafu, <b>vodoravna linija</b> predstavlja <b>jednoliko</b> gibanje (stalna brzina).</span> ";
-                            } else if(tocanVrsta === 'ubrzano') {
-                                svgs = ['ubrzano'];
-                                praviloPodsjetnik += "<span class='ubrzano'>U <i>v</i>/<i>t</i> grafu, kosa linija koja \"bježi\" od x-osi (od brzine nula, odnosno mirovanja) je jednoliko ubrzano gibanje.</span> ";
-                            } else {
-                                svgs = ['ubrzano'];
-                                praviloPodsjetnik += "<span class='usporeno'>U <i>v</i>/<i>t</i> grafu, kosa linija koja \"se približava\" x-osi (brzini nula, odnosno mirovanju) je jednoliko usporeno gibanje.</span> ";
-                            }
-                            if(tocanSmjer === 'naprijed') { 
-                                praviloPodsjetnik += "<span class='naprijedVT'><p>U <i>v</i>/<i>t</i> grafu, sva gibanja <b>iznad nule</b> (pozitivna brzina) su gibanja <b>naprijed</b>.</span> ";
-                svgs.push('smjer');
-                            } else if(tocanSmjer === 'unazad') {
-                                    praviloPodsjetnik += "<span class='unazadVT'><p>U <i>v</i>/<i>t</i> grafu, sva gibanja <b>ispod nule</b> (negativna brzina) su gibanja <b>unazad</b>.</span> ";
-                                    svgs.push('smjer');
-                            }
+                    praviloPodsjetnik = "<b>Podsjetnik:</b> ";
+                    if(tocanVrsta === 'mirovanje') {
+                        svgs = ['jednoliko'];
+                        praviloPodsjetnik += "<span class='mirovanje'>U <i>v</i>/<i>t</i> grafu, mirovanje je vodoravna linija na nuli (kada mirujemo, brzina nam je stalno nula).</span><span class='jednoliko'> Ostale vodoravne linije u <i>v</i>/<i>t</i> grafu nisu mirovanja nego jednolika gibanja (stalno ista pozitivna ili negativna brzina).</span>";
+                    } else if(tocanVrsta === 'jednoliko') {
+                            svgs = ['jednoliko'];
+                            praviloPodsjetnik += "<span class='jednoliko'>U <i>v</i>/<i>t</i> grafu, <b>vodoravna linija</b> predstavlja <b>jednoliko</b> gibanje (stalna brzina).</span> ";
+                    } else if(tocanVrsta === 'ubrzano') {
+                        svgs = ['ubrzano'];
+                        praviloPodsjetnik += "<span class='ubrzano'>U <i>v</i>/<i>t</i> grafu, kosa linija koja \"bježi\" od x-osi (od brzine nula, odnosno mirovanja) je jednoliko ubrzano gibanje.</span> ";
+                    } else {
+                        svgs = ['ubrzano'];
+                        praviloPodsjetnik += "<span class='usporeno'>U <i>v</i>/<i>t</i> grafu, kosa linija koja \"se približava\" x-osi (brzini nula, odnosno mirovanju) je jednoliko usporeno gibanje.</span> ";
+                    }
+                    if(tocanSmjer === 'naprijed') { 
+                        praviloPodsjetnik += "<span class='naprijedVT'><p>U <i>v</i>/<i>t</i> grafu, sva gibanja <b>iznad nule</b> (pozitivna brzina) su gibanja <b>naprijed</b>.</span> ";
+                    svgs.push('smjer');
+                    } else if(tocanSmjer === 'unazad') {
+                            praviloPodsjetnik += "<span class='unazadVT'><p>U <i>v</i>/<i>t</i> grafu, sva gibanja <b>ispod nule</b> (negativna brzina) su gibanja <b>unazad</b>.</span> ";
+                            svgs.push('smjer');
+                    }
                             
         } else if (vrstaGrafa === 'a/t') {
             praviloPodsjetnik = "";
@@ -1547,7 +1607,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     // Za razinu 0 već smo spremili objekt s vrstom i smjerom, 
     // pa ovo radimo samo za ostale razine gdje je točan odgovor broj:
-    if (tezina !== 0) {
+    if (tezina !== 0 && tezina !== 6) {
         zadatak.tocanOdgovor = tocanOdgovor;
     }
 
@@ -1570,6 +1630,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     tekstPitanja.innerHTML = `${tekst}`;
     
     //Faze = faze;
+    /*
     if(sakrijMinMax) {
         document.getElementById('cestaMin').opacity=0;
         document.getElementById('cestaMax').opacity=0;
@@ -1577,6 +1638,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         document.getElementById('cestaMin').opacity=1;
         document.getElementById('cestaMax').opacity=1;
     }
+    */
 }
 
 
@@ -1598,7 +1660,7 @@ function provjeriOdgovor() {
     //zaustaviSimulaciju();
     
     // Provjera ako smo na nultoj vještini (prepoznavanje)
-    if (trenutniZadatak.tezina === 0) {
+    if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 6) {
         const odabranaVrsta = selectVrsta.value;
         const odabraniSmjer = selectSmjer.value;
 
@@ -1636,7 +1698,7 @@ function provjeriOdgovor() {
         
         let tocno = "";
         
-        if (trenutniZadatak.tezina !== 0) {
+        if (trenutniZadatak.tezina !== 0 && trenutniZadatak.tezina !== 6) {
             tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
@@ -1683,22 +1745,23 @@ function provjeriOdgovor() {
     
     
     
+
     
     
+/*    
     
-    
-    
-    
-    
-    
-    
-    
-//////////////////////////////////////////////////////
-//                                                  //
-//              CRTANJE  GRAFOVA                    //
-//                                                  //
-//////////////////////////////////////////////////////
-    
+                                                           
+  ,ad8888ba,   88888888ba          db         88888888888  
+ d8"'    `"8b  88      "8b        d88b        88           
+d8'            88      ,8P       d8'`8b       88           
+88             88aaaaaa8P'      d8'  `8b      88aaaaa      
+88      88888  88""""88'       d8YaaaaY8b     88"""""      
+Y8,        88  88    `8b      d8""""""""8b    88           
+ Y8a.    .a88  88     `8b    d8'        `8b   88           
+  `"Y88888P"   88      `8b  d8'          `8b  88           
+                                                           
+                                                               
+*/    
 
 
 // Pomoćna funkcija za crtanje "mješovitog" teksta na canvasu - dio teksta u kurzivu
@@ -2171,7 +2234,12 @@ function nacrtajOznakeFaza(chart) {
     
     trenutniZadatak.faze.forEach((faza, indeks) => {
         const tSredina = (faza.t0 + faza.t1) / 2;
-        const ySredina = (faza.y0 + faza.y1) / 2;
+        if (trenutniZadatak.vrstaGrafa === 's/t-krivo') {
+        const dt = tSredina - faza.t0;
+            ySredina = faza.kinematika.s0 + faza.kinematika.v0 * dt + 0.5 * faza.kinematika.a * dt * dt;
+        } else {
+            ySredina = (faza.y0 + faza.y1) / 2;
+        }   
         const px = xAxis.getPixelForValue(tSredina) - 15;
         const py = yAxis.getPixelForValue(ySredina) - 5; 
         if(indeks == oznaciDio) { 
@@ -2223,7 +2291,17 @@ function prikaziGraf(zadatak) {
     const ctx = document.getElementById('gibanjaChart').getContext('2d');
     let chartData = [];
     
-    if (zadatak.vrstaGrafa === 'v/t' && zadatak.gradivo === 'jednoliko') {
+    if (zadatak.vrstaGrafa === 's/t-krivo') {
+        const N = 20; // broj točaka po fazi za glatku krivulju
+        zadatak.faze.forEach(f => {
+            const dt = f.t1 - f.t0;
+            for (let i = 0; i <= N; i++) {
+                const t = (i / N) * dt;
+                const s = f.kinematika.s0 + f.kinematika.v0 * t + 0.5 * f.kinematika.a * t * t;
+                chartData.push({ x: f.t0 + t, y: s, isKraj: (i === 0 || i === N) });
+            }
+        });
+    } else if (zadatak.vrstaGrafa === 'v/t' && zadatak.gradivo === 'jednoliko') {
         zadatak.faze.forEach((f, i) => {
             if (i === 0) chartData.push({ x: f.t0, y: f.y0 });
             chartData.push({ x: f.t1, y: f.y0 });
@@ -2239,6 +2317,12 @@ function prikaziGraf(zadatak) {
         chartData.push({ x: zadatak.faze[0].t0, y: zadatak.faze[0].y0 });
         zadatak.faze.forEach(f => chartData.push({ x: f.t1, y: f.y1 }));
     }
+    
+    let referentniData = [];
+    if (zadatak.vrstaGrafa === 's/t-krivo') {
+        referentniData.push({ x: zadatak.faze[0].t0, y: zadatak.faze[0].kinematika.s0 });
+        zadatak.faze.forEach(f => referentniData.push({ x: f.t1, y: f.kinematika.s1 }));
+    }
 
     if (chartInstance) chartInstance.destroy();
 
@@ -2250,11 +2334,22 @@ function prikaziGraf(zadatak) {
                 data: chartData,
                 borderColor: (DM ? '#ffffff' : '#000000'),
                 borderWidth: 3,
-                pointRadius: 5,
+                pointRadius: (ctx) => (ctx.raw && ctx.raw.isKraj === false) ? 0 : 5,
                 pointBackgroundColor: (DM ? '#ffffff' : '#000000'),
                 fill: false,
                 tension: 0,
                 clip: false
+            },
+            {
+                data: referentniData,
+                borderColor: (DM ? '#ffffff77' : '#00000055'),
+                borderWidth: 1.5,
+                borderDash: [6, 4],
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                clip: false,
+                order: 2   // crta se ispod/prije glavne linije
             }]
         },
         options: {
@@ -2283,7 +2378,7 @@ function prikaziGraf(zadatak) {
 }
 
 // --- OSTALI GRAFOVI ---
-// Izračunava set točaka (x = vrijeme, y = vrijednost) za zadanu vrstu grafa
+// Računa set točaka (x = vrijeme, y = vrijednost) za zadanu vrstu grafa
 // koristeći već izračunatu kinematiku po fazama (s0, v0, a po fazi).
 function izracunajTockeZaGraf(faze, vrsta, brojTocaka = 100) {
     const tMax = faze[faze.length - 1].t1;
@@ -2380,8 +2475,10 @@ function prikaziOstaleGrafove() {
     ostaliChartInstances.forEach(c => { if (c) c.destroy(); });
     ostaliChartInstances = [null, null];
 
+    const glavni = trenutniZadatak.vrstaGrafa === 's/t-krivo' ? 's/t' : trenutniZadatak.vrstaGrafa;
+    
     const sviTipovi = ['s/t', 'v/t', 'a/t'];
-    const ostaliTipovi = sviTipovi.filter(v => v !== trenutniZadatak.vrstaGrafa);
+    const ostaliTipovi = sviTipovi.filter(v => v !== glavni);
 
     ostaliChartInstances[0] = nacrtajMiniGraf('grafOstali1', trenutniZadatak, ostaliTipovi[0]);
     //if(gradivoSelect.value !== 'jednoliko' && trenutniZadatak.vrstaGrafa !== 's/t') 
@@ -2566,131 +2663,6 @@ function odaberi(str) {
     return emojiArray[Math.floor(Math.random() * emojiArray.length)];
 }
 
-function generirajSumu({
-        emoji = '🌳🌲',
-        klasa = '',
-        broj = 300,
-        maxh = 30,
-        vmin = 12,
-        vmax = 35,
-        vrnd = 4,
-        opacity = '0.8'}={}) {
-    var spremnik = document.getElementById('sumaPozadina');
-    //spremnik.innerHTML = '';
-    var e = 3;
-    for (var i = 0; i < broj; i++) {
-        var stablo = document.createElement('span');
-        stablo.className = "predmet " + klasa;
-        stablo.textContent = odaberi(emoji);
-        //var top = nasumice(0, 34); // 0 = dalje/manje, veće = bliže/veće
-        var f = i**e/(broj**e);
-        var top = f*maxh; // 16 18
-        var velicina = vmin + f * (vmax-vmin)+vrnd-Math.random(vrnd*2); // 14px do 28px, dublja stabla veća
-        stablo.style.left = nasumice(-5, 105) + '%';
-        stablo.style.top = (top+Math.random(4)) + 'px';
-        stablo.style.fontSize = velicina.toFixed(1) + 'px';
-        stablo.style.opacity = ((1-opacity) + f * (opacity)).toFixed(2);
-        //stablo.style.brightness = 2;
-        stablo.style.animationDelay = nasumice(0, 4).toFixed(2) + 's';
-        spremnik.appendChild(stablo);
-    }
-}
-
-function dodajPredmet({
-            id = '',
-            emoji = '',
-            klasa = '',
-            broj = 10,
-            min = 10,
-            max = 45,
-            y = -5
-            }={}) {
-    var spremnik = document.getElementById(id);
-    //spremnik.innerHTML = '';
-    for (var i = 0; i < broj; i++) {
-        var novi = document.createElement('span');
-        const klase = klasa.split(' ').filter(Boolean);
-        novi.classList.add("predmet");
-        if (klase.length > 0) { 
-            novi.classList.add(...klase);
-            novi.style.animationDelay = nasumice(0, 4).toFixed(2) + 's';
-        }
-        novi.textContent = odaberi(emoji);
-        novi.style.left = nasumice(0, 100) + '%';
-        novi.style.bottom = (y+Math.random(6)-3) + 'px';
-        novi.style.fontSize = nasumice(min, max).toFixed(1) + 'px';
-        if(Math.random(1)>0.5) 
-            novi.style.transform = "scaleX(-1)";
-        spremnik.appendChild(novi);
-    }
-}
-
-
-
-function generirajKrajolik(k) {
-
-    var VOZILO = '🚌🚐🚑🚒🚓🚕🚗🚙🛻🚚🚛🚴';
-    emojiAuto.innerHTML = odaberi(VOZILO);
-
-    if (k === 0) { 
-        k = nasumice(1,4).toFixed(0); 
-    }
-    
-    document.getElementById('sumaPozadina').innerHTML = '';
-    document.getElementById('stablaPrednja').innerHTML = '';
-    
-    if (k == 1) {
-        document.getElementById('sumaPozadina').style.background='linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(139, 192, 43, 1) 100%)';
-        generirajSumu({emoji:'🌻', klasa:'cvijet', broj:1000, maxh:28, vmin:9, vmax:16, vrnd:3, opacity:0.1});
-        dodajPredmet({id:'sumaPozadina',emoji:'🌻',klasa:'vjetar2 sjena',broj:30,min:16,max:18,y:10});
-        dodajPredmet({id:'sumaPozadina',emoji:'🏠⛪⛪',klasa:'cvijet',broj:1,min:50,max:50,y:0});
-        dodajPredmet({id:'sumaPozadina',emoji:'🌳',klasa:'vjetar',broj:3,min:32,max:45,y:0});
-        dodajPredmet({id:'sumaPozadina',emoji:'🌳',klasa:'cvijet',broj:30,min:13,max:16,y:-5});
-        dodajPredmet({id:'sumaPozadina',emoji:'🌹🌹🥀🥀🥀🥀🪻🌱',klasa:'cvijet',broj:80,min:8,max:12,y:-3});
-        dodajPredmet({id:'stablaPrednja',emoji:'🌳',klasa:'vjetar sakrij',broj:1,min:50,max:70,y:-5});
-        dodajPredmet({id:'stablaPrednja',emoji:'🌳',klasa:'vjetar sakrij',broj:nasumice(2,4).toFixed(0),min:22,max:26,y:-5});
-        //dodajPredmet({id:'stablaPrednja',emoji:'🌻',klasa:'vjetar2',broj:nasumice(5,7).toFixed(0),min:20,max:24,y:-5});
-        dodajPredmet({id:'stablaPrednja',emoji:'🌹🥀🥀🥀🥀🪻',klasa:'',broj:80,min:8,max:12,y:-3});
-        if(Math.random(1)>0.5)
-            dodajPredmet({id:'stablaPrednja',emoji:'🐑🐑🐑🐑🐏',klasa:'kretanje',broj:1,min:23,max:23,y:-8});
-
-    } else if (k == 2) {
-        document.getElementById('sumaPozadina').style.background='linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(139, 192, 43, 1) 100%)';
-        generirajSumu({emoji:'🌳🌳🌲🌲🌲', klasa:'vjetar', broj:240, maxh:20, vmin:16, vmax:34, vrnd:4, opacity:0.1});
-        dodajPredmet({id:'sumaPozadina',emoji:'🌳🌳🌲🌲',klasa:'vjetar',broj:30,min:15,max:20,y:-5});
-        dodajPredmet({id:'sumaPozadina',emoji:'🪻🪻🪻🌻🌻🌻🌱',klasa:'',broj:80,min:8,max:12,y:-3});
-        dodajPredmet({id:'stablaPrednja',emoji:'🌳🌳🌲🌲',klasa:'vjetar sakrij',broj:1,min:50,max:70,y:-5});
-        dodajPredmet({id:'stablaPrednja',emoji:'🌳🌳🌲🌲',klasa:'vjetar sakrij',broj:nasumice(2,4).toFixed(0),min:28,max:35,y:-5});
-        dodajPredmet({id:'stablaPrednja',emoji:'🪻🪻🪻🪻🌻🌻🌻🌱',klasa:'',broj:80,min:8,max:12,y:-3});
-        dodajPredmet({id:'stablaPrednja',emoji:'🦌',klasa:'kretanje',broj:1,min:26,max:26,y:-8});
-        dodajPredmet({id:'stablaPrednja',emoji:'🦫🐇🦔🦡',klasa:'',broj:1,min:18,max:18,y:-12});
-    } else if (k == 3) {
-        document.getElementById('sumaPozadina').style.background='linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(2, 171, 71, 1) 100%)';    
-        generirajSumu({emoji:'🌲🌲🌲🌲🌲🌲🌲', klasa:'vjetar', broj:120, maxh:10, vmin:20, vmax:35, vrnd:7});
-        dodajPredmet({id:'sumaPozadina', emoji:'🪨', klasa:'', broj:5, min:15, max:30, y:-5});
-        dodajPredmet({id:'sumaPozadina', emoji:'🌳🌳🌲🌲🌲', klasa:'', broj:30, min:15, max:20, y:-5});
-        dodajPredmet({id:'sumaPozadina', emoji:'🪻🪻🪻🪻🪻🪻🪻🪻🪻🪻🌲🌱', klasa:'', broj:80, min:8, max:12, y:-3});
-        dodajPredmet({id:'stablaPrednja', emoji:'🌲🌲🌲🌲', klasa:'vjetar sakrij', broj:1, min:50, max:70, y:-5});
-        dodajPredmet({id:'stablaPrednja', emoji:'🌲🌲🌲🌲', klasa:'vjetar sakrij', broj:nasumice(2,4).toFixed(0), min:28, max:35, y:-5});
-        dodajPredmet({id:'stablaPrednja', emoji:'🪻🪻🪻🪻🪻🪻🪻🪻🪻🪻🌲🌱', klasa:'', broj:80, min:8, max:12, y:-3});
-        dodajPredmet({id:'stablaPrednja', emoji:'🦌', klasa:'kretanje', broj:1, min:26, max:26, y:-8});
-        dodajPredmet({id:'stablaPrednja', emoji:'🦫🐇🦔🦡', klasa:'', broj:1, min:17, max:17, y:-15});
-    } else {
-        document.getElementById('sumaPozadina').style.background='linear-gradient(180deg, rgba(255, 255, 255, 1) 0%,  rgba(3, 138, 211, 1) 20%)';    
-        generirajSumu({emoji:'~', klasa:'val', broj:200, maxh:35, vmin:7, vmax:30, vrnd:3,opacity:0.7});
-        generirajSumu({emoji:'⛵⛵', klasa:'', broj:3, maxh:35, vmin:7, vmax:30, vrnd:3,opacity:0});
-        //dodajPredmet({id:'sumaPozadina', emoji:'🏫🏠🏤⛪', klasa:'cvijet', broj:1, min:50, max:50, y:0});
-        dodajPredmet({id:'sumaPozadina', emoji:'🌳', klasa:'', broj:1, min:35, max:50, y:-2});
-        dodajPredmet({id:'sumaPozadina', emoji:'🌳🌳', klasa:'', broj:30, min:15, max:20, y:-5});
-        dodajPredmet({id:'sumaPozadina', emoji:'🪻🪻🪻🌻🌷🥀', klasa:'', broj:20, min:8, max:12, y:-3});
-        dodajPredmet({id:'stablaPrednja', emoji:'🌳', klasa:'vjetar sakrij', broj:1, min:50, max:70, y:-5});
-        dodajPredmet({id:'stablaPrednja', emoji:'🌳', klasa:'vjetar sakrij', broj:nasumice(2,4).toFixed(0), min:28, max:35, y:-5});
-        dodajPredmet({id:'stablaPrednja', emoji:'🪻🪻🌻🌷🥀', klasa:'', broj:80, min:8, max:12, y:-3});
-        //dodajPredmet({id:'stablaPrednja', emoji:'🦌', klasa:'', broj:1, min:26, max:26, y:-8});
-        dodajPredmet({id:'stablaPrednja', emoji:'🐇', klasa:'kretanje', broj:1, min:17, max:17, y:-15});
-    }
-}
-
 
 
 
@@ -2729,8 +2701,8 @@ gibScena.addEventListener('click', () => {
 function zaustaviSimulaciju() {
     isSimulacijaAktivna = false;
     trenutnoVrijemeSimulacije = null;
-    simulacijaHint.style.visibility = 'visible';
-    if (danOdgovor === 1) { simulacijaHint.innerHTML = 'klikni za pokrenuti simulaciju'; } else { simulacijaHint.innerHTML = 'daj odgovor za pokrenuti simulaciju'; }
+    //simulacijaHint.style.visibility = 'visible';
+    //if (danOdgovor === 1) { simulacijaHint.innerHTML = 'klikni za pokrenuti simulaciju'; } else { simulacijaHint.innerHTML = 'daj odgovor za pokrenuti simulaciju'; }
     if (animacijaFrameId) cancelAnimationFrame(animacijaFrameId);
     if (chartInstance) chartInstance.update();
     ostaliChartInstances.forEach(c => { if (c) c.update(); });
@@ -2744,9 +2716,9 @@ function pokreniAnimaciju() {
     let startVrijeme = performance.now();
 
     if(trenutniZadatak.gradivo === 'sva' && trenutniZadatak.vrstaGrafa != 's/t') {
-                simulacijaHint.innerHTML = '<span style="color: #ddbb00"><b>žuta strelica</b></span> - iznos i smjer akceleracije (i sile)';
+                //simulacijaHint.innerHTML = '<span style="color: #ddbb00"><b>žuta strelica</b></span> - iznos i smjer akceleracije (i sile)';
     } else {
-        simulacijaHint.innerHTML = 'klikni za zaustaviti simulaciju';
+        //simulacijaHint.innerHTML = 'klikni za zaustaviti simulaciju';
     }
     
     document.querySelectorAll('.sakrij').forEach(el => {
@@ -2809,9 +2781,9 @@ function azurirajAuto(t) {
     gibBrzinomjerSloj.style.left = `${postotak}%`;
     papirPolozaj.style.left = `${2+postotak*0.96}%`;
     
-    emojiAuto.style.left = `${postotak}%`;
-    emojiAuto.style.top = `${traka}%`;
-    brzinomjer.style.left = `${postotak}%`;
+    //gibAuto.style.left = `${postotak}%`;
+    //gibAuto.style.top = `${traka}%`;
+    //brzinomjer.style.left = `${postotak}%`;
     azurirajBrzinomjer(brzina, trenutniZadatak.simulacijaProps.maxBrzina);
 
     akceleracijaStrelica.style.left = `${postotak}%`;
@@ -2881,10 +2853,23 @@ function azurirajTockice(t) {
     dodajTockicu(postotak, brzina);
 }
 
+// ostale interakcije
+
+gradivoSelect.addEventListener("change", (e) => {
+    if (e.target.value === "jednoliko") {
+        zavijaOpcija.disabled = 1;
+        if(tezinaSelect.value == 6) { 
+            tezinaSelect.value = 0; 
+        }
+    } else {
+        zavijaOpcija.disabled = 0;
+    }
+});
+
+
 
 // Prvo pokretanje
 generirajZadatak();
-//generirajKrajolik(0);
 
 
 </script>
