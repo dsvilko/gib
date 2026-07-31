@@ -596,8 +596,19 @@
             </svg>
             -->
             <svg id="akceleracijaStrelica" class="strelica-akceleracije" viewBox="0 0 200 20">
-                    <line id="akcLinija" x1="100" y1="10" x2="100" y2="10" stroke="#facc15" stroke-width="4" stroke-linecap="butt" />
-                    <polygon id="akcVrh" points="100,10 100,10 100,10" fill="#facc15" />
+                    <defs>
+                        <!-- Define the black shadow filter -->
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="black" flood-opacity="0.8" />
+                        </filter>
+                    </defs>
+            
+                    <g filter="url(#shadow)">
+                        <line id="akcLinija" x1="100" y1="10" x2="100" y2="10" stroke="#facc15" stroke-width="4" stroke-linecap="butt" />
+                        <polygon id="akcVrh" points="100,10 100,10 100,10" fill="#facc15" />
+                        <!-- Added letter 'a' -->
+                        <text id="akcOznaka" x="100" y="25" fill="#facc15" font-size="12" text-anchor="middle" font-weight="bold">a</text>
+                    </g>
             </svg>
             <img id="gibAuto" class="gib-auto" src="https://dsvilko.github.io/gib/vozila/mini.png" alt="Vozilo">
         </div>
@@ -1241,19 +1252,23 @@ function oblikujPitanjeIZadatak(zadatak) {
                     praviloPodsjetnik = "<b>Podsjetnik:</b> ";
                     if(tocanVrsta === 'mirovanje') { 
                             svgs = ['jednoliko'];
+                            svgHide = 'right';
                             praviloPodsjetnik += "<span class='mirovanje'>U <i>s</i>/<i>t</i> grafu, svaka vodoravna linija predstavlja mirovanje</span>. Vrijeme teče, no položaj (<b><i>s</i></b> na y-osi) se ne mijenja.";
                     }  else if(tocanVrsta === 'jednoliko') {
                             svgs = ['jednoliko'];
+                            svgHide = 'right';
                             praviloPodsjetnik += "<span class='jednoliko'>U <i>s</i>/<i>t</i> grafu, kosa linija predstavlja jednoliko gibanje,</span>";
                     } else if(tocanVrsta === 'ubrzano') {
                             svgs = ['ubrzano'];
+                            svgHide = 'right';
                             praviloPodsjetnik += "<span class='ubrzano'>U <i>s</i>/<i>t</i> grafu, iznos brzine je jednak nagibu. Zakrivljene linije predstavljaju ubrzana ili usporena gibanja (nagib se mijenja pa se brzina mijenja). Ako se <b>nagib povećava</b> (zavija na strmije), kao u ovom slučaju, radi se o <b>ubrzanom</b> gibanju.</span>";
                     } else if(tocanVrsta === 'usporeno') {
                             svgs = ['ubrzano'];
+                            svgHide = 'right';
                             praviloPodsjetnik += "<span class='usporeno'>U <i>s</i>/<i>t</i> grafu, iznos brzine je jednak nagibu. Zakrivljene linije predstavljaju ubrzana ili usporena gibanja (nagib se mijenja pa se brzina mijenja). Ako se <b>nagib smanjuje</b> (prema manje strmom), kao u ovom slučaju, radi se o <b>usporenom</b> gibanju.</span>";
                     } 
                     if(tocanSmjer === 'naprijed') {
-                            praviloPodsjetnik += "<p><span class='naprijed'>Ako linija uzlazna (prema gore), gibanje je prema naprijed.</span> ";
+                            praviloPodsjetnik += "<p><span class='naprijed'>Ako je linija uzlazna (prema gore), gibanje je prema naprijed.</span> ";
                     } else if(tocanSmjer === 'unazad') {
                             praviloPodsjetnik += "<p><span class='unazad'>Ako je linija silazna (nagnuta prema dolje), tijelo se giba unazad.</span> ";
                     } 
@@ -2701,6 +2716,7 @@ gibScena.addEventListener('click', () => {
 function zaustaviSimulaciju() {
     isSimulacijaAktivna = false;
     trenutnoVrijemeSimulacije = null;
+    akceleracijaStrelica.style.opacity=0;
     //simulacijaHint.style.visibility = 'visible';
     //if (danOdgovor === 1) { simulacijaHint.innerHTML = 'klikni za pokrenuti simulaciju'; } else { simulacijaHint.innerHTML = 'daj odgovor za pokrenuti simulaciju'; }
     if (animacijaFrameId) cancelAnimationFrame(animacijaFrameId);
@@ -2714,6 +2730,7 @@ function zaustaviSimulaciju() {
 function pokreniAnimaciju() {
     const ukupnoVrijeme = trenutniZadatak.faze[2].t1;
     let startVrijeme = performance.now();
+    akceleracijaStrelica.style.opacity=1;
 
     if(trenutniZadatak.gradivo === 'sva' && trenutniZadatak.vrstaGrafa != 's/t') {
                 //simulacijaHint.innerHTML = '<span style="color: #ddbb00"><b>žuta strelica</b></span> - iznos i smjer akceleracije (i sile)';
@@ -2796,6 +2813,12 @@ function azurirajAuto(t) {
             const smjer = akceleracija >= 0 ? 1 : -1;
             const vrhX = 100 + smjer * duljina;
 
+            if(!isSimulacijaAktivna || akceleracija == 0) {
+                akceleracijaStrelica.style.opacity = 0;
+            } else {
+                akceleracijaStrelica.style.opacity = 1;
+            }
+            
             // Osiguraj da linija nema polukružni izbočaj koji strši izvan vrha
             akcLinija.setAttribute('stroke-linecap', 'butt');
 
@@ -2810,6 +2833,7 @@ function azurirajAuto(t) {
                     // Ključna izmjena: linija završava na bazi trokuta (nazad), a ne u vrhu (vrhX)
                     akcLinija.setAttribute('x2', nazad);
                     akcVrh.setAttribute('points', `${vrhX},10 ${nazad},6 ${nazad},14`);
+                    akcOznaka.setAttribute('x', vrhX);
             }
     }
 
