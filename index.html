@@ -133,7 +133,7 @@
         .pitanje-graf-container {
             position: relative;
             width: calc(25% - 1px);
-            height: 100px;
+            height: 100%;
         }
 
         .question-box {
@@ -311,6 +311,7 @@
             overflow: hidden; /* reže brzinomjer koji viri ispod donjeg ruba */
             border-radius: 8px;
             line-height: 0; /* uklanja whitespace ispod inline slike */
+            margin-top: 10px;
         }
 
         /* Sloj 1: pozadinska slika (cesta, nebo, drveće u daljini...) - određuje visinu scene */
@@ -694,7 +695,7 @@
 
             <button id="btnProvjeri" class="btn-primary">Provjeri</button>
             <button id="btnDalje" class="btn-primary hidden" style="background-color: var(--success)">Novi</button>
-            <button id="btnOstaliGrafovi" class="btn-primary" style="background-color: #0891b2; display: none;">Grafovi</button>
+            <!-- <button id="btnOstaliGrafovi" class="btn-primary" style="background-color: #0891b2; display: none;">Grafovi</button> -->
         </div>
 
         
@@ -788,7 +789,7 @@
     const akcVrh = document.getElementById('akcVrh');
 
     const chartContainer = document.getElementById('chartContainer');
-    const btnOstaliGrafovi = document.getElementById('btnOstaliGrafovi');
+    //const btnOstaliGrafovi = document.getElementById('btnOstaliGrafovi');
     const ostaliGrafoviRed = document.getElementById('ostaliGrafoviRed');
 
     btnGeneriraj.addEventListener('click', generirajZadatak);
@@ -811,13 +812,13 @@
    let pitaniTip = null;
    
    
+   // Dimenzije grafova
+   let grafVisina = 380;
+   let ostaliGrafoviVisina = 150;
+   let pitanjeGrafoviVisina = 130;
    
-   
-   
-   
-   
-   
-   
+   let prikazaniDodatniGrafovi = false;
+   let prikazaniOdabirGrafovi = false;
    
    
 /*   
@@ -855,8 +856,8 @@ function generirajZadatak() {
 
     // Reset "ostalih grafova"
     sakrijOstaleGrafove();
-    btnOstaliGrafovi.textContent = 'Ostali grafovi';
-    btnOstaliGrafovi.style.display = 'none';
+    //btnOstaliGrafovi.textContent = 'Ostali grafovi';
+    //btnOstaliGrafovi.style.display = 'none';
 
     // Reset točkica traga na cesti
     ocistiTockice();
@@ -1033,13 +1034,17 @@ function generirajZadatak() {
         pitanjeGrafoviRed.style.display = 'none';
     }
 
-    
+    prikazaniDodatniGrafovi = 0;
+    prikazaniOdabirGrafovi = 0;
     if (tezina === 7) {
-        chartContainer.style.height='225px';
+        //chartContainer.style.height=grafVisina-odabirVisina-5+'px';
         prikaziKandidateGrafova(trenutniZadatak);
+        prikazaniOdabirGrafovi = 1;
     } else {
-        chartContainer.style.height='330px';
+        //chartContainer.style.height=grafVisina+'px';
     }
+    
+    skalirajSveGrafove();
     prikaziGraf(trenutniZadatak);
     zadatakSekcija.classList.remove('hidden');
 
@@ -1829,9 +1834,11 @@ function provjeriOdgovor() {
     btnProvjeri.disabled = true;
     btnProvjeri.classList.add('hidden');
     btnDalje.classList.remove('hidden');
-    btnOstaliGrafovi.style.display = 'block';
+    //btnOstaliGrafovi.style.display = 'block';
 
     danOdgovor = 1;
+    prikaziOstaleGrafove();
+    if(trenutniZadatak.tezina === 7) prikaziKandidateGrafova(trenutniZadatak);
     
     let isCorrect = false;
 
@@ -2026,7 +2033,17 @@ const skolskaOsPlugin = {
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'v/t') { simbolY = 'v'; jedinicaY = '(m/s)'; }
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'a/t') { simbolY = 'a'; jedinicaY = '(m/s²)'; }
         }
-        nacrtajDijeloveTeksta(ctx, [{ t: simbolY, i: true }, { t: ' ' + jedinicaY, i: false }], xNula + 0, yAxis.top - 20, 'bold 14px sans-serif', 'center');
+        // Oznaka veličine na y-osi: default iznad strelice (kao dosad), ili - ako je
+        // postavljena opcija oznakaYuStranu - malo desno od vrha strelice.
+        const kompaktan = chart.options.plugins?.skolskaOs?.kompaktan;
+        if (kompaktan) {
+            ctx.textBaseline = 'middle';
+            nacrtajDijeloveTeksta(ctx, [{ t: simbolY, i: true }, { t: ' ' + jedinicaY, i: false }], xNula + 12, yAxis.top - 12, 'bold 14px sans-serif', 'left');
+        } else {
+            nacrtajDijeloveTeksta(ctx, [{ t: simbolY, i: true }, { t: ' ' + jedinicaY, i: false }], xNula + 0, yAxis.top - 20, 'bold 14px sans-serif', 'center');
+        }
+        
+        //nacrtajDijeloveTeksta(ctx, [{ t: simbolY, i: true }, { t: ' ' + jedinicaY, i: false }], xNula + 0, yAxis.top - 20, 'bold 14px sans-serif', 'center');
 
         // Brojevi X-osi
         ctx.fillStyle = (DM ? '#ffffff' : '#000000');
@@ -2083,9 +2100,9 @@ const skolskaOsPlugin = {
 
             ctx.fillStyle = chart.options.plugins?.skolskaOs?.bojaTekstaSredina || '#ef4444';
             ctx.font = 'bold 13px sans-serif';
-            ctx.textAlign = 'center';
+            ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom'; // Poravnava dno slova s yDno koordinatom
-            ctx.fillText(tekstDno, xCentar, 25);
+            ctx.fillText(tekstDno, right, 15);
         }
         
         ctx.restore();
@@ -2111,12 +2128,12 @@ const minimalnaOsPlugin = {
         // X-os i Y-os
         ctx.beginPath();
         ctx.moveTo(xAxis.left, yNula);
-        ctx.lineTo(xAxis.right + 10, yNula);
+        ctx.lineTo(xAxis.right + 5, yNula);
         ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo(xNula, yAxis.bottom);
-        ctx.lineTo(xNula, yAxis.top - 18);
+        ctx.lineTo(xNula, yAxis.top - 10);
         ctx.stroke();
 
         ctx.fillStyle = (DM ? '#ffffff' : '#000000');
@@ -2155,12 +2172,19 @@ const minimalnaOsPlugin = {
             const xCentar = (left + right) / 2;
             const yCentar = (top + bottom) / 2;
 
+            let boja = '#002ab345';
+            
+            if(danOdgovor) {
+                if(broj == trenutniZadatak.tocanOdgovor) boja = '#16A34A';
+                else if(broj == inputOdgovor.value) boja = '#DC2626';
+            }
+            
             //ctx.fillStyle = (DM ? '#ffffff' : '#000000'); // Boja teksta
-            ctx.fillStyle = chart.options.plugins?.skolskaOs?.bojaTekstaSredina || '#002ab345';
-            ctx.font = 'bold 120px sans-serif'; // Font po želji
+            ctx.fillStyle = boja;
+            ctx.font = 'bold 40px sans-serif'; // Font po želji
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(broj, xCentar, yCentar);
+            ctx.fillText(broj, xCentar, top-20);
     
         }
         
@@ -2498,9 +2522,11 @@ function nacrtajOznakeFaza(chart) {
             ySredina = faza.kinematika.s0 + faza.kinematika.v0 * dt + 0.5 * faza.kinematika.a * dt * dt;
         } else {
             ySredina = (faza.y0 + faza.y1) / 2;
-        }   
-        const px = xAxis.getPixelForValue(tSredina) - 15;
-        const py = yAxis.getPixelForValue(ySredina) - 5; 
+        }  
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const px = xAxis.getPixelForValue(tSredina) - 0;
+        const py = yAxis.getPixelForValue(ySredina) - 0; 
         if(indeks == oznaciDio) { 
             ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); 
             ctx.fillText(`${indeks + 1}`, px, py);
@@ -2617,7 +2643,7 @@ function prikaziGraf(zadatak) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { top: 45, right: 35, left: 10, bottom: 22 } },
+            layout: { padding: { top: 40, right: 35, left: 10, bottom: 22 } },
             scales: {
                 x: {
                     type: 'linear',
@@ -2740,7 +2766,7 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { top: 35, right: 32, left: 5, bottom: 10 } },
+            layout: { padding: { top: 20, right: 32, left: 5, bottom: 15 } },
             scales: {
                 x: {
                     type: 'linear',
@@ -2767,7 +2793,8 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
                     simbol: simbolY, 
                     jedinica: jedinicaY,
                     tekstSredina: natpis2,
-                    tekstDno: natpis
+                    tekstDno: natpis,
+                    kompaktan: true
                 },
                 vizualniAsistent: false,
                 minimalnaOs: false
@@ -2812,9 +2839,10 @@ function nacrtajPitanjeGraf(broj, zadatak, vrsta) {
             }]
         },
         options: {
+            events: [],
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { top: 20, right: 10, left: 1, bottom: 3 } },
+            layout: { padding: { top: 40, right: 10, left: 1, bottom: 3 } },
             scales: {
                 x: {
                     type: 'linear',
@@ -2839,7 +2867,8 @@ function nacrtajPitanjeGraf(broj, zadatak, vrsta) {
                     broj: broj
                 },
                 vizualniAsistent: false,
-                skolskaOs: false
+                skolskaOs: false,
+                simulacijaLinija: false
             }
         }
     });
@@ -2877,6 +2906,7 @@ function prikaziKandidateGrafova(zadatak) {
     pitanjeChartInstances.forEach(c => { if (c) c.destroy(); });
     pitanjeChartInstances = [];
 
+    //pitanjeGrafoviRed.style.height = odabirVisina+'px';
     zadatak.kandidati.forEach((k, i) => {
         const lazniZadatak = { faze: k.faze, gradivo: zadatak.gradivo, vrstaGrafa: zadatak.pitaniTip };
         pitanjeChartInstances[i] = nacrtajPitanjeGraf(i + 1, lazniZadatak, zadatak.pitaniTip);
@@ -2885,7 +2915,7 @@ function prikaziKandidateGrafova(zadatak) {
 
 
 
-
+/*
 
 btnOstaliGrafovi.addEventListener('click', () => {
     ostaliGrafoviVidljivi = !ostaliGrafoviVidljivi;
@@ -2903,7 +2933,7 @@ ostaliGrafoviRed.addEventListener('click', (e) => {
     sakrijOstaleGrafove();
 });
 
-
+*/
 
 
 
@@ -3132,7 +3162,7 @@ function pokreniAnimaciju() {
         azurirajAuto(trenutnoVrijemeSimulacije);
         azurirajTockice(trenutnoVrijemeSimulacije);
         chartInstance.update('none'); // Ažuriraj bez animiranja cijelog grafa
-        if (ostaliGrafoviVidljivi) {
+        if (prikazaniDodatniGrafovi) {
             ostaliChartInstances.forEach(c => { if (c) c.update('none'); });
         }
         
@@ -3269,6 +3299,53 @@ gradivoSelect.addEventListener("change", (e) => {
         zavijaOpcija.disabled = 0;
     }
 });
+
+function procesirajKlikNaGrafove() {
+    if(danOdgovor) { 
+        if(prikazaniDodatniGrafovi) { 
+            prikazaniDodatniGrafovi = 0;
+            if(trenutniZadatak.tezina == 7) prikazaniOdabirGrafovi = 1;
+        } else if(prikazaniOdabirGrafovi) {
+            prikazaniOdabirGrafovi = 0;
+            prikazaniDodatniGrafovi = 1;
+        } else {
+            prikazaniDodatniGrafovi = 1;
+        }
+    }
+    skalirajSveGrafove();
+}
+
+function skalirajSveGrafove() {
+    chartContainer.style.height = grafVisina - (prikazaniDodatniGrafovi?ostaliGrafoviVisina+0:0) - (prikazaniOdabirGrafovi?pitanjeGrafoviVisina+0:0) + 'px';
+    ostaliGrafoviRed.style.height = ostaliGrafoviVisina + 'px';
+    pitanjeGrafoviRed.style.height = pitanjeGrafoviVisina + 'px';
+    if(prikazaniDodatniGrafovi) ostaliGrafoviRed.style.display='flex';
+        else ostaliGrafoviRed.style.display='none';
+    if(prikazaniOdabirGrafovi) pitanjeGrafoviRed.style.display='flex';
+        else pitanjeGrafoviRed.style.display='none';
+}
+
+function klikMiniGraf(broj) {
+    if(!danOdgovor) {
+        inputOdgovor.value = broj;
+        provjeriOdgovor();
+    } else {
+        procesirajKlikNaGrafove();
+    }
+}
+
+ostaliGrafoviRed.addEventListener('click', (e) => {
+    procesirajKlikNaGrafove();
+});
+
+chartContainer.addEventListener('click', (e) => {
+    procesirajKlikNaGrafove();
+});
+
+pitanjeGraf1.addEventListener('click', (e) => { klikMiniGraf(1); });
+pitanjeGraf2.addEventListener('click', (e) => { klikMiniGraf(2); });
+pitanjeGraf3.addEventListener('click', (e) => { klikMiniGraf(3); });
+pitanjeGraf4.addEventListener('click', (e) => { klikMiniGraf(4); });
 
 
 
