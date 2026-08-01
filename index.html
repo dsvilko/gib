@@ -965,8 +965,17 @@ function generirajZadatak() {
         const glavniKanonski = (vrstaGrafa === 's/t-krivo') ? 's/t' : vrstaGrafa;
         let moguciTipovi = ['s/t', 'v/t', 'a/t'].filter(v => v !== glavniKanonski);
         if (gradivo === 'jednoliko') moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
+
         pitaniTip = moguciTipovi[Math.floor(Math.random() * moguciTipovi.length)];
 
+        // Ako je ponuđeni tip s/t, a gradivo je 'sva' (dakle točan odgovor je vjerojatno
+        // zakrivljen jer potječe iz v/t ili a/t grafa s akceleracijom), generiraj lažne
+        // kandidate kroz isti "v/t-akceleracijski" mehanizam kao s/t-krivo - ne kroz čisti
+        // s/t generator koji uvijek daje a=0 (uvijek ravne linije). Time zakrivljenost više
+        // nije razlikovno obilježje pravog odgovora.
+        const generatorskiTip = (pitaniTip === 's/t' && gradivo !== 'jednoliko') ? 's/t-krivo' : pitaniTip;
+        
+        
         kandidati = [{ faze: faze, ispravan: true }];
 
         // Generiraj 3 lažna kandidata, svaki uz vlastite pokušaje dok ne prođe provjere
@@ -978,12 +987,12 @@ function generirajZadatak() {
 
             while (!uspjeh && pokusajiL < 100) {
                 pokusajiL++;
-                const rez = generirajSiroveFaze(trajanja, pitaniTip, gradivo, 0); // tezina=0 -> jednoznačan predznak, čitljivije kandidate
+                const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0); // tezina=0 -> jednoznačan predznak, čitljivije kandidate
                 if (!rez.isDobar) continue;
-                if (!provjeriZanimljivost(rez.faze, pitaniTip, gradivo, 0)) continue;
+                if (!provjeriZanimljivost(rez.faze, generatorskiTip, gradivo, 0)) continue;
 
-                izracunajKinematikuZaFaze(rez.faze, pitaniTip);
-                if (!provjeriValjanostKinematike(rez.faze, pitaniTip, 0)) continue;
+                izracunajKinematikuZaFaze(rez.faze, generatorskiTip);
+                if (!provjeriValjanostKinematike(rez.faze, generatorskiTip, 0, false)) continue;
 
                 // Mora se dovoljno razlikovati od svih dosad prihvaćenih kandidata
                 if (kandidati.some(pos => suViseSlicna(pos.faze, rez.faze))) continue;
@@ -1280,7 +1289,7 @@ function izracunajKinematikuZaFaze(faze, vrstaGrafa) {
     });
 }
 
-function provjeriValjanostKinematike(faze, vrstaGrafa, tezina) {
+function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivost = true) {
     // Najviše jedna faza smije biti "mirovanje" (brzina i akceleracija cijelo vrijeme 0)
     const brojMirovanja = faze.filter(f => Math.abs(f.kinematika.v0) < 1e-9 && Math.abs(f.kinematika.a) < 1e-9).length;
     if (brojMirovanja > 1) return false;
@@ -1297,7 +1306,7 @@ function provjeriValjanostKinematike(faze, vrstaGrafa, tezina) {
 
     // s/t-krivo: svaki segment mora biti dovoljno "čitljiv" (dovoljno dug s obzirom
     // na akceleraciju) da se zakrivljenost vizualno primijeti na grafu.
-    if (vrstaGrafa === 's/t-krivo') {
+    if (provjeriCitljivost && vrstaGrafa === 's/t-krivo') {
         for (const f of faze) {
             const dt = f.t1 - f.t0;
             const aAbs = Math.abs(f.kinematika.a);
