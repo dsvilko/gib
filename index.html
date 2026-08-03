@@ -1064,7 +1064,7 @@ function generirajZadatak() {
     }
 
     if (!isDobarGraf) {
-        console.warn('Nije pronađen valjan graf nakon', pokusaji, 'pokušaja za', vrstaGrafa, gradivo, tezina);
+        console.warn('Glavni graf generiran iz ', pokusaji, '. pokušaja, za', vrstaGrafa, gradivo, tezina);
     }
    
     // ZA TEŽINU 6  (KOJI OD GRAFOVA...?)
@@ -1095,7 +1095,53 @@ function generirajZadatak() {
         // nije razlikovno obilježje pravog odgovora.
         const generatorskiTip = (pitaniTip === 's/t' && gradivo !== 'jednoliko') ? 's/t-krivo' : pitaniTip;
         
+        kandidati = [{ faze: faze, ispravan: true, razinaOdbacivanja: null }];
+
+        const ciljaneRazine = odaberiCiljaneRazine();
+
+        for (let k = 0; k < 3; k++) {
+            let lazniFaze = null;
+            let uspjeh = false;
+            let pokusajiL = 0;
+            const ciljanaRazina = ciljaneRazine[k];
+
+            while (!uspjeh && pokusajiL < 1000) {
+                pokusajiL++;
+                const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0);
+                if (!rez.isDobar) continue;
+                if (!provjeriZanimljivost(rez.faze, generatorskiTip, gradivo, 0)) continue;
+
+                izracunajKinematikuZaFaze(rez.faze, generatorskiTip);
+                if (!provjeriValjanostKinematike(rez.faze, generatorskiTip, 0, false)) continue;
+
+                // Mora se razlikovati od TOČNOG odgovora baš na ciljanoj razini
+                const razinaVsTocan = usporediPotpise(faze, rez.faze, generatorskiTip);
+                if (razinaVsTocan !== ciljanaRazina) continue;
+
+                // I ne smije biti identičan (razina=null) nekom već prihvaćenom kandidatu
+                if (kandidati.some(pos => usporediPotpise(pos.faze, rez.faze, generatorskiTip) === null)) continue;
+
+                lazniFaze = rez.faze;
+                uspjeh = true;
+            }
+
+            if (pokusajiL > 90) {
+                console.warn('Velik broj neuspjelih pokušaja za razinu ' + ciljanaRazina + ': ' + pokusajiL);
+            } else {
+                console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
+            }
+
+            // Fallback: ako 100 pokušaja ne uspije pogoditi baš ciljanu razinu, uzmi zadnji
+            // generirani (ili sami graf kao krajnji fallback) - bolje blaži zadatak nego rušenje.
+            const konacneFaze = lazniFaze || faze;
+            const stvarnaRazina = uspjeh ? ciljanaRazina : usporediPotpise(faze, konacneFaze, generatorskiTip);
+            kandidati.push({ faze: konacneFaze, ispravan: false, razinaOdbacivanja: stvarnaRazina });
+        }
+
+        kandidati.sort(() => Math.random() - 0.5);        
         
+        
+        /*
         kandidati = [{ faze: faze, ispravan: true }];
 
         // Generiraj 3 lažna kandidata, svaki uz vlastite pokušaje dok ne prođe provjere
@@ -1131,6 +1177,7 @@ function generirajZadatak() {
         }
 
         kandidati.sort(() => Math.random() - 0.5);
+        */
     }
 
     //trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina };
@@ -1438,6 +1485,88 @@ function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivos
 }
 
 
+
+// POMOČNE FUNKCIJE ZA GENERIRANJE DOBRIH GRAFOVA KANDIDATA
+// (razina 6)
+
+const EPS = 1e-9;
+
+// Vraća potpis jedne faze, ovisan o tipu grafa koji se stvarno crta.
+// razina1/razina2/razina3 su 'null' kad ta razina nije primjenjiva za tu fazu
+// (npr. razina2/3 kod faze koja miruje/je vodoravna - nema predznak ni nagib).
+function izracunajPotpisFaze(faza, tipGrafa) {
+    const dt = faza.t1 - faza.t0;
+
+    if (tipGrafa === 'v/t' || tipGrafa === 'a/t') {
+        // Visina linije je značenjska: mirovanje/nulta-akc. na nuli, inače predznak i iznos.
+        const vrijednost = (tipGrafa === 'v/t') ? faza.kinematika.v0 : faza.kinematika.a;
+        const naNuli = Math.abs(vrijednost) < EPS;
+        return {
+            razina1: naNuli ? 'nula' : 'izvan-nule',
+            razina2: naNuli ? null : Math.sign(vrijednost),
+            razina3: naNuli ? null : Math.abs(vrijednost)
+        };
+    }
+
+    if (tipGrafa === 's/t') {
+        // Visina nije bitna - samo je li linija vodoravna (mirovanje) ili kosa (gibanje).
+        //const nagib = (faza.y1 - faza.y0) / dt; // = kinematika.v0, jer je a=0
+        const nagib = faza.kinematika.v0;
+        const vodoravno = Math.abs(nagib) < EPS;
+        return {
+            razina1: vodoravno ? 'vodoravno' : 'koso',
+            razina2: vodoravno ? null : Math.sign(nagib),
+            razina3: vodoravno ? null : Math.abs(nagib)
+        };
+    }
+
+    if (tipGrafa === 's/t-krivo') {
+        const v0 = faza.kinematika.v0;
+        const a = faza.kinematika.a;
+        const miruje = Math.abs(v0) < EPS && Math.abs(a) < EPS;
+        // Osnovni smjer: predznak v0; ako kreće iz mirovanja (v0≈0) ali ubrzava,
+        // smjer određuje predznak akceleracije.
+        const smjer = Math.abs(v0) >= EPS ? Math.sign(v0)
+                     : (Math.abs(a) >= EPS ? Math.sign(a) : 0);
+        return {
+            razina1: miruje ? 'vodoravno' : 'koso',
+            razina2: miruje ? null : smjer,
+            // Predznak zakrivljenosti; 0 = segment je ravan (nema zakrivljenosti za usporedbu)
+            razina3: miruje ? null : (Math.abs(a) < EPS ? 0 : Math.sign(a))
+        };
+    }
+
+    return { razina1: null, razina2: null, razina3: null };
+}
+
+// Vraća najnižu razinu (1, 2 ili 3) na kojoj se dva grafa prvi put razlikuju,
+// ili null ako su identični na sve 3 razine (previše slični - treba odbaciti).
+function usporediPotpise(fazeA, fazeB, tipGrafa) {
+    const potpisiA = fazeA.map(f => izracunajPotpisFaze(f, tipGrafa));
+    const potpisiB = fazeB.map(f => izracunajPotpisFaze(f, tipGrafa));
+
+    for (let razina = 1; razina <= 3; razina++) {
+        const kljuc = 'razina' + razina;
+        for (let i = 0; i < potpisiA.length; i++) {
+            const va = potpisiA[i][kljuc];
+            const vb = potpisiB[i][kljuc];
+            if (va === null && vb === null) continue; // ta razina se ne primjenjuje na ovu fazu
+            if (va !== vb) return razina;
+        }
+    }
+    return null; // identični na sve tri razine
+}
+
+// Svaki string = ciljane razine za tri distraktora (redoslijed dodjele nije bitan,
+// jer se kandidati kasnije ionako promiješaju). Ponavljanje istog broja (npr. '123'
+// vs '112') namjerno unosi slučajnost - da NE bude uvijek točno jedan distraktor
+// po razini.
+const OBRASCI_TEZINE_KANDIDATA = ['123', '123'];
+
+function odaberiCiljaneRazine() {
+    const izbor = OBRASCI_TEZINE_KANDIDATA[Math.floor(Math.random() * OBRASCI_TEZINE_KANDIDATA.length)];
+    return izbor.split('').map(Number); // npr. "112" -> [1, 1, 2]
+}
 
 
 
@@ -1915,6 +2044,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         // KOJI OD 4 GRAFA....
         tekst = `Koji od 4 prikazana <b>${formatirajVrstuGrafa(pitaniTip)}</b> grafa ispravno prikazuje isto gibanje kao gornji graf?`;
         infoObjasnjene = "<b>Kako razmišljamo:</b><br>(od jednostavnijeg)<p>";
+        infoObjasnjene += "DEBUG: "+zadatak.kandidati[0].razinaOdbacivanja+","+zadatak.kandidati[1].razinaOdbacivanja+","+zadatak.kandidati[2].razinaOdbacivanja+","+zadatak.kandidati[3].razinaOdbacivanja+"<p>";
         if(zadatak.vrstaGrafa == 's/t') {  // s/t - jednolika gibanja
             if(zadatak.pitaniTip == 'v/t') {  // u v/t
                 svgs.push('jednoliko');
