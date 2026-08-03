@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vježbanje grafičkog prikaza gibanja</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		
     <style>
         :root {
             --primary: #2563eb;
@@ -34,7 +38,7 @@
             max-width: 800px;
             width: 100%;
             background: var(--card-bg);
-            padding: 25px 25px 0px 25px;
+            padding: 25px 25px 10px 25px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
@@ -59,7 +63,7 @@
         padding: 5px 8px;
         border-radius: 0;
         margin: -25px -25px 5px -25px;   /* edge-to-edge unutar containera */
-        font-size: 0.7rem;
+        font-size: 1rem;
         font-family: 'Roboto Condensed', 'Segoe UI', Tahoma, sans-serif;
         -webkit-overflow-scrolling: touch;
     }
@@ -77,18 +81,18 @@
         border: 1px solid #475569;
         border-radius: 6px;
         padding: 3px 4px;
-        font-size: 0.7rem;
+        font-size: 1.2em;
         font-family: inherit;
-        max-width: 115px;
+        max-width: 130px;
         flex-shrink: 1;
     }
 
     /* toggle kao tipka koja mijenja boju prema stanju */
     .toggle-btn {
         height: 100%;
-        flex-shrink: 0;
+        flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
         white-space: nowrap;
-        font-size: 0.7rem;
+        font-size: 0.9em;
         font-family: inherit;
         font-weight: 600;
         padding: 4px 8px;
@@ -634,9 +638,11 @@
         <span class="cp-label">Vježbaj</span>
 
         <select id="gradivoSelect">
-            <option value="jednoliko">samo jednolika</option>
+            <option value="jednoliko">jednolika</option>
             <option value="sva">sva gibanja</option>
         </select>
+
+        <button type="button" id="chkLakse" class="toggle-btn" data-active="false">samo</button>
 
         <select id="tezinaSelect">
             <option value="0" selected>0. Vrsta?</option>
@@ -649,9 +655,8 @@
             <option value="7">7. Pretvori.</option>
         </select>
 
-        <button type="button" id="chkLakse" class="toggle-btn" data-active="false">i prethodne</button>
 
-        <button id="btnGeneriraj" class="btn-primary" title="Novi zadatak">⟳</button>
+        <button id="btnGeneriraj" class="btn-primary" title="Novi zadatak" style="display:none">⟳</button>
     </div>
 
 <div>
@@ -660,7 +665,7 @@
     <div class="control-panel">
         <div class="control-group">
             <label for="gradivoSelect">Gibanja:</label>
-            <select id="gradivoSelect">
+            <select id="gradivoSelect" onchange="generirajZadatak()">
                 <option value="jednoliko">Samo jednolika</option>
                 <option value="sva">Jed. i ubrzana</option>
             </select>
@@ -670,7 +675,7 @@
                 <label for="tezinaSelect">Vještina:</label>
                 
             </div>
-            <select id="tezinaSelect">
+            <select id="tezinaSelect" onchange="generirajZadatak()">
                 <option value="0" selected>0. Vrsta?</option>
                 <option value="1">1. Direktno.</option>
                 <option value="2">2. Promjene?</option>
@@ -2950,7 +2955,7 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { top: 20, right: 32, left: 5, bottom: 15 } },
+            layout: { padding: { top: 20, right: 32, left: 5, bottom: 30 } },
             scales: {
                 x: {
                     type: 'linear',
@@ -3536,8 +3541,14 @@ chkLakse.addEventListener('click', () => {
     const isActive = chkLakse.dataset.active === 'true';
     chkLakse.dataset.active = String(!isActive);
     chkLakse.classList.toggle('active', !isActive);
+		if(chkLakse.dataset.active == 'true') chkLakse.innerHTML = "sve do";
+		else chkLakse.innerHTML = "samo";
+	  
+    generirajZadatak();
 });
 
+document.getElementById('gradivoSelect').addEventListener('change', generirajZadatak);
+document.getElementById('tezinaSelect').addEventListener('change', generirajZadatak);
 
 // Prvo pokretanje
 generirajZadatak();
