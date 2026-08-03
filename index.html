@@ -651,8 +651,8 @@
             <option value="3">3. Max?</option>
             <option value="4">4. Nagib?</option>
             <option value="5">5. Površina?</option>
-            <option value="6" id="zavijaOpcija">6. Zavija?</option>
-            <option value="7">7. Pretvori.</option>
+            <option value="6">6. Pretvori.</option>
+            <option value="7" id="zavijaOpcija">7. Zavija?</option>
         </select>
 
 
@@ -993,7 +993,7 @@ function generirajZadatak() {
     
     if (gradivoSelect.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
-        if(tezinaSelect.value == 6) { 
+        if(tezinaSelect.value == 7) { 
             tezinaSelect.value = 0; 
         }
     }
@@ -1015,6 +1015,7 @@ function generirajZadatak() {
     
     // Logika za opciju "ili lakše"
     let odabranaTezina = parseInt(tezinaSelect.value);
+    const ciljanaTezina = odabranaTezina;
     if (chkLakse.dataset.active === 'true') {
         odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
     }
@@ -1025,14 +1026,15 @@ function generirajZadatak() {
         if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
         else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t'];
         else if (tezina === 5) dopusteniGrafovi = ['v/t'];
-        else if (tezina === 7) dopusteniGrafovi = ['s/t', 'v/t'];
+        else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
     } else {
         if (tezina === 0) dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
         else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
         else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
         else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
-        else if (tezina === 6) dopusteniGrafovi = ['s/t-krivo'];   // NOVO
-        else if (tezina === 7) dopusteniGrafovi = ['s/t', 'v/t', 's/t-krivo']; // NOVO (bez a/t kao glavnog)
+        else if (tezina === 6) dopusteniGrafovi = 
+                          (ciljanaTezina === 7) ? ['s/t', 'v/t', 's/t-krivo'] : ['s/t', 'v/t'];
+        else if (tezina === 7) dopusteniGrafovi = ['s/t-krivo'];   // NOVO
     }
 
     const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
@@ -1065,11 +1067,11 @@ function generirajZadatak() {
         console.warn('Nije pronađen valjan graf nakon', pokusaji, 'pokušaja za', vrstaGrafa, gradivo, tezina);
     }
    
-    // ZA TEŽINU 7
+    // ZA TEŽINU 6  (KOJI OD GRAFOVA...?)
     
     let kandidati = null;
 
-    if (tezina === 7 && isDobarGraf) {
+    if (tezina === 6 && isDobarGraf) {
         // Isti vremenski razmaci kao glavni graf, da su kandidati usporedivi
         const trajanja = faze.map(f => f.t1 - f.t0);
 
@@ -1078,6 +1080,12 @@ function generirajZadatak() {
         let moguciTipovi = ['s/t', 'v/t', 'a/t'].filter(v => v !== glavniKanonski);
         if (gradivo === 'jednoliko') moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
 
+        const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
+        if (imaAkceleracije && ciljanaTezina !== 7) {
+            moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
+        }
+        
+        
         pitaniTip = moguciTipovi[Math.floor(Math.random() * moguciTipovi.length)];
 
         // Ako je ponuđeni tip s/t, a gradivo je 'sva' (dakle točan odgovor je vjerojatno
@@ -1127,25 +1135,25 @@ function generirajZadatak() {
 
     //trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina };
     trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
-    if (tezina === 7) {
+    if (tezina === 6) {
         trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
     }
     
     oblikujPitanjeIZadatak(trenutniZadatak);
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
-    /*if (tezina === 0 || tezina === 6) {
+    /*if (tezina === 0 || tezina === 7) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
     } else {
         unosBrojaBox.style.display = 'flex';
         unosPrepoznavanjeBox.style.display = 'none';
     }*/
-    if (tezina === 0 || tezina === 6) {
+    if (tezina === 0 || tezina === 7) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
         pitanjeGrafoviRed.style.display = 'none';
-    } else if (tezina === 7) {
+    } else if (tezina === 6) {
         unosBrojaBox.style.display = 'flex';       // isti numerički input kao za 1-5
         unosPrepoznavanjeBox.style.display = 'none';
         pitanjeGrafoviRed.style.display = 'flex';  // ali dodatno prikaži 4 grafa
@@ -1157,7 +1165,7 @@ function generirajZadatak() {
 
     prikazaniDodatniGrafovi = 0;
     prikazaniOdabirGrafovi = 0;
-    if (tezina === 7) {
+    if (tezina === 6) {
         //chartContainer.style.height=grafVisina-odabirVisina-5+'px';
         prikaziKandidateGrafova(trenutniZadatak);
         prikazaniOdabirGrafovi = 1;
@@ -1244,7 +1252,7 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
     } else if (vrstaGrafa === 'v/t' && gradivo !== 'jednoliko') {
         yTrenutno = (Math.random() < 0.5) ? 0 : (Math.floor(Math.random() * 9) - 2);
     } else {
-        yTrenutno = 0;
+        yTrenutno = Math.floor(Math.random()*5)-2;
     }
 
     // Za v/t + jednoliko: u 70% slučajeva forsiraj jednu pozitivnu, jednu negativnu
@@ -1287,7 +1295,7 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
                 yKraj = v;
             } else {
                 // sva gibanja: nasumična akceleracija a, brzina se linearno mijenja unutar faze
-                let a = Math.floor(Math.random() * 4) - 2;
+                let a = Math.floor(Math.random() * 5) - 2;
                 if (tezina === 5) {
                     a = Math.floor(Math.random() * 2); // za težinu 5 akceleracija je uvijek >= 0
                     if (yTrenutno === 0 && a === 0) a = 2;
@@ -1295,9 +1303,9 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
                 yKraj = yTrenutno + (a * dt);
 
                 // Zabrana prelaska brzine preko nule usred faze - potrebno kad se pita
-                // za vrstu/smjer gibanja (0/6) ili računa površina/pomak (5), gdje
+                // za vrstu/smjer gibanja (0/7) ili računa površina/pomak (5), gdje
                 // predznak brzine mora biti jednoznačan unutar cijelog segmenta.
-                if ((tezina === 0 || tezina === 5 || tezina === 6) && yTrenutno * yKraj < 0) isDobar = false;
+                if ((tezina === 0 || tezina === 5 || tezina === 7) && yTrenutno * yKraj < 0) isDobar = false;
             }
         }
         else if (vrstaGrafa === 'a/t') {
@@ -1452,7 +1460,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
         // --------------- VRSTA --------------
     
-    if (tezina === 0 || tezina === 6) {
+    if (tezina === 0 || tezina === 7) {
         // NULTA VJEŠTINA: Prepoznavanje gibanja
         const fIndeks = Math.floor(Math.random() * 3);
         const faza = faze[fIndeks];
@@ -1806,7 +1814,7 @@ function oblikujPitanjeIZadatak(zadatak) {
             if(index>=0) { 
                 nagib = (faze[index+1].y1-faze[index].y0)/(faze[index+1].t1-faze[index].t0); 
             }
-            if(index>=0 && Number.isInteger(nagib*2) && Math.random(1)<0.99) { // srednja brzina
+            if(index>=0 && Math.abs(Math.round(nagib * 10) - nagib * 10) < Number.EPSILON && Math.random(1)<0.99) { // srednja brzina
             //if(index>=0 && Math.random(1)<0.99) { // srednja brzina
                 tekst = `Kolika je <b>srednja brzina</b> tijela između <span class="highlight-blue">${faze[index].t0}. i ${faze[index+1].t1}. sekunde</span>?`;
                 dt = faze[index+1].t1-faze[index].t0;
@@ -1903,8 +1911,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             svgs.push('pov');
             zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
         }
-    } else if(tezina === 7) {
-        tekst = `Koji od 4 prikazana ${formatirajVrstuGrafa(pitaniTip)} grafa ispravno prikazuje isto gibanje kao gornji graf?`;
+    } else if(tezina === 6) {
+        // KOJI OD 4 GRAFA....
+        tekst = `Koji od 4 prikazana <b>${formatirajVrstuGrafa(pitaniTip)}</b> grafa ispravno prikazuje isto gibanje kao gornji graf?`;
         infoObjasnjene = "<b>Kako razmišljamo:</b><br>(od jednostavnijeg)<p>";
         if(zadatak.vrstaGrafa == 's/t') {  // s/t - jednolika gibanja
             if(zadatak.pitaniTip == 'v/t') {  // u v/t
@@ -1993,9 +2002,9 @@ function oblikujPitanjeIZadatak(zadatak) {
         else jedinicaText = 's';
     } 
     else if (tezina === 3) jedinicaText = ""; // Samo broj faze
-    else if (tezina === 7) jedinicaText = ""; // Samo redni broj grafa
     else if (tezina === 4) jedinicaText = (vrstaGrafa === 's/t') ? 'm/s' : 'm/s²';
     else if (tezina === 5) jedinicaText = (vrstaGrafa === 'v/t') ? 'm' : 'm/s';
+    else if (tezina === 6) jedinicaText = ""; // Samo redni broj grafa
     
     mjernaJedinica.textContent = jedinicaText;
     tekstPitanja.innerHTML = `${tekst}`;
@@ -2022,7 +2031,7 @@ function provjeriOdgovor() {
 
     danOdgovor = 1;
     prikaziOstaleGrafove();
-    if(trenutniZadatak.tezina === 7) prikaziKandidateGrafova(trenutniZadatak);
+    if(trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
     /*
     if (document.getElementById('hint-overlay')) {
         const overlay = document.getElementById('hint-overlay');
@@ -2038,7 +2047,7 @@ function provjeriOdgovor() {
     //zaustaviSimulaciju();
     
     // Provjera ako smo na nultoj vještini (prepoznavanje)
-    if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 6) {
+    if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 7) {
         const odabranaVrsta = selectVrsta.value;
         const odabraniSmjer = selectSmjer.value;
 
@@ -2076,7 +2085,7 @@ function provjeriOdgovor() {
         
         let tocno = "";
         
-        if (trenutniZadatak.tezina !== 0 && trenutniZadatak.tezina !== 6) {
+        if (trenutniZadatak.tezina !== 0 && trenutniZadatak.tezina !== 7) {   // izmijenjeno 6->7
             tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
@@ -3481,7 +3490,7 @@ function azurirajTockice(t) {
 gradivoSelect.addEventListener("change", (e) => {
     if (e.target.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
-        if(tezinaSelect.value == 6) { 
+        if(tezinaSelect.value == 7) { 
             tezinaSelect.value = 0; 
         }
     } else {
