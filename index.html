@@ -633,69 +633,33 @@
 
  
 
-<div class="container">
-    <div class="control-panel">
-        <span class="cp-label">Vježbaj</span>
+    <div class="container">
+        <div class="control-panel">
+            <span class="cp-label">Vježbaj</span>
 
-        <select id="gradivoSelect">
-            <option value="jednoliko">jednolika</option>
-            <option value="sva">sva gibanja</option>
-        </select>
-
-        <button type="button" id="chkLakse" class="toggle-btn" data-active="false">samo</button>
-
-        <select id="tezinaSelect">
-            <option value="0" selected>0. Vrsta?</option>
-            <option value="1">1. Direktno.</option>
-            <option value="2">2. Promjene?</option>
-            <option value="3">3. Max?</option>
-            <option value="4">4. Nagib?</option>
-            <option value="5">5. Površina?</option>
-            <option value="6">6. Pretvori.</option>
-            <option value="7" id="zavijaOpcija">7. Zavija?</option>
-        </select>
-
-
-        <button id="btnGeneriraj" class="btn-primary" title="Novi zadatak" style="display:none">⟳</button>
-    </div>
-
-<div>
-    
-    <!--
-    <div class="control-panel">
-        <div class="control-group">
-            <label for="gradivoSelect">Gibanja:</label>
-            <select id="gradivoSelect" onchange="generirajZadatak()">
-                <option value="jednoliko">Samo jednolika</option>
-                <option value="sva">Jed. i ubrzana</option>
+            <select id="gradivoSelect">
+                <option value="jednoliko">jednolika</option>
+                <option value="sva">sva gibanja</option>
             </select>
-        </div>
-        <div class="control-group">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <label for="tezinaSelect">Vještina:</label>
-                
-            </div>
-            <select id="tezinaSelect" onchange="generirajZadatak()">
+
+            <button type="button" id="chkLakse" class="toggle-btn" data-active="false">samo</button>
+
+            <select id="tezinaSelect">
                 <option value="0" selected>0. Vrsta?</option>
                 <option value="1">1. Direktno.</option>
                 <option value="2">2. Promjene?</option>
                 <option value="3">3. Max?</option>
                 <option value="4">4. Nagib?</option>
                 <option value="5">5. Površina?</option>
-                <option value="6" id="zavijaOpcija">6. Zavija?</option>
-                <option value="7"> 7. Pretvori.</option>
+                <option value="6">6. Pretvori.</option>
+                <option value="7" id="zavijaOpcija">7. Zavija?</option>
             </select>
+
+
+            <button id="btnGeneriraj" class="btn-primary" title="Novi zadatak" style="display:none">⟳</button>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="font-weight: normal; font-size: 0.8rem; width: 100%; text-align: center; align-items: center; cursor: pointer; color: var(--text);">
-                    <input type="checkbox" id="chkLakse" style="width: auto; margin: 0 5px 0 0; padding: 0;">vježbaj i prethodne
-            </label>
-        </div>
-        <div class="control-group" style="justify-content: flex-end; align-items: flex-end; flex-direction: row; gap: 10px;">
-            <button id="btnGeneriraj" class="btn-primary">Novi zadatak</button>
-        </div>
-    </div>
-    -->
+
+    <div>
     
     
     <div id="chartContainer" class="chart-container">
@@ -730,12 +694,7 @@
         <img id= "gibPozadina" class="gib-pozadina-slika" src="https://dsvilko.github.io/gib/pozadine/France/bg2.jpg" alt="Pozadina ceste">
 
         <div class="gib-vozilo-sloj" id="gibVoziloSloj">
-            <!--
-            <svg id="gibStrelicaSmjera" class="gib-strelica-smjera" viewBox="0 0 200 20">
-                <line id="gibStrelicaLinija" x1="60" y1="10" x2="140" y2="10" stroke="#facc15" stroke-width="4" stroke-linecap="butt" />
-                <polygon id="gibStrelicaVrh" points="140,2 156,10 140,18" fill="#facc15" />
-            </svg>
-            -->
+           
             <svg id="akceleracijaStrelica" class="strelica-akceleracije" viewBox="0 0 200 20">
                     <defs>
                         <!-- Define the black shadow filter -->
@@ -807,7 +766,7 @@
 
             <button id="btnProvjeri" class="btn-primary">Provjeri</button>
             <button id="btnDalje" class="btn-primary hidden" style="background-color: var(--success)">Novi</button>
-            <!-- <button id="btnOstaliGrafovi" class="btn-primary" style="background-color: #0891b2; display: none;">Grafovi</button> -->
+            
         </div>
 
         
@@ -968,8 +927,6 @@ function generirajZadatak() {
 
     // Reset "ostalih grafova"
     sakrijOstaleGrafove();
-    //btnOstaliGrafovi.textContent = 'Ostali grafovi';
-    //btnOstaliGrafovi.style.display = 'none';
 
     // Reset točkica traga na cesti
     ocistiTockice();
@@ -1011,7 +968,7 @@ function generirajZadatak() {
         }
     });
         
-    const gradivo = gradivoSelect.value;
+    let gradivo = gradivoSelect.value;
     
     // Logika za opciju "ili lakše"
     let odabranaTezina = parseInt(tezinaSelect.value);
@@ -1061,6 +1018,9 @@ function generirajZadatak() {
 
         // 4. korak: provjere koje ovise o (tek izračunatoj) kinematici
         isDobarGraf = provjeriValjanostKinematike(faze, vrstaGrafa, tezina);
+        
+        //zakrpa za težinu 6: iz nekog razloga v/t graf ne smije imati mirovanje u 2. fazi
+        if(tezina === 6 && vrstaGrafa === 'v/t' && gradivo === 'jednoliko' && faze[1].kinematika.v0 == 0) isDobarGraf = false;
     }
 
     if (!isDobarGraf) {
@@ -1080,6 +1040,12 @@ function generirajZadatak() {
         let moguciTipovi = ['s/t', 'v/t', 'a/t'].filter(v => v !== glavniKanonski);
         if (gradivo === 'jednoliko') moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
 
+        // Glavni graf je doslovni (nezakrivljeni) s/t => sve faze imaju a=0, pa a/t
+        // kandidat ne bi imao smisla (uvijek bi bila ravna linija na nuli).
+        if (glavniKanonski === 's/t') {
+            moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
+        }
+        
         const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
         if (imaAkceleracije && ciljanaTezina !== 7) {
             moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
@@ -1094,6 +1060,8 @@ function generirajZadatak() {
         // s/t generator koji uvijek daje a=0 (uvijek ravne linije). Time zakrivljenost više
         // nije razlikovno obilježje pravog odgovora.
         const generatorskiTip = (pitaniTip === 's/t' && gradivo !== 'jednoliko') ? 's/t-krivo' : pitaniTip;
+        
+        if (pitaniTip === 'v/t' && !imaAkceleracije)  gradivo = 'jednoliko';
         
         kandidati = [{ faze: faze, ispravan: true, razinaOdbacivanja: null }];
 
@@ -1125,10 +1093,10 @@ function generirajZadatak() {
                 uspjeh = true;
             }
 
-            if (pokusajiL > 90) {
+            if (pokusajiL > 150) {
                 console.warn('Velik broj neuspjelih pokušaja za razinu ' + ciljanaRazina + ': ' + pokusajiL);
             } else {
-                console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
+                //console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
             }
 
             // Fallback: ako 100 pokušaja ne uspije pogoditi baš ciljanu razinu, uzmi zadnji
@@ -1141,46 +1109,9 @@ function generirajZadatak() {
         kandidati.sort(() => Math.random() - 0.5);        
         
         
-        /*
-        kandidati = [{ faze: faze, ispravan: true }];
-
-        // Generiraj 3 lažna kandidata, svaki uz vlastite pokušaje dok ne prođe provjere
-        // I dok se dovoljno razlikuje od već prihvaćenih kandidata.
-        for (let k = 0; k < 3; k++) {
-            let lazniFaze = null;
-            let uspjeh = false;
-            let pokusajiL = 0;
-
-            while (!uspjeh && pokusajiL < 100) {
-                pokusajiL++;
-                const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0); // tezina=0 -> jednoznačan predznak, čitljivije kandidate
-                if (!rez.isDobar) continue;
-                if (!provjeriZanimljivost(rez.faze, generatorskiTip, gradivo, 0)) continue;
-
-                izracunajKinematikuZaFaze(rez.faze, generatorskiTip);
-                if (!provjeriValjanostKinematike(rez.faze, generatorskiTip, 0, false)) continue;
-
-                // Mora se dovoljno razlikovati od svih dosad prihvaćenih kandidata
-                if (kandidati.some(pos => suViseSlicna(pos.faze, rez.faze))) continue;
-
-                lazniFaze = rez.faze;
-                uspjeh = true;
-            }
-
-            if(pokusajiL>90) {
-                console.warn('Velik broj neuspjelih pokušaja pronalaska dovoljnoo različitih grafiva: '+pokusajiL);
-            }
-            
-            // Ako 100 pokušaja nije dalo dovoljno različit graf, uzmi zadnji generirani
-            // (bolje ponoviti neki kandidat nego srušiti zadatak)
-            kandidati.push({ faze: lazniFaze || faze, ispravan: false });
-        }
-
-        kandidati.sort(() => Math.random() - 0.5);
-        */
+      
     }
 
-    //trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina };
     trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
     if (tezina === 6) {
         trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
@@ -1189,13 +1120,7 @@ function generirajZadatak() {
     oblikujPitanjeIZadatak(trenutniZadatak);
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
-    /*if (tezina === 0 || tezina === 7) {
-        unosBrojaBox.style.display = 'none';
-        unosPrepoznavanjeBox.style.display = 'flex';
-    } else {
-        unosBrojaBox.style.display = 'flex';
-        unosPrepoznavanjeBox.style.display = 'none';
-    }*/
+    
     if (tezina === 0 || tezina === 7) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
@@ -1213,7 +1138,6 @@ function generirajZadatak() {
     prikazaniDodatniGrafovi = 0;
     prikazaniOdabirGrafovi = 0;
     if (tezina === 6) {
-        //chartContainer.style.height=grafVisina-odabirVisina-5+'px';
         prikaziKandidateGrafova(trenutniZadatak);
         prikazaniOdabirGrafovi = 1;
     } else {
@@ -1225,16 +1149,13 @@ function generirajZadatak() {
     zadatakSekcija.classList.remove('hidden');
 
     // Pripremi UI za simulaciju
-    //simulacijaBox.style.display = 'none';
-    //simulacijaHint.style.visibility = 'visible';
-
+    
     // Postavi oznake na rubovima ceste (min i max s)
     let tocke = izracunajTockeZaGraf(faze,'s/t',100);
     let minS = Math.min(...tocke.map(p => p.y));
     let maxS = Math.max(...tocke.map(p => p.y));
     
-    //let minS = Math.min(0, ...faze.map(f => Math.min(f.kinematika.s0, f.kinematika.s1)));
-    //let maxS = Math.max(...faze.map(f => Math.max(f.kinematika.s0, f.kinematika.s1)));
+    
     if (minS === maxS) maxS = minS + 10; // Osigurač da raspon nije 0
 
     // Najveća apsolutna brzina tijekom gibanja (brzina je linearna unutar faze,
@@ -1249,26 +1170,9 @@ function generirajZadatak() {
     if (maxAkceleracija === 0) maxAkceleracija = 1; // Osigurač protiv dijeljenja s 0
 
     trenutniZadatak.simulacijaProps = { minS, maxS, maxBrzina, maxAkceleracija };
-    /*
-    if(!sakrijMinMax) {
-        cestaMin.textContent = Math.round(minS) + 'm';
-        cestaMax.textContent = Math.round(maxS) + 'm';
-    } else {
-        cestaMin.textContent = '?';
-        cestaMax.textContent = '?';
-    }
-    */
     azurirajAuto(0);
 }
 
-// Dva niza faza smatraju se "previše sličnima" ako im se sve y1 vrijednosti
-// (krajnje točke faza) podudaraju unutar tolerancije.
-function suViseSlicna(fazeA, fazeB) {
-    for (let i = 0; i < fazeA.length; i++) {
-        if (Math.abs(fazeA[i].y1 - fazeB[i].y1) > 1e-9) return false;
-    }
-    return true;
-}
 
 function getYAtT(faze, t) {
     let f = faze.find(f => t >= f.t0 && t <= f.t1);
@@ -1277,11 +1181,10 @@ function getYAtT(faze, t) {
     return f.y0 + ((f.y1 - f.y0) / (f.t1 - f.t0)) * (t - f.t0);
 }
 
-// Pretvara oznaku vrste grafa (npr. "s/t") u HTML s kurzivnim oznakama veličina, npr. "<i>s</i>/<i>t</i>"
+
 function formatirajVrstuGrafa(vrsta) {
     return '<i>' + vrsta.replace('/', '</i>/<i>') + '</i>';
 }
-
 
 
 // POMOČNE FUNKCIJE ZA GENERIRANJE ZADATAKA
@@ -1490,72 +1393,71 @@ function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivos
 // (razina 6)
 
 const EPS = 1e-9;
+const TOLERANCIJA_RANGA = 0.35; // relativna tolerancija: iznosi unutar ovog postotka smatraju se "praktički jednakima" (isti rang)
 
-// Vraća potpis jedne faze, ovisan o tipu grafa koji se stvarno crta.
-// razina1/razina2/razina3 su 'null' kad ta razina nije primjenjiva za tu fazu
-// (npr. razina2/3 kod faze koja miruje/je vodoravna - nema predznak ni nagib).
-function izracunajPotpisFaze(faza, tipGrafa) {
-    const dt = faza.t1 - faza.t0;
+// Računa potpis SVAKE faze u nizu, uzimajući u obzir tip grafa. razina3 kod
+// v/t, a/t i s/t je RELATIVNI RANG iznosa (0,1,2...) unutar OVOG grafa,
+// ne apsolutna vrijednost - bitan je samo redoslijed/omjer, nikad točna razlika.
+// Kod s/t-krivo razina3 ostaje predznak zakrivljenosti (gore/dolje).
+function izracunajPotpiseZaGraf(faze, tipGrafa) {
+    if (tipGrafa === 's/t-krivo') {
+        return faze.map(f => {
+            const v0 = f.kinematika.v0, a = f.kinematika.a;
+            const miruje = Math.abs(v0) < EPS && Math.abs(a) < EPS;
+            const smjer = Math.abs(v0) >= EPS ? Math.sign(v0) : (Math.abs(a) >= EPS ? Math.sign(a) : 0);
+            return {
+                razina1: miruje ? 'vodoravno' : 'koso',
+                razina2: miruje ? null : smjer,
+                razina3: miruje ? null : (Math.abs(a) < EPS ? 0 : Math.sign(a))
+            };
+        });
+    }
 
-    if (tipGrafa === 'v/t' || tipGrafa === 'a/t') {
-        // Visina linije je značenjska: mirovanje/nulta-akc. na nuli, inače predznak i iznos.
-        const vrijednost = (tipGrafa === 'v/t') ? faza.kinematika.v0 : faza.kinematika.a;
+    // v/t, a/t, s/t: prvo razina1/razina2 po fazi, plus "sirovi" iznos za rangiranje
+    const sirovi = faze.map(f => {
+        const vrijednost = (tipGrafa === 'a/t') ? f.kinematika.a : f.kinematika.v0; // v/t i s/t oboje preko v0
         const naNuli = Math.abs(vrijednost) < EPS;
         return {
-            razina1: naNuli ? 'nula' : 'izvan-nule',
+            razina1: naNuli ? (tipGrafa === 's/t' ? 'vodoravno' : 'nula') : (tipGrafa === 's/t' ? 'koso' : 'izvan-nule'),
             razina2: naNuli ? null : Math.sign(vrijednost),
-            razina3: naNuli ? null : Math.abs(vrijednost)
+            iznos: naNuli ? null : Math.abs(vrijednost),
+            razina3: null
         };
-    }
+    });
 
-    if (tipGrafa === 's/t') {
-        // Visina nije bitna - samo je li linija vodoravna (mirovanje) ili kosa (gibanje).
-        //const nagib = (faza.y1 - faza.y0) / dt; // = kinematika.v0, jer je a=0
-        const nagib = faza.kinematika.v0;
-        const vodoravno = Math.abs(nagib) < EPS;
-        return {
-            razina1: vodoravno ? 'vodoravno' : 'koso',
-            razina2: vodoravno ? null : Math.sign(nagib),
-            razina3: vodoravno ? null : Math.abs(nagib)
-        };
-    }
+    // Dodijeli rang (0,1,2...) po iznosu, grupirajući bliske vrijednosti u isti rang
+    const indeksiZaRang = sirovi.map((s, i) => i).filter(i => sirovi[i].iznos !== null);
+    indeksiZaRang.sort((a, b) => sirovi[a].iznos - sirovi[b].iznos);
+    let trenutniRang = 0;
+    indeksiZaRang.forEach((idx, k) => {
+        if (k > 0) {
+            const prevIdx = indeksiZaRang[k - 1];
+            const razlika = Math.abs(sirovi[idx].iznos - sirovi[prevIdx].iznos);
+            const referenca = Math.max(sirovi[idx].iznos, sirovi[prevIdx].iznos, EPS);
+            if (razlika / referenca > TOLERANCIJA_RANGA) trenutniRang++;
+        }
+        sirovi[idx].razina3 = trenutniRang;
+    });
 
-    if (tipGrafa === 's/t-krivo') {
-        const v0 = faza.kinematika.v0;
-        const a = faza.kinematika.a;
-        const miruje = Math.abs(v0) < EPS && Math.abs(a) < EPS;
-        // Osnovni smjer: predznak v0; ako kreće iz mirovanja (v0≈0) ali ubrzava,
-        // smjer određuje predznak akceleracije.
-        const smjer = Math.abs(v0) >= EPS ? Math.sign(v0)
-                     : (Math.abs(a) >= EPS ? Math.sign(a) : 0);
-        return {
-            razina1: miruje ? 'vodoravno' : 'koso',
-            razina2: miruje ? null : smjer,
-            // Predznak zakrivljenosti; 0 = segment je ravan (nema zakrivljenosti za usporedbu)
-            razina3: miruje ? null : (Math.abs(a) < EPS ? 0 : Math.sign(a))
-        };
-    }
-
-    return { razina1: null, razina2: null, razina3: null };
+    return sirovi.map(({ razina1, razina2, razina3 }) => ({ razina1, razina2, razina3 }));
 }
 
-// Vraća najnižu razinu (1, 2 ili 3) na kojoj se dva grafa prvi put razlikuju,
-// ili null ako su identični na sve 3 razine (previše slični - treba odbaciti).
 function usporediPotpise(fazeA, fazeB, tipGrafa) {
-    const potpisiA = fazeA.map(f => izracunajPotpisFaze(f, tipGrafa));
-    const potpisiB = fazeB.map(f => izracunajPotpisFaze(f, tipGrafa));
+    const potpisiA = izracunajPotpiseZaGraf(fazeA, tipGrafa);
+    const potpisiB = izracunajPotpiseZaGraf(fazeB, tipGrafa);
 
     for (let razina = 1; razina <= 3; razina++) {
         const kljuc = 'razina' + razina;
         for (let i = 0; i < potpisiA.length; i++) {
             const va = potpisiA[i][kljuc];
             const vb = potpisiB[i][kljuc];
-            if (va === null && vb === null) continue; // ta razina se ne primjenjuje na ovu fazu
+            if (va === null && vb === null) continue;
             if (va !== vb) return razina;
         }
     }
-    return null; // identični na sve tri razine
+    return null;
 }
+
 
 // Svaki string = ciljane razine za tri distraktora (redoslijed dodjele nije bitan,
 // jer se kandidati kasnije ionako promiješaju). Ponavljanje istog broja (npr. '123'
@@ -2091,22 +1993,6 @@ function oblikujPitanjeIZadatak(zadatak) {
             }
         }
         
-        /*
-        
-        if((zadatak.vrstaGrafa == 'v/t' && zadatak.pitaniTip == 'a/t') 
-        || (zadatak.vrstaGrafa == 'v/t' && zadatak.pitaniTip == 'a/t')) {
-            svgs.push('v-a');
-        } else if(zadatak.vrstaGrafa == 's/t-krivo') {
-            svgs.push('s-v');
-            svgs.push('v-a');
-        } else if((zadatak.vrstaGrafa == 'v/t' || zadatak.vrstaGrafa == 's/t') && zadatak.gradivo == 'jednoliko') {
-            svgs.push('jednoliko');
-            svgs.push('smjer');
-        } else {
-            svgs.push('ubrzano');
-            svgs.push('smjer');
-        }
-        */
         zadatak.pomocData = null;
     }
     if(zadatak.gradivo === 'jednoliko' || vrstaGrafa === 's/t') { infoObjasnjene += nefizikalno; }
@@ -2139,16 +2025,6 @@ function oblikujPitanjeIZadatak(zadatak) {
     mjernaJedinica.textContent = jedinicaText;
     tekstPitanja.innerHTML = `${tekst}`;
     
-    //Faze = faze;
-    /*
-    if(sakrijMinMax) {
-        document.getElementById('cestaMin').opacity=0;
-        document.getElementById('cestaMax').opacity=0;
-    } else {
-        document.getElementById('cestaMin').opacity=1;
-        document.getElementById('cestaMax').opacity=1;
-    }
-    */
 }
 
 
@@ -2162,19 +2038,12 @@ function provjeriOdgovor() {
     danOdgovor = 1;
     prikaziOstaleGrafove();
     if(trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
-    /*
-    if (document.getElementById('hint-overlay')) {
-        const overlay = document.getElementById('hint-overlay');
-        overlay.remove();
-    }
-    */
+   
     let isCorrect = false;
 
     isSimulacijaAktivna = true;
-    //simulacijaHint.style.visibility = 'hidden';
     
     pokreniAnimaciju();
-    //zaustaviSimulaciju();
     
     // Provjera ako smo na nultoj vještini (prepoznavanje)
     if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 7) {
@@ -2391,8 +2260,6 @@ const skolskaOsPlugin = {
             }
         });
 
-        //ctx.textAlign = 'right';
-        //ctx.fillText('0', xNula - 6, yNula + 6);
         
         // Dodatni tekst u sredini grafa (ako je definiran)
         const tekstSredina = chart.options.plugins?.skolskaOs?.tekstSredina;
@@ -2858,13 +2725,6 @@ function nacrtajOznakeFaza(chart) {
         if(indeks == oznaciDio) { 
             ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); 
             ctx.fillText(`${indeks + 1}`, px, py);
-            /*  // zaokruži broj
-            ctx.beginPath();
-            ctx.arc(px+14, py-18, 25, 0, 2 * Math.PI);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = (DM ? '#26FB' : '#083eaaCC'); // Set your circle color
-            ctx.stroke();
-            */
         } else { 
             ctx.fillStyle = (DM ? '#ffffff44' : '#00000055'); 
             ctx.fillText(`${indeks + 1}`, px, py);
@@ -2996,33 +2856,6 @@ function prikaziGraf(zadatak) {
     });
 }
 
-// --- OSTALI GRAFOVI ---
-// Računa set točaka (x = vrijeme, y = vrijednost) za zadanu vrstu grafa
-// koristeći već izračunatu kinematiku po fazama (s0, v0, a po fazi).
-/*
-function izracunajTockeZaGraf(faze, vrsta, brojTocaka = 50) {
-    const tMax = faze[faze.length - 1].t1;
-    const tocke = [];
-
-    for (let i = 0; i < brojTocaka; i++) {
-        const t = (tMax * i) / (brojTocaka - 1);
-        let faza = faze.find(f => t >= f.t0 && t <= f.t1) || faze[faze.length - 1];
-        const dt = t - faza.t0;
-        const { s0, v0, a } = faza.kinematika;
-
-        let y;
-        if (vrsta === 's/t') {
-            y = s0 + v0 * dt + 0.5 * a * dt * dt;
-        } else if (vrsta === 'v/t') {
-            y = v0 + a * dt;
-        } else { // 'a/t'
-            y = a;
-        }
-        tocke.push({ x: t, y: y });
-    }
-    return tocke;
-}
-*/
 
 function izracunajTockeZaGraf(faze, vrsta, brojTocaka = 50) {
    
@@ -3243,27 +3076,6 @@ function prikaziKandidateGrafova(zadatak) {
 
 
 
-/*
-
-btnOstaliGrafovi.addEventListener('click', () => {
-    ostaliGrafoviVidljivi = !ostaliGrafoviVidljivi;
-    if (ostaliGrafoviVidljivi) {
-        prikaziOstaleGrafove();
-        ostaliGrafoviRed.style.display = 'flex';
-        //btnOstaliGrafovi.textContent = 'Sakrij ostale grafove';
-    } else {
-        sakrijOstaleGrafove();
-        btnOstaliGrafovi.textContent = 'Ostali grafovi';
-    }
-});
-
-ostaliGrafoviRed.addEventListener('click', (e) => {
-    sakrijOstaleGrafove();
-});
-
-*/
-
-
 
 
 
@@ -3370,15 +3182,6 @@ var nivo = 0;
 
 function generirajNoviKrajolik() {
 
-
-//    var auto = document.getElementById('gibAuto');
-//    var brzinomjerSloj = document.getElementById('gibBrzinomjerSloj');
-//    var strelica = document.getElementById('gibStrelicaSmjera');
-//    var TRAJANJE = 10000; // ms za prijelaz cijele ceste
-//    var pocetak = null;
-
-    //gibAuto.src = 'vozila/' + VOZILA[Math.floor(Math.random() * VOZILA.length)]+ '.png';
-    //let poz = POZADINE[Math.floor(Math.random() * POZADINE.length)];
     
     gibAuto.src = 'vozila/' + VOZILA[nivo%VOZILA.length] + '.png';
     
@@ -3430,18 +3233,6 @@ function odaberi(str) {
 
 
 gibScena.addEventListener('click', () => {
-    /*
-    if (isSimulacijaAktivna) {
-        zaustaviSimulaciju();
-        azurirajAuto(0); // Vrati na početak
-    } else if(danOdgovor === 1) {
-        isSimulacijaAktivna = true;
-        //simulacijaHint.style.visibility = 'hidden';
-        simulacijaHint.style.visibility = 'visible';
-        //simulacijaHint.innerHTML = 'klikni za zaustaviti simulaciju';
-        pokreniAnimaciju();
-    }
-    */
     if(prednjiPrikazan) {
         gibPrednji.style.opacity=0;
     } else {
@@ -3455,8 +3246,7 @@ function zaustaviSimulaciju() {
     isSimulacijaAktivna = false;
     trenutnoVrijemeSimulacije = null;
     akceleracijaStrelica.style.opacity=0;
-    //simulacijaHint.style.visibility = 'visible';
-    //if (danOdgovor === 1) { simulacijaHint.innerHTML = 'klikni za pokrenuti simulaciju'; } else { simulacijaHint.innerHTML = 'daj odgovor za pokrenuti simulaciju'; }
+ 
     if (animacijaFrameId) cancelAnimationFrame(animacijaFrameId);
     if (chartInstance) chartInstance.update();
     ostaliChartInstances.forEach(c => { if (c) c.update(); });
@@ -3470,11 +3260,6 @@ function pokreniAnimaciju() {
     let startVrijeme = performance.now();
     akceleracijaStrelica.style.opacity=1;
 
-    if(trenutniZadatak.gradivo === 'sva' && trenutniZadatak.vrstaGrafa != 's/t') {
-                //simulacijaHint.innerHTML = '<span style="color: #ddbb00"><b>žuta strelica</b></span> - iznos i smjer akceleracije (i sile)';
-    } else {
-        //simulacijaHint.innerHTML = 'klikni za zaustaviti simulaciju';
-    }
     
     document.querySelectorAll('.sakrij').forEach(el => {
         el.style.opacity = '0.65';
@@ -3536,9 +3321,6 @@ function azurirajAuto(t) {
     gibBrzinomjerSloj.style.left = `${postotak}%`;
     papirPolozaj.style.left = `${2+postotak*0.96}%`;
     
-    //gibAuto.style.left = `${postotak}%`;
-    //gibAuto.style.top = `${traka}%`;
-    //brzinomjer.style.left = `${postotak}%`;
     azurirajBrzinomjer(brzina, trenutniZadatak.simulacijaProps.maxBrzina);
 
     akceleracijaStrelica.style.left = `${postotak}%`;
@@ -3587,7 +3369,7 @@ function azurirajBrzinomjer(brzina, maxBrzina) {
 
     gibBrzinomjerKazaljka.setAttribute('x2', vrhX.toFixed(2));
     gibBrzinomjerKazaljka.setAttribute('y2', vrhY.toFixed(2));
-    //brzinomjer.classList.toggle('negativna-brzina', brzina < 0);
+   
 }
 
 // --- TOČKICE TRAGA (svakih 0.1s tijekom prvog prolaska) ---
