@@ -639,7 +639,8 @@
 
             <select id="gradivoSelect">
                 <option value="jednoliko">jednolika</option>
-                <option value="sva">sva gibanja</option>
+                <option value="sva">ubrzana</option>
+                <option value="krivo">"zakrivljena"</option>
             </select>
 
             <button type="button" id="chkLakse" class="toggle-btn" data-active="false">samo</button>
@@ -652,7 +653,7 @@
                 <option value="4">4. Nagib?</option>
                 <option value="5">5. Površina?</option>
                 <option value="6">6. Pretvori.</option>
-                <option value="7" id="zavijaOpcija">7. Zavija?</option>
+                
             </select>
 
 
@@ -811,7 +812,7 @@
 
     const gradivoSelect = document.getElementById('gradivoSelect');
     const tezinaSelect = document.getElementById('tezinaSelect');
-    const zavijaOpcija = document.getElementById('zavijaOpcija');
+    //const zavijaOpcija = document.getElementById('zavijaOpcija');
     const chkLakse = document.getElementById('chkLakse');
     
     const btnGeneriraj = document.getElementById('btnGeneriraj');
@@ -948,12 +949,14 @@ function generirajZadatak() {
     explanationBox.style.display = 'none';
     oznaciDio = 10;
     
+    /*
     if (gradivoSelect.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
         if(tezinaSelect.value == 7) { 
             tezinaSelect.value = 0; 
         }
     }
+    */
     
     //generirajKrajolik(0);
     generirajNoviKrajolik();
@@ -985,13 +988,16 @@ function generirajZadatak() {
         else if (tezina === 5) dopusteniGrafovi = ['v/t'];
         else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
     } else {
-        if (tezina === 0) dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
+        if (tezina === 0) { 
+            if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
+            else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
+        }
         else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
         else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
         else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
         else if (tezina === 6) dopusteniGrafovi = 
-                          (ciljanaTezina === 7) ? ['s/t', 'v/t', 's/t-krivo'] : ['s/t', 'v/t'];
-        else if (tezina === 7) dopusteniGrafovi = ['s/t-krivo'];   // NOVO
+                          (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
+        //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
     }
 
     const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
@@ -1047,7 +1053,7 @@ function generirajZadatak() {
         }
         
         const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
-        if (imaAkceleracije && ciljanaTezina !== 7) {
+        if (imaAkceleracije && gradivo !== 'krivo') {
             moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
         }
         
@@ -1121,7 +1127,7 @@ function generirajZadatak() {
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
     
-    if (tezina === 0 || tezina === 7) {
+    if (tezina === 0) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
         pitanjeGrafoviRed.style.display = 'none';
@@ -1255,7 +1261,7 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
                 // Zabrana prelaska brzine preko nule usred faze - potrebno kad se pita
                 // za vrstu/smjer gibanja (0/7) ili računa površina/pomak (5), gdje
                 // predznak brzine mora biti jednoznačan unutar cijelog segmenta.
-                if ((tezina === 0 || tezina === 5 || tezina === 7) && yTrenutno * yKraj < 0) isDobar = false;
+                if ((tezina === 0 || tezina === 5) && yTrenutno * yKraj < 0) isDobar = false;
             }
         }
         else if (vrstaGrafa === 'a/t') {
@@ -1491,7 +1497,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
         // --------------- VRSTA --------------
     
-    if (tezina === 0 || tezina === 7) {
+    if (tezina === 0) {
         // NULTA VJEŠTINA: Prepoznavanje gibanja
         const fIndeks = Math.floor(Math.random() * 3);
         const faza = faze[fIndeks];
@@ -2002,7 +2008,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     // Za razinu 0 već smo spremili objekt s vrstom i smjerom, 
     // pa ovo radimo samo za ostale razine gdje je točan odgovor broj:
-    if (tezina !== 0 && tezina !== 6 && tezina !== 7) {
+    if (tezina !== 0 && tezina !== 6) {
         zadatak.tocanOdgovor = tocanOdgovor;
     }
 
@@ -2046,7 +2052,7 @@ function provjeriOdgovor() {
     pokreniAnimaciju();
     
     // Provjera ako smo na nultoj vještini (prepoznavanje)
-    if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 7) {
+    if (trenutniZadatak.tezina === 0) {
         const odabranaVrsta = selectVrsta.value;
         const odabraniSmjer = selectSmjer.value;
 
@@ -2084,7 +2090,7 @@ function provjeriOdgovor() {
         
         let tocno = "";
         
-        if (trenutniZadatak.tezina !== 0 && trenutniZadatak.tezina !== 7) {   // izmijenjeno 6->7
+        if (trenutniZadatak.tezina !== 0) {   // izmijenjeno 6->7
             tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
@@ -3399,6 +3405,7 @@ function azurirajTockice(t) {
 
 // ostale interakcije
 
+/*
 gradivoSelect.addEventListener("change", (e) => {
     if (e.target.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
@@ -3409,12 +3416,13 @@ gradivoSelect.addEventListener("change", (e) => {
         zavijaOpcija.disabled = 0;
     }
 });
+*/
 
 function procesirajKlikNaGrafove() {
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 
             prikazaniDodatniGrafovi = 0;
-            if(trenutniZadatak.tezina == 7) prikazaniOdabirGrafovi = 1;
+            //if(trenutniZadatak.tezina == 7) prikazaniOdabirGrafovi = 1;
         } else if(prikazaniOdabirGrafovi) {
             prikazaniOdabirGrafovi = 0;
             prikazaniDodatniGrafovi = 1;
