@@ -83,14 +83,15 @@
         padding: 3px 4px;
         font-size: 1.2em;
         font-family: inherit;
-        max-width: 130px;
-        flex-shrink: 1;
+        /*max-width: 130px;
+        flex-shrink: 1;*/
+        flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
     }
 
     /* toggle kao tipka koja mijenja boju prema stanju */
     .toggle-btn {
         height: 100%;
-        flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
+      
         white-space: nowrap;
         font-size: 0.9em;
         font-family: inherit;
@@ -637,13 +638,15 @@
         <div class="control-panel">
             <span class="cp-label">Vježbaj</span>
 
-            <select id="gradivoSelect">
-                <option value="jednoliko">jednolika</option>
-                <option value="sva">sva gibanja</option>
-            </select>
-
             <button type="button" id="chkLakse" class="toggle-btn" data-active="false">samo</button>
 
+            <select id="gradivoSelect">
+                <option value="jednoliko">jednolika</option>
+                <option value="sva">ubrzana</option>
+                <option value="krivo">"zakrivljena"</option>
+            </select>
+
+            
             <select id="tezinaSelect">
                 <option value="0" selected>0. Vrsta?</option>
                 <option value="1">1. Direktno.</option>
@@ -652,7 +655,7 @@
                 <option value="4">4. Nagib?</option>
                 <option value="5">5. Površina?</option>
                 <option value="6">6. Pretvori.</option>
-                <option value="7" id="zavijaOpcija">7. Zavija?</option>
+                
             </select>
 
 
@@ -811,7 +814,7 @@
 
     const gradivoSelect = document.getElementById('gradivoSelect');
     const tezinaSelect = document.getElementById('tezinaSelect');
-    const zavijaOpcija = document.getElementById('zavijaOpcija');
+    //const zavijaOpcija = document.getElementById('zavijaOpcija');
     const chkLakse = document.getElementById('chkLakse');
     
     const btnGeneriraj = document.getElementById('btnGeneriraj');
@@ -948,12 +951,14 @@ function generirajZadatak() {
     explanationBox.style.display = 'none';
     oznaciDio = 10;
     
+    /*
     if (gradivoSelect.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
         if(tezinaSelect.value == 7) { 
             tezinaSelect.value = 0; 
         }
     }
+    */
     
     //generirajKrajolik(0);
     generirajNoviKrajolik();
@@ -968,16 +973,28 @@ function generirajZadatak() {
         }
     });
         
-    let gradivo = gradivoSelect.value;
+    
     
     // Logika za opciju "ili lakše"
     let odabranaTezina = parseInt(tezinaSelect.value);
+    let odabranoGradivo = gradivoSelect.value;
     const ciljanaTezina = odabranaTezina;
     if (chkLakse.dataset.active === 'true') {
-        odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
+        if(odabranoGradivo === 'sva') 
+            odabranoGradivo = slucajan(['jednoliko','sva','sva']);
+        else if(odabranoGradivo === 'krivo')
+            odabranoGradivo = slucajan(['jednoliko','sva','krivo']);
+        if(odabranoGradivo === 'krivo') 
+            if(odabranaTezina<6)
+                odabranaTezina = 6;
+            else
+                odabranaTezina = slucajan([0,6]);
+        else 
+            odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
     }
-    const tezina = odabranaTezina;
-
+    let tezina = odabranaTezina;
+    let gradivo = odabranoGradivo;
+    
     let dopusteniGrafovi = [];
     if (gradivo === 'jednoliko') {
         if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
@@ -985,21 +1002,30 @@ function generirajZadatak() {
         else if (tezina === 5) dopusteniGrafovi = ['v/t'];
         else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
     } else {
-        if (tezina === 0) dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
+        if (tezina === 0) { 
+            if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
+            else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
+        }
         else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
         else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
         else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
         else if (tezina === 6) dopusteniGrafovi = 
-                          (ciljanaTezina === 7) ? ['s/t', 'v/t', 's/t-krivo'] : ['s/t', 'v/t'];
-        else if (tezina === 7) dopusteniGrafovi = ['s/t-krivo'];   // NOVO
+                          (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
+        //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
     }
 
     const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
 
     let faze = [];
     let isDobarGraf = false;
+    let uspjesno = false;
     let pokusaji = 0;
-
+    let pokusaji2 = 0;
+    let kandidati = null;
+    
+while(!isDobarGraf && pokusaji2 < 10) {
+    pokusaji2++;
+    
     while (!isDobarGraf && pokusaji < 150) {
         pokusaji++;
         // Svaki pokušaj koristi novi nasumični raspored trajanja triju faza
@@ -1029,7 +1055,7 @@ function generirajZadatak() {
    
     // ZA TEŽINU 6  (KOJI OD GRAFOVA...?)
     
-    let kandidati = null;
+    
 
     if (tezina === 6 && isDobarGraf) {
         // Isti vremenski razmaci kao glavni graf, da su kandidati usporedivi
@@ -1047,7 +1073,7 @@ function generirajZadatak() {
         }
         
         const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
-        if (imaAkceleracije && ciljanaTezina !== 7) {
+        if (imaAkceleracije && gradivo !== 'krivo') {
             moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
         }
         
@@ -1065,15 +1091,18 @@ function generirajZadatak() {
         
         kandidati = [{ faze: faze, ispravan: true, razinaOdbacivanja: null }];
 
-        const ciljaneRazine = odaberiCiljaneRazine();
-
+        //const ciljaneRazine = odaberiCiljaneRazine();
+        let ciljaneRazine = [1,2,3];
+        if(pokusaji2>5) ciljaneRazine = [1,2,2];
+        if(pokusaji2>7) ciljaneRazine = [1,1,2];
+        
         for (let k = 0; k < 3; k++) {
             let lazniFaze = null;
             let uspjeh = false;
             let pokusajiL = 0;
             const ciljanaRazina = ciljaneRazine[k];
 
-            while (!uspjeh && pokusajiL < 1000) {
+            while (!uspjeh && pokusajiL < 400) {
                 pokusajiL++;
                 const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0);
                 if (!rez.isDobar) continue;
@@ -1093,8 +1122,9 @@ function generirajZadatak() {
                 uspjeh = true;
             }
 
-            if (pokusajiL > 150) {
+            if (pokusajiL >= 400) {
                 console.warn('Velik broj neuspjelih pokušaja za razinu ' + ciljanaRazina + ': ' + pokusajiL);
+                isDobarGraf = false;
             } else {
                 //console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
             }
@@ -1111,6 +1141,9 @@ function generirajZadatak() {
         
       
     }
+}  // glavna petlja s 10 pokušaja
+    if(pokusaji2>1) 
+        console.warn("Zadatak generiran iz "+pokusaji2+". pokušaja.");
 
     trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
     if (tezina === 6) {
@@ -1121,7 +1154,7 @@ function generirajZadatak() {
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
     
-    if (tezina === 0 || tezina === 7) {
+    if (tezina === 0) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
         pitanjeGrafoviRed.style.display = 'none';
@@ -1255,7 +1288,7 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
                 // Zabrana prelaska brzine preko nule usred faze - potrebno kad se pita
                 // za vrstu/smjer gibanja (0/7) ili računa površina/pomak (5), gdje
                 // predznak brzine mora biti jednoznačan unutar cijelog segmenta.
-                if ((tezina === 0 || tezina === 5 || tezina === 7) && yTrenutno * yKraj < 0) isDobar = false;
+                if ((tezina === 0 || tezina === 5) && yTrenutno * yKraj < 0) isDobar = false;
             }
         }
         else if (vrstaGrafa === 'a/t') {
@@ -1393,7 +1426,7 @@ function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivos
 // (razina 6)
 
 const EPS = 1e-9;
-const TOLERANCIJA_RANGA = 0.35; // relativna tolerancija: iznosi unutar ovog postotka smatraju se "praktički jednakima" (isti rang)
+const TOLERANCIJA_RANGA = 0.4; // relativna tolerancija: iznosi unutar ovog postotka smatraju se "praktički jednakima" (isti rang)
 
 // Računa potpis SVAKE faze u nizu, uzimajući u obzir tip grafa. razina3 kod
 // v/t, a/t i s/t je RELATIVNI RANG iznosa (0,1,2...) unutar OVOG grafa,
@@ -1491,7 +1524,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
         // --------------- VRSTA --------------
     
-    if (tezina === 0 || tezina === 7) {
+    if (tezina === 0) {
         // NULTA VJEŠTINA: Prepoznavanje gibanja
         const fIndeks = Math.floor(Math.random() * 3);
         const faza = faze[fIndeks];
@@ -1951,16 +1984,16 @@ function oblikujPitanjeIZadatak(zadatak) {
             if(zadatak.pitaniTip == 'v/t') {  // u v/t
                 svgs.push('jednoliko');
                 svgs.push('smjer');
-                infoObjasnjene += "1. <span class='mirovanje'>pogledamo gdje su vodoravne linije u s/t grafu (mirovanje). U tom dijelu treba biti linija na nuli u <b><i>v</i>/<i>t</i></b> grafu.</span><p>";
-                infoObjasnjene += "2. <span class='naprijed'>pogledamo gdje je linija uzlazna u <b><i>s</i>/<i>t</i></b> grafu (gibanje naprijed). U tom dijelu treba biti vodoravna linija iznad nule u <b><i>v</i>/<i>t</i></b> grafu.</span> <span class='unazad'>Ako je u <b><i>s</i>/<i>t</i></b> grafu linija silazna, brzina je negativna (ispod nule u <b><i>v</i>/<i>t</i></b> grafu).</span><p>";
-                infoObjasnjene += "Ako niti to nije dovoljno... <p>3. veći nagib u <b><i>s</i>/<i>t</i></b> grafu (veća brzina) znaći odmaknutija vodoravna linija od x-osi u <b><i>v</i>/<i>t</i></b> grafu.";
+                infoObjasnjene += "1. <span class='mirovanje'>pogledamo gdje su vodoravne linije u s/t grafu (mirovanje). U tom dijelu (i samo tamo) treba biti linija na nuli u <b><i>v</i>/<i>t</i></b> grafu.</span>"+odbaceni(1);
+                infoObjasnjene += "2. <span class='naprijed'>pogledamo gdje je linija uzlazna u <b><i>s</i>/<i>t</i></b> grafu (gibanje naprijed). U tom dijelu treba biti vodoravna linija iznad nule u <b><i>v</i>/<i>t</i></b> grafu.</span> <span class='unazad'>Ako je u <b><i>s</i>/<i>t</i></b> grafu linija silazna, brzina je negativna (ispod nule u <b><i>v</i>/<i>t</i></b> grafu).</span>"+odbaceni(2);
+                infoObjasnjene += "Ako niti to nije dovoljno... <p>3. veći nagib u <b><i>s</i>/<i>t</i></b> grafu (veća brzina) znaći odmaknutija vodoravna linija od x-osi u <b><i>v</i>/<i>t</i></b> grafu."+odbaceni(3);
             }
         } else if(zadatak.vrstaGrafa == 's/t-krivo') {  // s/t za ubrzana gibanja
             if(zadatak.pitaniTip == 'v/t') {  //   u v/t
                 svgs.push('jednoliko');
                 svgs.push('s-v');
                 infoObjasnjene += "1. Pogledamo ima li dijelova gdje je tijelo mirovalo (vodoravna linija u <b><i>s</i>/<i>t</i></b> grafu). Tamo mora biti linija na nuli u <b><i>v</i>/<i>t</i></b> grafu!<p>";
-                infoObjasnjene += "2. Pogledamo ima li dijelova gdje imamo kosu liniju u <b><i>s</i>/<i>t</i></b> grafu (jednoliko gibanje). Tamo mora biti vodoravna linija u <b><i>v</i>/<i>t</i></b> grafu!<br>Zakrivljene linije u <b><i>s</i>/<i>t</i></b> grafu postaju kose linije u <b><i>v</i>/<i>t</i></b> grafu.<p>";
+                infoObjasnjene += "2. Pogledamo ima li dijelova gdje imamo kosu liniju u <b><i>s</i>/<i>t</i></b> grafu (jednoliko gibanje). Samo tamo mora biti vodoravna linija u <b><i>v</i>/<i>t</i></b> grafu!<br>Zakrivljene linije u <b><i>s</i>/<i>t</i></b> grafu postaju kose linije u <b><i>v</i>/<i>t</i></b> grafu.<p>";
                 infoObjasnjene += "3. Sve uzlazne linije (gibanje naprijed) moraju biti linije iznad nule u <b><i>v</i>/<i>t</i></b> grafu!Silazne linije u <b><i>s</i>/<i>t</i></b> grafu moraju biti ispod x-osi u <b><i>v</i>/<i>t</i></b> grafu.<br>";
             } else {  //    u a/t graf
                 svgs.push('s-a2');
@@ -1976,20 +2009,20 @@ function oblikujPitanjeIZadatak(zadatak) {
                 } else {
                     svgs.push('jednoliko');
                     svgs.push('smjer');
-                    infoObjasnjene += "1. <span class='mirovanje'>Pogledamo imamo li negdje mirovanje (linija na nuli u <b><i>v</i>/<i>t</i></b> grafu). Tamo mora biti vodoravna linija u <b><i>s</i>/<i>t</i></b> grafu!</span><p>2. <span class='naprijed'>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija iznad nule, linija u <b><i>s</i>/<i>t</i></b> grafu mora se penjati prema gore (gibanja naprijed).</span><br><span class='unazad'>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija ispod nule, linija u <b><i>s</i>/<i>t</i></b> grafu mora biti silazna.</span><p>3. Tamo gdje je linija odmaknutija od nule u <b><i>v</i>/<i>t</i></b> grafu, nagib linije mora biti veći u <b><i>s</i>/<i>t</i></b> grafu.";
+                    infoObjasnjene += "1. <span class='mirovanje'>Pogledamo imamo li negdje mirovanje (linija na nuli u <b><i>v</i>/<i>t</i></b> grafu). Tamo mora biti vodoravna linija u <b><i>s</i>/<i>t</i></b> grafu!</span>"+odbaceni(1)+"2. <span class='naprijed'>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija iznad nule, linija u <b><i>s</i>/<i>t</i></b> grafu mora se penjati prema gore (gibanja naprijed).</span><br><span class='unazad'>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija ispod nule, linija u <b><i>s</i>/<i>t</i></b> grafu mora biti silazna.</span>"+odbaceni(2)+"3. Tamo gdje je linija odmaknutija od nule u <b><i>v</i>/<i>t</i></b> grafu, nagib linije mora biti veći u <b><i>s</i>/<i>t</i></b> grafu."+odbaceni(3);
                 }
             } else if(zadatak.pitaniTip == 'a/t') {
                 svgs.push('v-a');
-                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija u v//t grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo je akceleracija nula (vodoravna linija na nuli).<p>2. <span style='color: #00B9B9'>Sve uzlazne linije u <b><i>v</i>/<i>t</i></b> grafu su vodoravne linije iznad nule u <b><i>a</i>/<i>t</i></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><i>v</i>/<i>t</i></b> grafu su vodoravne linije ispod nule u <b><i>a</i>/<i>t</i></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>";
+                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija u v//t grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo je akceleracija nula (vodoravna linija na nuli)."+odbaceni(1)+"2. <span style='color: #00B9B9'>Sve uzlazne linije u <b><i>v</i>/<i>t</i></b> grafu su vodoravne linije iznad nule u <b><i>a</i>/<i>t</i></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><i>v</i>/<i>t</i></b> grafu su vodoravne linije ispod nule u <b><i>a</i>/<i>t</i></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"3. tamo gdje je veći nagib u v/t grafu (veća akceleracija), vodoravna linija u a/t grafu mora biti dalje of x-osi (nule)."+odbaceni(3);
             } else {   //  u s/t (ubrzana gibanja)
                 svgs.push('s-v-jednoliko');
                 svgs.push('s-v');
-                infoObjasnjene += "1. Pogledamo ima li negdje <span class='naprijed'>jednoliko gibanje naprijed</span> ili <span class='naprijed'>jednoliko gibanje unazad</span> (vodoravne linije u <b><i>v</i>/<i>t</i></b> grafu koje postaju kose linije u <b><i>s</i>/<i>t</i></b> grafu.<p>2. Tamo gdje je brzina pozitivna (linija iznad nule u <b><i>v</i>/<i>t</i></b> grafu), u <b><i>s</i>/<i>t</i></b> grafu linija mora biti uzlazna.<br>Tamo gdje je brzina negativna (linija ispod nule u <b><i>v</i>/<i>t</i></b> grafu), u <b><i>s</i>/<i>t</i></b> grafu linija mora biti silazna.<p>3. Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija nagnuta prema nuli (usporeno gibanje), <b><i>s</i>/<i>t</i></b> graf je zakrivljena linija koja postaje manje strma. <br>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija nagnuta od nule (ubrzano gibanje), <b><i>s</i>/<i>t</i></b> graf je zakrivljena linija koja postaje strmija.";
+                infoObjasnjene += "1. Pogledamo ima li negdje <span class='naprijed'>jednoliko gibanje naprijed</span> ili <span class='naprijed'>jednoliko gibanje unazad</span> (vodoravne linije u <b><i>v</i>/<i>t</i></b> grafu koje postaju kose linije u <b><i>s</i>/<i>t</i></b> grafu."+odbaceni(1)+"2. Tamo gdje je brzina pozitivna (linija iznad nule u <b><i>v</i>/<i>t</i></b> grafu), u <b><i>s</i>/<i>t</i></b> grafu linija mora biti uzlazna.<br>Tamo gdje je brzina negativna (linija ispod nule u <b><i>v</i>/<i>t</i></b> grafu), u <b><i>s</i>/<i>t</i></b> grafu linija mora biti silazna."+odbaceni(2)+"3. Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija nagnuta prema nuli (usporeno gibanje), <b><i>s</i>/<i>t</i></b> graf je zakrivljena linija koja postaje manje strma. <br>Tamo gdje je u <b><i>v</i>/<i>t</i></b> grafu linija nagnuta od nule (ubrzano gibanje), <b><i>s</i>/<i>t</i></b> graf je zakrivljena linija koja postaje strmija."+odbaceni(3);
             }
         } else {   // zadan a/t graf
             if(zadatak.pitaniTip == 'v/t') {
                 svgs.push('v-a');
-                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><i>a</i>/<i>t</i></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><i>v</i>/<i>t</i></b> grafu mora biti neka vodoravna linija.</span><p>2. <span style='color: #00B9B9'>Ako je u <b><i>a</i>/<i>t</i></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><i>v</i>/<i>t</i></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><i>a</i>/<i>t</i></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><i>v</i>/<i>t</i></b> grafu.</span>";
+                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><i>a</i>/<i>t</i></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><i>v</i>/<i>t</i></b> grafu mora biti neka vodoravna linija.</span>"+odbaceni(1)+"2. <span style='color: #00B9B9'>Ako je u <b><i>a</i>/<i>t</i></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><i>v</i>/<i>t</i></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><i>a</i>/<i>t</i></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><i>v</i>/<i>t</i></b> grafu.</span>"+odbaceni(2)+"3. Tako gdje akceleracija ima veću vrijednost (linija u grafu je udaljenija od nule), kosa linija u <b><i>v</i>/<i>t</i></b> grafu mora imati veći nagib."+odbaceni(3);
             }
         }
         
@@ -2002,7 +2035,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     // Za razinu 0 već smo spremili objekt s vrstom i smjerom, 
     // pa ovo radimo samo za ostale razine gdje je točan odgovor broj:
-    if (tezina !== 0 && tezina !== 6 && tezina !== 7) {
+    if (tezina !== 0 && tezina !== 6) {
         zadatak.tocanOdgovor = tocanOdgovor;
     }
 
@@ -2027,6 +2060,26 @@ function oblikujPitanjeIZadatak(zadatak) {
     
 }
 
+function odbaceni(broj) {
+    const grafovi = [];
+
+    trenutniZadatak.kandidati.forEach((kandidat, index) => {
+        if (kandidat.razinaOdbacivanja === broj) {
+            grafovi.push(index + 1); // želimo numeraciju od 1 do 4
+        }
+    });
+
+    if (grafovi.length === 0) {
+        return "<p>";
+    }
+
+    if (grafovi.length === 1) {
+        return `<br>Na ovaj smo način mogli odbaciti graf <b>${grafovi[0]}</b>.<p>`;
+    }
+
+    const zadnji = grafovi.pop();
+    return `<br>Na ovaj smo način mogli odbaciti grafove <b>${grafovi.join("</b>, <b>")}</b> i <b>${zadnji}</b>.<p>`;
+}
 
     
 function provjeriOdgovor() {
@@ -2046,7 +2099,7 @@ function provjeriOdgovor() {
     pokreniAnimaciju();
     
     // Provjera ako smo na nultoj vještini (prepoznavanje)
-    if (trenutniZadatak.tezina === 0 || trenutniZadatak.tezina === 7) {
+    if (trenutniZadatak.tezina === 0) {
         const odabranaVrsta = selectVrsta.value;
         const odabraniSmjer = selectSmjer.value;
 
@@ -2084,7 +2137,7 @@ function provjeriOdgovor() {
         
         let tocno = "";
         
-        if (trenutniZadatak.tezina !== 0 && trenutniZadatak.tezina !== 7) {   // izmijenjeno 6->7
+        if (trenutniZadatak.tezina !== 0) {   // izmijenjeno 6->7
             tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
@@ -3219,7 +3272,9 @@ function odaberi(str) {
     return emojiArray[Math.floor(Math.random() * emojiArray.length)];
 }
 
-
+function slucajan(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
 
 
 
@@ -3399,6 +3454,7 @@ function azurirajTockice(t) {
 
 // ostale interakcije
 
+/*
 gradivoSelect.addEventListener("change", (e) => {
     if (e.target.value === "jednoliko") {
         zavijaOpcija.disabled = 1;
@@ -3409,12 +3465,13 @@ gradivoSelect.addEventListener("change", (e) => {
         zavijaOpcija.disabled = 0;
     }
 });
+*/
 
 function procesirajKlikNaGrafove() {
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 
             prikazaniDodatniGrafovi = 0;
-            if(trenutniZadatak.tezina == 7) prikazaniOdabirGrafovi = 1;
+            //if(trenutniZadatak.tezina == 7) prikazaniOdabirGrafovi = 1;
         } else if(prikazaniOdabirGrafovi) {
             prikazaniOdabirGrafovi = 0;
             prikazaniDodatniGrafovi = 1;
