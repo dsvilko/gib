@@ -1835,23 +1835,28 @@ function oblikujPitanjeIZadatak(zadatak) {
         let maxNagib = Math.max(...iznosiNagiba);
         let minNagib = Math.min(...iznosiNagiba2.filter(n => n > 0));
         tocanOdgovor = iznosiNagiba.indexOf(maxNagib) + 1;
+        
         oznaciDio = 4;
         if (vrstaGrafa === 's/t') {
             if(iznosiNagiba2.filter(n => n > 0).length >= 2 && Math.random(1)<0.2) {
                 tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najstrmija</b>?`;
                 infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <i>s</i>–<i>t</i> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <i>s</i>–<i>t</i> grafu, najmanji nagib vjerojatno pokazuje najstrimiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
                 tocanOdgovor = iznosiNagiba.indexOf(minNagib) + 1;
             } else {
                 tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) <b><u>brzina bila najveća</u></b>, po iznosu?`;
                 infoObjasnjene = `Brzina na <i>s</i>–<i>t</i> grafu određena je nagibom (strminom) linije. Jasno je da dio broj <b>${tocanOdgovor}</b> ima najveći nagib pa je tu tijelo bilo i najbrže.`;
+                infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
                 infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>s</i>–<i>t</i> grafu zato <b>je</b> brzina!`;
             }
         } else {
             tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
             infoObjasnjene = `Akceleracija na <i>v</i>–<i>t</i> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
+            infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja promjenu tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo akceleracija (promjena brzine po sekundi) a ujedno i nagib te linije!';
             infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>–<i>t</i> grafu zato <b>je</b> akceleracija!`;
         }
-        zadatak.pomocData = null;
+        //zadatak.pomocData = null;
+        zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0 };
         svgs.push('u-desno');
         svgs.push('strmije');
     }
@@ -2642,6 +2647,33 @@ const vizualniAsistentPlugin = {
                     );
                 }
             }
+        }
+        if (state.tip === 'usporedi_nagibe') {
+            let faze = trenutniZadatak.faze;
+            ctx.save();
+            for (let i=0; i<=2; i++) {
+                const px0 = xAxis.getPixelForValue(faze[i].t0);
+                const px1 = xAxis.getPixelForValue(faze[i].t0+1);
+                const py0 = yAxis.getPixelForValue(faze[i].y0);
+                const py1 = yAxis.getPixelForValue(faze[i].y0 + (faze[i].y1-faze[i].y0)/(faze[i].t1-faze[i].t0));
+                ctx.beginPath();
+                ctx.fillStyle='#FF000055';
+                
+                ctx.moveTo(px0,py0);
+                ctx.lineTo(px1,py0);
+                ctx.lineTo(px1,py1);
+                ctx.lineTo(px0,py0);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.strokeStyle='#FF0000';
+                ctx.lineWidth = 3;
+                ctx.moveTo(px1,py0);
+                ctx.lineTo(px1,py1);
+                ctx.stroke();
+                
+            }
+            ctx.restore();
         }
         
         
