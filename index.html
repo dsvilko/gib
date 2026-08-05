@@ -645,7 +645,6 @@
                 <option value="sva">ubrzana</option>
                 <option value="krivo">"zakrivljena"</option>
             </select>
-            <span class="cp-label">vještina:</span>
             
             <select id="tezinaSelect">
                 <option value="0" selected>0. Vrsta?</option>
@@ -1759,7 +1758,7 @@ function oblikujPitanjeIZadatak(zadatak) {
             const pomaci = faze.map(f => f.y1 - f.y0);
                 if (Math.random(1)<0.2 && pomaci.some(p => p > 0) && pomaci.some(p => p < 0)) {   // UKUPAN PUT (odometar)
             //if (Math.random(1)<0.5) {   // UKUPAN PUT (odometar)
-                tekst = "Koliki je <b>ukupan put</b> tijelo prešlo (koju promjenu bi odometar automobila pokazao)?"
+                tekst = "Koliki je <b>ukupan put</b> tijelo prešlo (za koliko bi se promijenio odometar automobila)?"
                 oznaciDio = 5;
                 tocanOdgovor = faze.reduce((zbroj, f) => zbroj + Math.abs(f.y1 - f.y0),0);
                 infoObjasnjene = `Ovo je nešto složenija varijanta zadatka s pomacima. Za razliku od pomaka (Δ<i>s</i>) koji može biti pozitivan (ako idemo prema naprijed ili negativan (ako se vraćamo unazad), ako nas stvarno zanima prijeđen put - koliko je odometar automobila pokazao ili koliko smo koraka od 1 metra mi stvarno napravili, moramo zbrojiti sve apsolutne vrijednosti pomaka (zanemarimo predznak).<p>Ovdje imamo tri dijela gibanja. Njihovi stvarni pomaci su:<br>`;
@@ -1790,7 +1789,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 //tekst = `Koliki je <b>pomak (Δ<i>s</i>)</b> tijela ${opisFaze}?`;
                 
                 tocanOdgovor = sKraj - sPoc;
-                infoObjasnjene = `Pomak računamo kao razliku konačnog i početnog položaja:<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>s</i>₂ - <i>s</i>₁</b><br>Konačni položaj iznosi ${sKraj} m, a početni iznosi ${sPoc} m.<br>Uvrštavanjem dobivamo:<br>&ensp;&emsp;Δ<i>s</i> = ${sKraj} m - ${sPoc} m = <b>${tocanOdgovor} m</b><br>Grafički si to možemo predstaviti "pomakom prema dolje ili gore" u tom dijelu gibanja (vidi crvenu strelicu dodanu gore na graf).`;
+                infoObjasnjene = `Pomak računamo kao razliku konačnog i početnog položaja:<br>&ensp;&emsp;<span class='unazad'><b>Δ<i>s</i> = <i>s</i>₂ - <i>s</i>₁</b></span><br>Konačni položaj iznosi ${sKraj} m, a početni iznosi ${sPoc} m.<br>Uvrštavanjem dobivamo:<br>&ensp;&emsp;<span class='unazad'>Δ<i>s</i> = ${sKraj} m - ${sPoc} m = <b>${tocanOdgovor} m</b></span><br>Grafički si to možemo predstaviti "pomakom prema dolje ili gore" u tom dijelu gibanja, između prve i zadnje točke (vidi crvenu strelicu dodanu gore na graf).<p>Pomak može biti pozitivan (idemo naprijed) ili negativan (vraćamo se unazad).`;
                 zadatak.pomocData = { tip: 'nagib_ili_delta', t0: tPoc, t1: tKraj, y0: sPoc, y1: sKraj, prikaziDx: false, prikaziDy: true, vrstaGrafa };
                 svgs.push('dy');
             }
@@ -1801,7 +1800,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 oznaciDio = faze.indexOf(f);
                 tekst = `Koliko je <b>sekundi trajao (Δ<i>t</i>)</b> <span class="highlight-blue">${faze.indexOf(f) + 1}. dio</span> gibanja?`;
                 tocanOdgovor = f.t1 - f.t0;
-                infoObjasnjene = `Trajanje pojedinog dijela gibanja očitavamo na osi vremena.<br>Ovaj dio započinje u ${f.t0}. sekundi, a završava u ${f.t1}. sekundi.<br>Interval iznosi:<br>&ensp;&emsp;Δ<i>t</i> = ${f.t1} s - ${f.t0} s = <b>${tocanOdgovor} s</b>.`;
+                infoObjasnjene = `Trajanje pojedinog dijela gibanja očitavamo na vremenskoj, x-osi.<br>Ovaj dio započinje u ${f.t0}. sekundi, a završava u ${f.t1}. sekundi.<br>Proteklo vrijeme zato iznosi:<br>&ensp;&emsp;<span class='naprijed'>Δ<i>t</i> = <i>t</i>₂ - <i>t</i>₁ = ${f.t1} s - ${f.t0} s = <b>${tocanOdgovor} s</b></span><p>Za razliku od pomaka (Δ<i>s</i>) ili promjene brzine (Δ<i>v</i>), proteklo vrijeme (Δ<i>t</i>) može biti jedino pozitivno. Bez vremeplova, ne možemo se vratiti nazad u vremenu, kao što se možemo vratiti nazad u prostoru ili kao što možemo smanjiti svoju brzinu.`;
                 zadatak.pomocData = { tip: 'nagib_ili_delta', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y0, prikaziDx: true, prikaziDy: false, vrstaGrafa };
                 svgs.push('dx');
             } else {
@@ -2568,14 +2567,22 @@ const vizualniAsistentPlugin = {
                 ctx.beginPath(); ctx.moveTo(xNula, yPixel); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = '#2563eb'; ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xPixel, yNula2); ctx.strokeStyle = '#dc2626'; ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
-                ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
+                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, '#2563eb', '');
+                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, '#dc2626', '');
+                dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
+                dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
+                //ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
+                //ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
             } else {
                 ctx.beginPath(); ctx.moveTo(xPixel, yNula2); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = '#2563eb'; ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xNula, yPixel); ctx.strokeStyle = '#dc2626'; ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
-                ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
+                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, '#dc2626', '');
+                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, '#2563eb', '');
+                dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
+                dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
+                //ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
+                //ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
             }
         }
 
