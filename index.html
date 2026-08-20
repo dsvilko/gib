@@ -66,8 +66,8 @@
             --paper-bg: white;
             --paper-dot-bg: #000;
             --paper-pos-bg: #F00;
-            --speedometer-bg: #000;
-            --speedometer-border: #fff;
+            --speedometer-bg: #fff;
+            --speedometer-border: #333;
             --svg-overlay-bg: #F8FAFC;
             --hint-overlay-bg: #ffffff;
             --hint-overlay-border: #cbd5e1;
@@ -255,32 +255,7 @@
     /* ---------- KRAJ NOVOG CONTROL PANELA ---------- */        
         
         
-   /*     
-        
-        .control-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            border: 1px solid var(--border);
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-*/
-
+  
         select {
             padding: 10px 0 10px 8px;
             border-radius: 6px;
@@ -490,6 +465,43 @@
             color: var(--text);
         }
 
+        .explanation details {
+            color: var(--text);
+            margin: 8px 0;
+            background: var(--card-bg);
+        }
+        .explanation summary {
+            cursor: pointer;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--text);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .explanation summary::-webkit-details-marker {
+            display: none;
+        }
+        .explanation summary::before {
+            content: '▸';
+            transition: transform 0.2s;
+            font-size: 1.22em;
+            color: var(--primary);
+        }
+        .explanation details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        .explanation details > div.details-content {
+            padding: 0 14px 12px;
+            line-height: 1.6;
+        }
+        .explanation details p {
+            margin: 0.5em 0;
+            text-align: left;
+        }
+
         .nefizikalno {
             margin: 15px;
             color: var(--nefizikalno-color);
@@ -583,7 +595,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 1px;
+            width: 2px;
             background-color: var(--phase-line-color, #888);
             pointer-events: none;
         }
@@ -594,7 +606,7 @@
             width: 2px;
             height: 100%;
             background-color: var(--paper-pos-bg);
-            opacity: 0.2;
+            opacity: 0.8;
         }
 
         /* Sloj 3: prednji plan (PNG s prozirnošću - grmlje, ograde i sl. ispred ceste) */
@@ -867,9 +879,9 @@
 
         <div class="gib-brzinomjer" id="gibBrzinomjerSloj">
             <svg viewBox="0 0 100 100">
-                <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#444" stroke-width="9" stroke-linecap="round" />
+                <path d="M 12 50 A 38 38 0 0 1 88 50" fill="none" stroke="#888" stroke-width="9" stroke-linecap="round" stroke-opacity="0.2" />
                 <line id="gibBrzinomjerKazaljka" x1="50" y1="50" x2="12" y2="50" stroke="#ff2626" stroke-width="7" stroke-linecap="round" />
-                <circle cx="50" cy="50" r="5.5" fill="#0f172a" />
+                <circle cx="50" cy="50" r="5.5" fill="#000" />
             </svg>
         </div>
     </div>
@@ -1040,13 +1052,9 @@
         akcVrh.setAttribute('fill', arrowColor);
         akcOznaka.setAttribute('fill', arrowColor);
         
-        // Speedometer
-        const speedoBg = isDark ? '#0f172a' : '#000';
-        const speedoBorder = isDark ? '#334155' : '#fff';
-        const speedoNeedle = isDark ? '#ff2626' : '#ff2626';
-        gibBrzinomjerPath.setAttribute('stroke', speedoBorder);
+        // Speedometer needle (container background handled by CSS vars)
+        const speedoNeedle = '#ff2626';
         gibBrzinomjerKazaljka.setAttribute('stroke', speedoNeedle);
-        gibBrzinomjerCircle.setAttribute('fill', speedoBg);
     }
 
     function toggleDarkMode() {
@@ -2055,13 +2063,13 @@ function oblikujPitanjeIZadatak(zadatak) {
                 tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) <b><u>brzina bila najveća</u></b>, po iznosu?`;
                 infoObjasnjene = `Brzina na <i>s</i>–<i>t</i> grafu određena je nagibom (strminom) linije. Jasno je da dio broj <b>${tocanOdgovor}</b> ima najveći nagib pa je tu tijelo bilo i najbrže.`;
                 infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
-                infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>s</i>–<i>t</i> grafu zato <b>je</b> brzina!`;
+                infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>s</i>–<i>t</i> grafu zato <b>je</b> brzina!</details>`;
             }
         } else {
             tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
             infoObjasnjene = `Akceleracija na <i>v</i>–<i>t</i> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
             infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja promjenu tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo akceleracija (promjena brzine po sekundi) a ujedno i nagib te linije!';
-            infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>–<i>t</i> grafu zato <b>je</b> akceleracija!`;
+            infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>–<i>t</i> grafu zato <b>je</b> akceleracija!</details>`;
         }
         //zadatak.pomocData = null;
         zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0 };
@@ -2104,15 +2112,15 @@ function oblikujPitanjeIZadatak(zadatak) {
                 infoObjasnjene = `Brzina je jednaka nagibu <i>s</i>–<i>t</i> grafa u tom dijelu.<br>&ensp;&emsp;<i>v</i> = <span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span><br>&ensp;&emsp; = <span class="dy">${dy} m</span> / <span class="dx">${dt} s</span> = <b>${tocanOdgovor} m/s</b>.`
             }
             infoObjasnjene += `<p>Brzinu <b>NIKAD ne računamo</b> tako da podijelimo <span style="color:#5BC2C2"><b>broj na y-osi</b></span> i <span style="color:#D298FC"><b>broj na x-osi</b></span>! Brzina nije položaj / trenutno vrijeme.`;
-            infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>s</i>–<i>t</i> grafu zato <b>je</b> brzina!`;
+            infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>s</i>–<i>t</i> grafu zato <b>je</b> brzina!</details>`;
         } else {
             tekst = `Kolika je <b>akceleracija</b> tijela u <span class="highlight-blue">${tSredina}. sekundi</span> gibanja?`;
             infoObjasnjene = `Akceleracija je jednaka nagibu <i>v</i>–<i>t</i> grafa u tom dijelu.<br>&ensp;&emsp;<i>a</i> = <span class="dy"><b>Δ<i>v</i></b></span> / <span class="dx"><b>Δ<i>t</i></b></span><br>&ensp;&emsp; = <span class="dy"><b>${dy} m/s</b></span> / <span class="dx"><b>${dt} s</b></span> = <b>${tocanOdgovor} m/s²</b>.`;
             infoObjasnjene += `<p>Akceleraciju <b>NIKAD ne računamo</b> tako da podijelimo <span style="color:#5BC2C2"><b>broj na y-osi</b></span> i <span style="color:#D298FC"><b>broj na x-osi</b></span>! Akceleracija nije trenutna brzina / trenutno vrijeme.`;
-            infoObjasnjene += `<p><b>Zašto?</b><br>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>–<i>t</i> grafu zato <b>je</b> akceleracija!`;
+            infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <i>v</i>–<i>t</i> grafu zato <b>je</b> akceleracija!</details>`;
         }
-        infoObjasnjene += '<p><b>Za ZNATIŽELJNE:</b><br>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<br>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
-        infoObjasnjene += `<p><b>Za LUMENE:</b><br>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <i>s</i>–<i>t</i> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<br>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<br>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<br>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<br>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<br>Krenimo od prvog člana: 2·<i>t</i>³. <br><b>Ovo je pravilo: derivacija od a·x<sup>b</sup> je a·b·x<sup>(b-1)</sup></b> (potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan).<br>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<br>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<br>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<br>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<br>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <br>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <i>v</i>–<i>t</i> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<br>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<br>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.`;
+        infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<br>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
+        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <i>s</i>–<i>t</i> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<br>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<br>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<br>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<br>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<br>Krenimo od prvog člana: 2·<i>t</i>³. <br><b>Ovo je pravilo: derivacija od a·x<sup>b</sup> je a·b·x<sup>(b-1)</sup></b> (potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan).<br>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<br>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<br>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<br>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<br>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <br>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <i>v</i>–<i>t</i> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<br>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<br>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
         if (racunaSeSrednja === 1) 
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[index].t0, t1: faze[index+1].t1, y0: faze[index].y0, y1: faze[index+1].y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
         else
@@ -2136,7 +2144,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     tocanOdgovor = Math.abs(faze[0].y1)*(faze[0].t1-faze[0].t0)+Math.abs(faze[1].y1)*(faze[1].t1-faze[1].t0)+Math.abs(faze[2].y1)*(faze[2].t1-faze[2].t0);
                     infoObjasnjene = `Ukupan prijeđen put ovdje je jednak zbroju svih površina obojanih pravokutnika. Da se pitalo o pomaku (udaljenosti konačnog mjesto od početnog), morali bismo uzeti u obzir i predznake - ljubičaste pravokutnike bismo oduzimali. Kako nam u ovom zadatku nije bitan smjer gibanja (odometar sve to bilježi kao gibanje), sve površine samo zbrojimo kao pozitivne.`;
                 }
-                infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu pojedinog pravokutnika mi zapravo računamo pomak tijela kod ovakvog niza jednolikih gibanja.`;
+                infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu pojedinog pravokutnika, dakle kao da računamo površinu, mi zapravo računamo pomak tijela kod ovakvog niza jednolikih gibanja.</details>`;
                 oznaciDio=5;
                 svgs.push('u-lijevo');
                 svgs.push('pov');
@@ -2150,7 +2158,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     let P = Math.abs(tocanOdgovor);
                     let neg = tocanOdgovor < 0 ? "Ako je ta površina ispod x-osi (kada je brzina negativna), pomak je negativan.<br>" : "";
                     infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o površini pravokutnika.<br>P = ${dy} · ${dt} = <b>${P}</b>.<br>${neg} Pomak je zato <b>${tocanOdgovor} metara</b>.`;
-                    infoObjasnjene += `<p><b>Zašto to radi?</b><br>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja.`;
+                    infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja. To da je pomak jednak površini 'ispod' <i>v</i>–<i>t</i> graf vrijedi i opčenito, kada ta površina nije samo jednostavan pravokutnik!</details>`;
                     zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
                     svgs.push('u-lijevo');
                     svgs.push('pov');
@@ -2160,9 +2168,9 @@ function oblikujPitanjeIZadatak(zadatak) {
                     tocanOdgovor = povPravokutnika + povTrokuta;
                     //if(povTrokuta != 0) {
                     //} 
-                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>–<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span class="pravokutnik">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span class="trokut"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
-                    infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span class="pravokutnik"><i>v₁</i> · Δ<i>t</i></span> + <span class="trokut">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
-                    infoObjasnjene += `<p><b>Za ZNATIŽELJNE:</b><br>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>–<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.`;  
+                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>–<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika:<br>&ensp;&emsp;<span class="pravokutnik">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<br>&ensp;&emsp;<span class="trokut"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
+                    infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span class="pravokutnik"><i>v₁</i> · Δ<i>t</i></span> + <span class="trokut">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!<p>Iz te formule, lako možemo izvesti i formulu za pomak kod jednoliko ubrzanog gibanja, ako znamo početnu brzinu i akceleraciju:<br>&ensp;&emsp;<b>Δ<i>s</i> =  <i>v₁</i> · Δ<i>t</i> + a · Δ<i>t</i>² / 2</b><br>... tako što smo u gornju formulu uvrstili<br>&ensp;&emsp;Δ<i>v</i> = a · Δ<i>t</i>.<br>Ako Vam je teško zapamtiti tu formulu, dovoljno je zapamtiti da se naprosto radi u računanju površine te tako razmišljati pri rješavanju zadatka.</details>`; 
+                    infoObjasnjene += `<details><summary>Za ZNATIŽELJNE</summary>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>–<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.</details>`;  
                     svgs.push('u-lijevo');
                     svgs.push('pov2');
                     zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
@@ -2179,10 +2187,10 @@ function oblikujPitanjeIZadatak(zadatak) {
                 let dy = Math.abs(f.y0);
                 let P = Math.abs(tocanOdgovor);
                 if (tocanOdgovor < 0) { 
-                    negText = "Ako je akceleracija negativna (ispod x-osi, usporavanje), kao u ovom slučaju, promjena brzina će također biti negativna "; 
+                    negText = "Ako je akceleracija negativna (ispod x-osi, usporavanje ili ubrzavanje unazad), kao u ovom slučaju, promjena brzina će također biti negativna "; 
                 }
                 infoObjasnjene = `Promjena brzine na <i>a</i>–<i>t</i> grafu odgovara <b>površini ispod grafa</b> (površini pravokutnika između linije koja predstavlja gibanje i x-osi).<br>Ta je površina ovdje:<br>&ensp;&emsp;<b>P = ${dy} · ${dt} = ${P}</b><br>${negText} pa je <br>&ensp;&emsp;<b>Δ<i>v</i> = ${tocanOdgovor} m/s</b>`;
-                infoObjasnjene += `<p><b>Zašto je Δ<i>v</i> = površina (u <i>a</i>–<i>t</i> grafu)?</b><br>Iz osnovne formule za akceleraciju:<br>&ensp;&emsp;<b><i>a</i> = Δ<i>v</i> / Δ<i>t</i></b><br>... formula za promjenu brzine je:<br>&ensp;&emsp;<b>Δ<i>v</i> = <i>a</i> · Δ<i>t</i></b><br>Računajući površinu pravokutnika (gore označenog drugom bojom) mi upravo množimo te dvije veličine ("visina" je iznos akceleracije, a "širina" je proteklo vrijeme) pa tako zapravo računamo promjenu brzine!`;
+                infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Iz osnovne formule za akceleraciju:<br>&ensp;&emsp;<b><i>a</i> = Δ<i>v</i> / Δ<i>t</i></b><br>... formula za promjenu brzine je:<br>&ensp;&emsp;<b>Δ<i>v</i> = <i>a</i> · Δ<i>t</i></b><br>Računajući površinu pravokutnika (gore označenog drugom bojom) mi upravo množimo te dvije veličine ("visina" je iznos akceleracije, a "širina" je proteklo vrijeme) pa tako zapravo računamo promjenu brzine!</details>`;
             }
             svgs.push('u-lijevo');
             svgs.push('pov');
