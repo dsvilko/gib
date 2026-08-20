@@ -56,6 +56,10 @@
 
             /* Explanation */
             --explanation-bg: #f8fafc;
+            --naprijed: #2563eb;
+            --pravokutnik: #AFE57A;
+            --trokut: #EEEA79;
+            --crvena: #DC2626;
 
             /* Misc */
             --nefizikalno-color: #666666;
@@ -112,15 +116,18 @@
 
             /* Explanation */
             --explanation-bg: #1e293b;
-
+            --naprijed: #316ae4;
+            --pravokutnik: #2b580b;
+            --trokut: #5f5f0e;
+            
             /* Misc */
             --nefizikalno-color: #94a3b8;
-            --paper-bg: #1e293b;
-            --paper-dot-bg: #f1f5f9;
-            --paper-pos-bg: #f87171;
+            --paper-bg: #e6d9ac;
+            --paper-dot-bg: #0f3da7;
+            --paper-pos-bg: #ff0404;
             --speedometer-bg: #0f172a;
             --speedometer-border: #334155;
-            --svg-overlay-bg: #0f172a;
+            --svg-overlay-bg: #1E293B;
             --hint-overlay-bg: #1e293b;
             --hint-overlay-border: #334155;
         }
@@ -154,7 +161,7 @@
         }
 
    /* ---------- NOVI CONTROL PANEL ---------- */
-.control-panel {
+    .control-panel {
         height: 35px;
         display: flex;
         align-items: center;
@@ -165,7 +172,7 @@
         color: var(--cp-text);
         padding: 5px 8px;
         border-radius: 0;
-        margin: -25px -25px 5px -25px;   /* edge-to-edge unutar containera */
+        margin: -25px -20px 5px -20px;   /* edge-to-edge unutar containera */
         font-size: 0.9rem;
         font-family: 'Roboto Condensed', 'Segoe UI', Tahoma, sans-serif;
         -webkit-overflow-scrolling: touch;
@@ -438,6 +445,7 @@
             background-color: var(--feedback-hint-bg);
             color: var(--feedback-hint-text);
             border: 1px solid var(--feedback-hint-border);
+            display: block;
         }
         
         /* Arrow styling */
@@ -477,12 +485,14 @@
 
         .ubrzano { color: #FF00FF; font-weight: 600; }
         .usporeno { color: #00BD68; font-weight: 600; }
-        .naprijed { color: blue; font-weight: 600; }
+        .naprijed { color: var(--naprijed); font-weight: 600; }
         .unazad { color: red; font-weight: 600; }
         .naprijedVT { color: blue; font-weight: 600; background: #DEE0FC; }
         .unazadVT { color: red; font-weight: 600; background: #F9D8D9; }
         .jednoliko { color: #00B9B9; font-weight: 600; }
         .mirovanje { color: #F9904E; font-weight: 600; }
+        .pravokutnik { background: var(--pravokutnik); font-weight: 600; padding: 4px; }
+        .trokut { background: var(--trokut); font-weight: 600; padding: 4px; }
         .strelica { color: #FACC00; font-weight: 600; }
         .dx { color: #3677EA; font-weight: 600; }
         .dy { color: #EA3F36; font-weight: 600; }
@@ -2117,8 +2127,8 @@ function oblikujPitanjeIZadatak(zadatak) {
                     tocanOdgovor = povPravokutnika + povTrokuta;
                     //if(povTrokuta != 0) {
                     //} 
-                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>–<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span style="background: #D7F5BB">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span style="background: #F9F2B3"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
-                    infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="background: #D7F5BB"><i>v₁</i> · Δ<i>t</i></span> + <span style="background: #F9F2B3">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
+                    infoObjasnjene = `I u ovom slučaju, kada nemamo vodoravnu liniju u <i>v</i>–<i>t</i> grafu već kosu, pomak koji smo napravili (Δ<i>s</i>) i dalje će biti jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b>!<br>Ovdje tu površinu možemo rastaviti na dvije površine (pomaka):<br>- površinu donjeg pravokutnika: <span class="pravokutnik">P₁ = ${minV} · ${dt} = ${povPravokutnika}</span><br>- gornjeg trokuta:<span class="trokut"> P₂ = ${razlikaV} · ${dt} / 2 = ${povTrokuta}</span><br>Ukupno nam to daje pomak od <b>${tocanOdgovor} m</b>.`;
+                    infoObjasnjene += `<p><b>Zašto je pomak jednak površini tog lika?</b><br>Ako znamo srednju brzinu, pomak uvijek možemo izračunati formulom:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span style="text-decoration:overline"><i>v</i></span> · Δ<i>t</i></b><br>Tu srednju brzinu u ovom slučaju možemo zapisati kao:<br>&ensp;&emsp;<b><span style="text-decoration:overline"><i>v</i></span> = <i>v₁</i> + Δ<i>v</i> / 2</b> &ensp;&emsp;(početna brzina + pola promjene brzine)<br>Ako to uvrstimo, dobijemo:<br>&ensp;&emsp;<b>Δ<i>s</i> = <span class="pravokutnik"><i>v₁</i> · Δ<i>t</i></span> + <span class="trokut">(Δ<i>v</i> · Δ<i>t</i>) / 2</span></b><br>... a to su upravo gornje dvije površine!`; 
                     infoObjasnjene += `<p><b>Za ZNATIŽELJNE:</b><br>Jednako kao što se računanje nagiba polazalo kao jako korisna vještina, tako se korisnim pokazalo i računanje površine ispod grafa (ne samo kod gibanja!).<br>Ako se radi o kombinaciji vodoravnih i kosih linija, kao kod naših <i>v</i>–<i>t</i> grafova, tu je površinu jednostavno izračunati zbrajajući površine pravokutnika i pravokutnih trokuta, no što ako je naš graf nekakva zakrivljena linija? Kako bismo tada odredili površinu?<br>Matematički alat (postupak) koji nam upravo pomaže pronaći odgovor na pitanje "kolika je površina ispod linije grafa" naziva se <a href="https://hr.wikipedia.org/wiki/Integral">integral</a>.<br>Kao i derivacije (koje pomažu pronaći nagib) i njih je otkrio i među prvima koristio <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>!<br>Integral je suprotna operacija derivaciji. Jednako kao što derivacijom položaja dođemo do brzine, a derivacijom brzine do akceleracije (tražeći nagibe), tako integrirajući akceleraciju možemo doći do brzine, a derivirajući brzinu do položaja.`;  
                     svgs.push('u-lijevo');
                     svgs.push('pov2');
@@ -2183,7 +2193,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 }
             } else if(zadatak.pitaniTip == 'a/t') {
                 svgs.push('v-a');
-                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija u v//t grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"2. <span style='color: #00B9B9'>Sve uzlazne linije u <b><i>v</i>–<i>t</i></b> grafu su vodoravne linije iznad nule u <b><i>a</i>–<i>t</i></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><i>v</i>–<i>t</i></b> grafu su vodoravne linije ispod nule u <b><i>a</i>–<i>t</i></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"3. tamo gdje je veći nagib u <i>v</i>–<i>t</i> grafu (veća akceleracija), vodoravna linija u <i>a</i>–<i>t</i> grafu mora biti dalje of x-osi (nule)."+odbaceni(3);
+                infoObjasnjene += "1. <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><i>v</i>–<i>t</i></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"2. <span style='color: #00B9B9'>Sve uzlazne linije u <b><i>v</i>–<i>t</i></b> grafu su vodoravne linije iznad nule u <b><i>a</i>–<i>t</i></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><i>v</i>–<i>t</i></b> grafu su vodoravne linije ispod nule u <b><i>a</i>–<i>t</i></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"3. tamo gdje je veći nagib u <b><i>v</i>–<i>t</i></b> grafu (veća akceleracija), vodoravna linija u <b><i>a</i>–<i>t</i></b> grafu mora biti dalje of x-osi (nule)."+odbaceni(3);
             } else {   //  u s-t (ubrzana gibanja)
                 svgs.push('s-v-jednoliko');
                 svgs.push('s-v');
@@ -2706,7 +2716,7 @@ const vizualniAsistentPlugin = {
         }
         
         function dopisiYVrijednost(x,y,boja,vrijednost) {
-            ctx.fillStyle = DM ? '#000000' : '#ffffff';
+            ctx.fillStyle = DM ? '#ffffff' : '#ffffff';
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -2731,17 +2741,17 @@ const vizualniAsistentPlugin = {
 
             if (state.reverse) {
                 ctx.beginPath(); ctx.moveTo(xNula, yPixel); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = cssVar('--primary'); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xPixel, yNula2); ctx.strokeStyle = cssVar('--danger'); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xPixel, yNula2); ctx.strokeStyle = cssVar('--crvena'); ctx.stroke();
                 ctx.setLineDash([]);
                 crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, cssVar('--primary'), '');
-                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--danger'), '');
+                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--crvena'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
             } else {
                 ctx.beginPath(); ctx.moveTo(xPixel, yNula2); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = cssVar('--primary'); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xNula, yPixel); ctx.strokeStyle = cssVar('--danger'); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xNula, yPixel); ctx.strokeStyle = cssVar('--crvena'); ctx.stroke();
                 ctx.setLineDash([]);
-                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, cssVar('--danger'), '');
+                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, cssVar('--crvena'), '');
                 crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--primary'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
@@ -2763,7 +2773,7 @@ const vizualniAsistentPlugin = {
             ctx.lineWidth = 2;
             ctx.setLineDash([5,5]);
             if (state.prikaziDy) {
-                ctx.strokeStyle = cssVar('--danger');
+                ctx.strokeStyle = cssVar('--crvena');
                 ctx.beginPath(); ctx.moveTo(X0, py0); ctx.lineTo(px0, py0); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(X0, py1); ctx.lineTo(px1, py1); ctx.stroke();
             }
@@ -2789,7 +2799,7 @@ const vizualniAsistentPlugin = {
                 //crtajStrelicu(startX, py0, startX, py1, '#dc2626', [
                 //    { t: 'Δ', i: false }, { t: oznakaSlovo, i: true }, { t: ` = ${state.y1 - state.y0} ${mjernaJedi}`, i: false }
                 //]);
-                crtajStrelicu(X0, py0, X0, py1, cssVar('--danger'), [
+                crtajStrelicu(X0, py0, X0, py1, cssVar('--crvena'), [
                     { t: 'Δ', i: false }, { t: oznakaSlovo, i: true }, { t: ` = ${(state.y1 - state.y0).toString().replace('-', '–')} ${mjernaJedi}`, i: false }], { pocetna: state.y0, krajnja: state.y1 }
                 );
             }
@@ -2807,11 +2817,11 @@ const vizualniAsistentPlugin = {
                     ctx.save();
                     ctx.setLineDash([6, 4]);
                     ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.strokeStyle = cssVar('--danger'); 
+                    ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.strokeStyle = cssVar('--crvena'); 
                     ctx.stroke();
                     ctx.restore();
                     
-                    crtajStrelicu(px0, py0, px0, py1, cssVar('--danger'), [
+                    crtajStrelicu(px0, py0, px0, py1, cssVar('--crvena'), [
                      { t: ` ${Math.abs(faze[i].y0 - faze[i].y1).toString()} m`, i: false }], { pocetna: faze[i].y0, krajnja: faze[i].y1 }
                     );
                 }
@@ -2826,7 +2836,7 @@ const vizualniAsistentPlugin = {
                 const py0 = yAxis.getPixelForValue(faze[i].y0);
                 const py1 = yAxis.getPixelForValue(faze[i].y0 + (faze[i].y1-faze[i].y0)/(faze[i].t1-faze[i].t0));
                 ctx.beginPath();
-                ctx.fillStyle = cssVar('--danger') + '55';
+                ctx.fillStyle = cssVar('--crvena') + '55';
                 
                 ctx.moveTo(px0,py0);
                 ctx.lineTo(px1,py0);
@@ -2835,7 +2845,7 @@ const vizualniAsistentPlugin = {
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.strokeStyle = cssVar('--danger');
+                ctx.strokeStyle = cssVar('--crvena');
                 ctx.lineWidth = 3;
                 ctx.moveTo(px1,py0);
                 ctx.lineTo(px1,py1);
@@ -3503,7 +3513,10 @@ function zaustaviSimulaciju() {
     trenutnoVrijemeSimulacije = null;
     akceleracijaStrelica.style.opacity=0;
  
-    if (animacijaFrameId) cancelAnimationFrame(animacijaFrameId);
+    if (animacijaFrameId) {
+        cancelAnimationFrame(animacijaFrameId);
+        animacijaFrameId = null;
+    }
     if (chartInstance) chartInstance.update();
     ostaliChartInstances.forEach(c => { if (c) c.update(); });
     document.querySelectorAll('.sakrij').forEach(el => {
@@ -3526,6 +3539,7 @@ function pokreniAnimaciju() {
         
         // Real-time protekle sekunde s beskonačnom petljom (loop)
         let proteklo = (vrijeme - startVrijeme) / 1000;
+        if (proteklo < 0) proteklo = 0;
         trenutnoVrijemeSimulacije = proteklo % ukupnoVrijeme;
         
         azurirajAuto(trenutnoVrijemeSimulacije);
@@ -3635,7 +3649,7 @@ function dodajTockicu(postotak, brzina) {
     tockica.className = 'tockica-gibanja';
     tockica.style.left = `${2+postotak*0.96}%`;
     tockica.style.top = `${(brzina < 0 ? 8 : 14)-0.2+Math.random(0.4)}px`;
-    tockica.style.background = DM ? (brzina < 0 ? '#fca5a5' : '#93c5fd') : `${brzina < 0 ? '#930000' : '#29319c'}`;
+    tockica.style.background = brzina < 0 ? '#930000' : '#29319c';
     tockica.style.opacity = Math.random(0.4)+0.6;
     papirTraka.appendChild(tockica);
 }
