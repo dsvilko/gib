@@ -20,6 +20,109 @@
             --text: #0f172a;
             --text-secondary: #475569;
             --border: #cbd5e1;
+
+            /* Control panel */
+            --cp-bg: var(--text);
+            --cp-text: #ffffff;
+            --cp-select-bg: #1e293b;
+            --cp-select-text: #ffffff;
+            --cp-select-border: #475569;
+            --cp-toggle-bg: #1e293b;
+            --cp-toggle-border: #475569;
+            --cp-toggle-text: #94a3b8;
+            --cp-toggle-active-bg: #475569;
+            --cp-toggle-active-border: #677b98;
+            --cp-toggle-active-text: #ffffff;
+
+            /* Question/interaction boxes */
+            --question-bg: #eff6ff;
+            --interaction-bg: #f8fafc;
+
+            /* Shalabahter */
+            --shalabahter-btn-bg: #ffffff;
+            --shalabahter-btn-text: #000000;
+            --shalabahter-overlay-bg: rgba(255, 255, 255, 0.5);
+            --shalabahter-content-bg: white;
+            --shalabahter-content-border: #555;
+
+            /* Feedback */
+            --feedback-correct-bg: #dcfce7;
+            --feedback-correct-border: #bbf7d0;
+            --feedback-incorrect-bg: #fee2e2;
+            --feedback-incorrect-border: #fecaca;
+            --feedback-hint-bg: #FFF9E5;
+            --feedback-hint-text: #FFD747;
+            --feedback-hint-border: #FFD747;
+
+            /* Explanation */
+            --explanation-bg: #f8fafc;
+
+            /* Misc */
+            --nefizikalno-color: #666666;
+            --paper-bg: white;
+            --paper-dot-bg: #000;
+            --paper-pos-bg: #F00;
+            --speedometer-bg: #000;
+            --speedometer-border: #fff;
+            --svg-overlay-bg: #F8FAFC;
+            --hint-overlay-bg: #ffffff;
+            --hint-overlay-border: #cbd5e1;
+        }
+
+        [data-theme="dark"] {
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --danger: #ff6f6f;
+
+            /* Control panel */
+            --cp-bg: #0f172a;
+            --cp-text: #f1f5f9;
+            --cp-select-bg: #334155;
+            --cp-select-text: #f1f5f9;
+            --cp-select-border: #475569;
+            --cp-toggle-bg: #334155;
+            --cp-toggle-border: #475569;
+            --cp-toggle-text: #94a3b8;
+            --cp-toggle-active-bg: #475569;
+            --cp-toggle-active-border: #677b98;
+            --cp-toggle-active-text: #ffffff;
+
+            /* Question/interaction boxes */
+            --question-bg: #1e3a5f;
+            --interaction-bg: #1e293b;
+
+            /* Shalabahter */
+            --shalabahter-btn-bg: #1e293b;
+            --shalabahter-btn-text: #f1f5f9;
+            --shalabahter-overlay-bg: rgba(15, 23, 42, 0.7);
+            --shalabahter-content-bg: #1e293b;
+            --shalabahter-content-border: #475569;
+
+            /* Feedback */
+            --feedback-correct-bg: #064e3b;
+            --feedback-correct-border: #065f46;
+            --feedback-incorrect-bg: #7f1d1d;
+            --feedback-incorrect-border: #991b1b;
+            --feedback-hint-bg: #51431e;
+            --feedback-hint-text: #fde047;
+            --feedback-hint-border: #fde047;
+
+            /* Explanation */
+            --explanation-bg: #1e293b;
+
+            /* Misc */
+            --nefizikalno-color: #94a3b8;
+            --paper-bg: #1e293b;
+            --paper-dot-bg: #f1f5f9;
+            --paper-pos-bg: #f87171;
+            --speedometer-bg: #0f172a;
+            --speedometer-border: #334155;
+            --svg-overlay-bg: #0f172a;
+            --hint-overlay-bg: #1e293b;
+            --hint-overlay-border: #334155;
         }
 
         body {
@@ -51,37 +154,37 @@
         }
 
    /* ---------- NOVI CONTROL PANEL ---------- */
-    .control-panel {
+.control-panel {
         height: 35px;
         display: flex;
         align-items: center;
         gap: 5px;
         flex-wrap: nowrap;
         overflow-x: auto;
-        background: var(--text);
-        color: #ffffff;
+        background: var(--cp-bg);
+        color: var(--cp-text);
         padding: 5px 8px;
         border-radius: 0;
         margin: -25px -25px 5px -25px;   /* edge-to-edge unutar containera */
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-family: 'Roboto Condensed', 'Segoe UI', Tahoma, sans-serif;
         -webkit-overflow-scrolling: touch;
     }
 
     .control-panel .cp-label {
         white-space: nowrap;
-        font-weight: 600;
+        font-weight: 400;
         flex-shrink: 0;
     }
 
     .control-panel select {
         height: 100%;
-        background: #1e293b;
-        color: #ffffff;
-        border: 1px solid #475569;
+        background: var(--cp-select-bg);
+        color: var(--cp-select-text);
+        border: 1px solid var(--cp-select-border);
         border-radius: 6px;
         padding: 3px 4px;
-        font-size: 1.2em;
+        font-size: 1em;
         font-family: inherit;
         /*max-width: 130px;
         flex-shrink: 1;*/
@@ -91,24 +194,24 @@
     /* toggle kao tipka koja mijenja boju prema stanju */
     .toggle-btn {
         height: 100%;
-      
+       
         white-space: nowrap;
         font-size: 0.9em;
         font-family: inherit;
         font-weight: 600;
         padding: 4px 8px;
         border-radius: 6px;
-        border: 1px solid #475569;
-        background: #1e293b;
-        color: #94a3b8;
+        border: 1px solid var(--cp-toggle-border);
+        background: var(--cp-toggle-bg);
+        color: var(--cp-toggle-text);
         cursor: pointer;
         transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
 
     .toggle-btn.active {
-        background: #475569;
-        border-color: #677b98;
-        color: #ffffff;
+        background: var(--cp-toggle-active-bg);
+        border-color: var(--cp-toggle-active-border);
+        color: var(--cp-toggle-active-text);
     }
 
     .control-panel .btn-primary {
@@ -219,7 +322,7 @@
         }
 
         .question-box {
-            background: #eff6ff;
+            background: var(--question-bg);
             border-left: 4px solid var(--primary);
             padding: 5px 10px 5px 15px;
             border-radius: 0 8px 8px 0;
@@ -236,7 +339,7 @@
             align-items: center;
             margin-bottom: 12px;
             flex-wrap: wrap;
-            background: #f8fafc;
+            background: var(--interaction-bg);
             padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
@@ -251,8 +354,8 @@
         }
         
         .shalabahterBtn {
-            background-color: #ffffff;
-            color: black;
+            background-color: var(--shalabahter-btn-bg);
+            color: var(--shalabahter-btn-text);
             border: none;
             cursor: pointer;
             font-weight: 600;
@@ -269,7 +372,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.5);
+            background: var(--shalabahter-overlay-bg);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -280,9 +383,9 @@
             display: inline-block;   /* shrink-wraps to content */
             padding: 16px;           /* space between image and box edge */
             margin: 24px;            /* space between box and viewport edge */
-            background: white;
+            background: var(--shalabahter-content-bg);
             border-radius: 8px;      /* optional styling */
-            border: 2px solid #555;
+            border: 2px solid var(--shalabahter-content-border);
             box-sizing: border-box;
             max-width: calc(100vw - 48px);   /* 100vw minus 2x margin */
             max-height: calc(100vh - 48px);  /* 100vh minus 2x margin */
@@ -320,21 +423,21 @@
         }
 
         .feedback.correct {
-            background-color: #dcfce7;
+            background-color: var(--feedback-correct-bg);
             color: var(--success);
-            border: 1px solid #bbf7d0;
+            border: 1px solid var(--feedback-correct-border);
         }
 
         .feedback.incorrect {
-            background-color: #fee2e2;
+            background-color: var(--feedback-incorrect-bg);
             color: var(--danger);
-            border: 1px solid #fecaca;
+            border: 1px solid var(--feedback-incorrect-border);
         }
 
         .feedback.hint {
-            background-color: #FFF9E5;
-            color: #FFD747;
-            border: 1px solid #FFD747;
+            background-color: var(--feedback-hint-bg);
+            color: var(--feedback-hint-text);
+            border: 1px solid var(--feedback-hint-border);
         }
         
         /* Arrow styling */
@@ -345,7 +448,7 @@
         }
         
         .explanation {
-            background: #f8fafc;
+            background: var(--explanation-bg);
             border: 1px solid var(--border);
             padding: 13px;
             border-radius: 8px;
@@ -360,7 +463,7 @@
 
         .nefizikalno {
             margin: 15px;
-            color: #666666;
+            color: var(--nefizikalno-color);
             font-style: italic;
             font-size: 0.8rem;
         }
@@ -431,7 +534,7 @@
             height: 20px;
             margin-top: 5px;
             margin-bottom: 5px;
-            background: white;
+            background: var(--paper-bg);
             box-shadow: 0 0px 8px rgba(0, 0, 0, 0.9);
         }
         
@@ -441,7 +544,7 @@
             width: 3px;
             height: 3px;
             border-radius: 50%;
-            background-color: #000;
+            background-color: var(--paper-dot-bg);
             transform: translate(-50%, -50%);
         }
         
@@ -450,7 +553,7 @@
             top: 0%;
             width: 2px;
             height: 100%;
-            background-color: #F00;
+            background-color: var(--paper-pos-bg);
             opacity: 0.2;
         }
 
@@ -474,8 +577,8 @@
             aspect-ratio: 1 / 1;
             transform: translateX(-50%);
             border-radius: 50%;
-            background-color: #000;
-            border: 0px solid #fff;
+            background-color: var(--speedometer-bg);
+            border: 0px solid var(--speedometer-border);
             box-shadow: 0 1px 4px rgba(255, 255, 255, 0.2);
             z-index: 4;
             /*transition: left 0.15s ease;*/
@@ -555,7 +658,7 @@
             top: 0;
             bottom: 0;
             width: 50%;                     /* Covers half the container width */
-            background-color: #F8FAFC;     /* Background color */
+            background-color: var(--svg-overlay-bg);     /* Background color */
             opacity: 0.7;                  /* transparency */
             pointer-events: none;          /* Allows clicks to pass through to images */
             z-index: 10;                   /* Keeps overlay on top of images */
@@ -573,8 +676,8 @@
         .hint-overlay {
             position: absolute;
             width: 180px;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
+            background-color: var(--hint-overlay-bg);
+            border: 1px solid var(--hint-overlay-border);
             border-radius: 8px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             padding: 10px;
@@ -656,6 +759,8 @@
                 <option value="6">6. Pretvori.</option>
                 
             </select>
+
+            <button id="btnDarkMode" class="toggle-btn" title="Dark mode" aria-label="Dark mode" style="flex: 0 0 auto;">☀️</button>
 
 
             <button id="btnGeneriraj" class="btn-primary" title="Novi zadatak" style="display:none">⟳</button>
@@ -740,7 +845,7 @@
         
         <div class="shalabahterOverlay" id="shalabahterOverlay">
             <div class="shalabahterOverlay-content">
-                <img src="svg/salabahter.svg" alt="Overlay image" id="shalabahterOverlayImg">
+                <img alt="Overlay image" id="shalabahterOverlayImg">
             </div>
         </div>
         
@@ -811,6 +916,10 @@
     let ostaliGrafoviVidljivi = false;
     let tockiceDodane = new Set();
 
+    function cssVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
     const gradivoSelect = document.getElementById('gradivoSelect');
     const tezinaSelect = document.getElementById('tezinaSelect');
     //const zavijaOpcija = document.getElementById('zavijaOpcija');
@@ -860,14 +969,73 @@
     const akceleracijaStrelica = document.getElementById('akceleracijaStrelica');
     const akcLinija = document.getElementById('akcLinija');
     const akcVrh = document.getElementById('akcVrh');
+    const akcOznaka = document.getElementById('akcOznaka');
+    const gibBrzinomjerPath = document.querySelector('#gibBrzinomjerSloj path');
+    const gibBrzinomjerCircle = document.querySelector('#gibBrzinomjerSloj circle');
 
     const chartContainer = document.getElementById('chartContainer');
     //const btnOstaliGrafovi = document.getElementById('btnOstaliGrafovi');
     const ostaliGrafoviRed = document.getElementById('ostaliGrafoviRed');
+    const btnDarkMode = document.getElementById('btnDarkMode');
 
     btnGeneriraj.addEventListener('click', generirajZadatak);
     btnProvjeri.addEventListener('click', provjeriOdgovor);
     btnDalje.addEventListener('click', () => btnGeneriraj.click());
+    btnDarkMode.addEventListener('click', toggleDarkMode);
+
+    let DM = 0; // Dark mode flag (0 = light, 1 = dark)
+
+    function svgPath(name) {
+        return `svg/${DM ? 'DM/' : ''}${name}.svg`;
+    }
+
+    function updateSimulationColors() {
+        const isDark = DM === 1;
+        // Acceleration arrow
+        const arrowColor = isDark ? '#facc15' : '#facc15'; // yellow works in both
+        akcLinija.setAttribute('stroke', arrowColor);
+        akcVrh.setAttribute('fill', arrowColor);
+        akcOznaka.setAttribute('fill', arrowColor);
+        
+        // Speedometer
+        const speedoBg = isDark ? '#0f172a' : '#000';
+        const speedoBorder = isDark ? '#334155' : '#fff';
+        const speedoNeedle = isDark ? '#ff2626' : '#ff2626';
+        gibBrzinomjerPath.setAttribute('stroke', speedoBorder);
+        gibBrzinomjerKazaljka.setAttribute('stroke', speedoNeedle);
+        gibBrzinomjerCircle.setAttribute('fill', speedoBg);
+    }
+
+    function toggleDarkMode() {
+        DM = DM ? 0 : 1;
+        document.documentElement.setAttribute('data-theme', DM ? 'dark' : 'light');
+        btnDarkMode.textContent = DM ? '🌙' : '☀️';
+        localStorage.setItem('darkMode', DM);
+        updateSimulationColors();
+        updateShalabahterImage();
+        
+        // Recreate charts with new colors (inline functions only evaluate at creation)
+        if (trenutniZadatak) {
+            prikaziGraf(trenutniZadatak);
+            if (ostaliGrafoviVidljivi) prikaziOstaleGrafove();
+            if (trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
+        }
+    }
+
+    function updateShalabahterImage() {
+        const img = document.getElementById('shalabahterOverlayImg');
+        if (img) img.src = svgPath('salabahter');
+    }
+
+    if (localStorage.getItem('darkMode') === '1' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        DM = 1;
+        document.documentElement.setAttribute('data-theme', 'dark');
+        btnDarkMode.textContent = '🌙';
+    }
+    
+    // Initial color setup for simulation
+    updateSimulationColors();
+    updateShalabahterImage();
 
     svgs = [];
     svgHide = '';
@@ -876,8 +1044,6 @@
     let v0Zadan = 0;
     let sakrijMinMax = 0;
     
-    let DM = 0; // Dark mode
-
     const isMobile = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
    
     //let Faze = {};
@@ -1919,7 +2085,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         if (vrstaGrafa === 'v/t' ) {
             if(Math.random(1)<0.3 && trenutniZadatak.gradivo === 'jednoliko') {
                 if(Math.random(1)<0.5) {
-                    tekst = `Koliko se završni položaj razlikuje pod početnog, ako promatramo cijelo prikazano gibanje?`;
+                    tekst = `Koliko se završni položaj razlikuje od početnog, ako promatramo cijelo prikazano gibanje?`;
                     tocanOdgovor = (faze[0].y1)*(faze[0].t1-faze[0].t0)+(faze[1].y1)*(faze[1].t1-faze[1].t0)+(faze[2].y1)*(faze[2].t1-faze[2].t0);
                     infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <i>v</i>–<i>t</i> grafa</b> (površini između linije i x-osi) - ovdje se radi o nizu površina pravokutnika. Površine iznad x-osi (zelena boja) odgovaraju pomacima naprijed (pozitivan pomak) dok površine ispod x-osi (ljubičasta boja) odgovaraju pomacima unazad (negativni pomaci). <br>Konačan odgovor na postavljeno pitanje dobijemo ako zbrojimo sve te površine, pazeći na njihove predznake.`;
                 } else {
@@ -2129,15 +2295,14 @@ function provjeriOdgovor() {
         feedbackBox.className = "feedback correct";
         feedbackBox.style.display = "block";
         feedbackBox.style.visibility = 'visible';
-        btnDalje.style.background = "#16a34a";
+        btnDalje.style.background = cssVar('--success');
         nivo++;
     } else {
-        //feedbackBox.innerHTML = `Netočno.`;
         feedbackBox.innerHTML = "";
         feedbackBox.className = "feedback incorrect";
         feedbackBox.style.display = "block";
         feedbackBox.style.visibility = 'visible';
-        btnDalje.style.background = "#dc2626";
+        btnDalje.style.background = cssVar('--danger');
         
         let tocno = "";
         
@@ -2163,7 +2328,7 @@ function provjeriOdgovor() {
             chartInstance.update(); 
         }
 
-        const imgTags = svgs.map(name => `<img src="svg/${name}.svg" alt="${name}" />`).join('\n  ');
+        const imgTags = svgs.map(name => `<img src="${svgPath(name)}" alt="${name}" />`).join('\n  ');
         let overlay='';
         if (svgHide !== '')  overlay = `<div class="svg-overlay svg-overlay-${svgHide}"></div>`;
         if (isMobile) {
@@ -2424,11 +2589,11 @@ const minimalnaOsPlugin = {
             const xCentar = (left + right) / 2;
             const yCentar = (top + bottom) / 2;
 
-            let boja = '#002ab345';
+            let boja = cssVar('--primary') + '45'; // semi-transparent primary
             
             if(danOdgovor) {
-                if(broj == trenutniZadatak.tocanOdgovor) boja = '#16A34A';
-                else if(broj == inputOdgovor.value) boja = '#DC2626';
+                if(broj == trenutniZadatak.tocanOdgovor) boja = cssVar('--success');
+                else if(broj == inputOdgovor.value) boja = cssVar('--danger');
             }
             
             //ctx.fillStyle = (DM ? '#ffffff' : '#000000'); // Boja teksta
@@ -2493,15 +2658,16 @@ const vizualniAsistentPlugin = {
                 const midY = (y1 + y2) / 2;
                 ctx.save();
                 ctx.translate(midX, midY);
+                const outlineColor = DM ? '#000000' : '#ffffff';
                 if (jeVertikalno) {
                     ctx.rotate(-Math.PI / 2);
-                    ctx.fillStyle = '#ffffff';
+                    ctx.fillStyle = outlineColor;
                     for(let i=-1; i<=1; i++) { for (let j=-1; j<=1; j++) {
                         nacrtajDijeloveTeksta(ctx, dijeloviTeksta, 0-i, 20-j, 'bold 15px sans-serif', 'center'); }}
                     ctx.fillStyle = boja;
                     nacrtajDijeloveTeksta(ctx, dijeloviTeksta, 0, 20, 'bold 15px sans-serif', 'center');
                 } else {
-                    ctx.fillStyle = '#ffffff';
+                    ctx.fillStyle = outlineColor;
                     for(let i=-1; i<=1; i++) { for (let j=-1; j<=1; j++) {
                         nacrtajDijeloveTeksta(ctx, dijeloviTeksta, 0-i, -10-j, 'bold 15px sans-serif', 'center'); }}
                     ctx.fillStyle = boja;
@@ -2540,7 +2706,7 @@ const vizualniAsistentPlugin = {
         }
         
         function dopisiYVrijednost(x,y,boja,vrijednost) {
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = DM ? '#000000' : '#ffffff';
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -2564,25 +2730,21 @@ const vizualniAsistentPlugin = {
                 yNula2 += 20;
 
             if (state.reverse) {
-                ctx.beginPath(); ctx.moveTo(xNula, yPixel); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = '#2563eb'; ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xPixel, yNula2); ctx.strokeStyle = '#dc2626'; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xNula, yPixel); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = cssVar('--primary'); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xPixel, yNula2); ctx.strokeStyle = cssVar('--danger'); ctx.stroke();
                 ctx.setLineDash([]);
-                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, '#2563eb', '');
-                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, '#dc2626', '');
+                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, cssVar('--primary'), '');
+                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--danger'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
-                //ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
-                //ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
             } else {
-                ctx.beginPath(); ctx.moveTo(xPixel, yNula2); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = '#2563eb'; ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xNula, yPixel); ctx.strokeStyle = '#dc2626'; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xPixel, yNula2); ctx.lineTo(xPixel, yPixel); ctx.strokeStyle = cssVar('--primary'); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(xPixel, yPixel); ctx.lineTo(xNula, yPixel); ctx.strokeStyle = cssVar('--danger'); ctx.stroke();
                 ctx.setLineDash([]);
-                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, '#dc2626', '');
-                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, '#2563eb', '');
+                crtajDiskSVrijednosti(xNula-DISK_OFFSET, yPixel, cssVar('--danger'), '');
+                crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--primary'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
-                //ctx.beginPath(); ctx.arc(xPixel, yNula, 6, 0, 2 * Math.PI); ctx.fillStyle = '#2563eb'; ctx.fill();
-                //ctx.beginPath(); ctx.arc(xNula, yPixel, 6, 0, 2 * Math.PI); ctx.fillStyle = '#dc2626'; ctx.fill();
             }
         }
 
@@ -2601,12 +2763,12 @@ const vizualniAsistentPlugin = {
             ctx.lineWidth = 2;
             ctx.setLineDash([5,5]);
             if (state.prikaziDy) {
-                ctx.strokeStyle = '#dc2626';
+                ctx.strokeStyle = cssVar('--danger');
                 ctx.beginPath(); ctx.moveTo(X0, py0); ctx.lineTo(px0, py0); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(X0, py1); ctx.lineTo(px1, py1); ctx.stroke();
             }
             if (state.prikaziDx) {
-                ctx.strokeStyle = '#2563eb';
+                ctx.strokeStyle = cssVar('--primary');
                 ctx.beginPath(); ctx.moveTo(px0, Y0); ctx.lineTo(px0, py0); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(px1, Y0); ctx.lineTo(px1, py1); ctx.stroke();
             }
@@ -2616,7 +2778,7 @@ const vizualniAsistentPlugin = {
                 //crtajStrelicu(px0, py0, px1, py0, '#2563eb', [
                 //    { t: 'Δ', i: false }, { t: 't', i: true }, { t: ` = ${state.t1 - state.t0} s`, i: false }
                 //]);
-                crtajStrelicu(px0, Y0, px1, Y0, '#2563eb', [
+                crtajStrelicu(px0, Y0, px1, Y0, cssVar('--primary'), [
                     { t: 'Δ', i: false }, { t: 't', i: true }, { t: ` = ${state.t1 - state.t0} s`, i: false }], { pocetna: state.t0, krajnja: state.t1 }
                 );
             }
@@ -2627,7 +2789,7 @@ const vizualniAsistentPlugin = {
                 //crtajStrelicu(startX, py0, startX, py1, '#dc2626', [
                 //    { t: 'Δ', i: false }, { t: oznakaSlovo, i: true }, { t: ` = ${state.y1 - state.y0} ${mjernaJedi}`, i: false }
                 //]);
-                crtajStrelicu(X0, py0, X0, py1, '#dc2626', [
+                crtajStrelicu(X0, py0, X0, py1, cssVar('--danger'), [
                     { t: 'Δ', i: false }, { t: oznakaSlovo, i: true }, { t: ` = ${(state.y1 - state.y0).toString().replace('-', '–')} ${mjernaJedi}`, i: false }], { pocetna: state.y0, krajnja: state.y1 }
                 );
             }
@@ -2645,11 +2807,11 @@ const vizualniAsistentPlugin = {
                     ctx.save();
                     ctx.setLineDash([6, 4]);
                     ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.strokeStyle = '#dc2626'; 
+                    ctx.beginPath(); ctx.moveTo(px0, py1); ctx.lineTo(px1, py1); ctx.strokeStyle = cssVar('--danger'); 
                     ctx.stroke();
                     ctx.restore();
                     
-                    crtajStrelicu(px0, py0, px0, py1, '#dc2626', [
+                    crtajStrelicu(px0, py0, px0, py1, cssVar('--danger'), [
                      { t: ` ${Math.abs(faze[i].y0 - faze[i].y1).toString()} m`, i: false }], { pocetna: faze[i].y0, krajnja: faze[i].y1 }
                     );
                 }
@@ -2664,7 +2826,7 @@ const vizualniAsistentPlugin = {
                 const py0 = yAxis.getPixelForValue(faze[i].y0);
                 const py1 = yAxis.getPixelForValue(faze[i].y0 + (faze[i].y1-faze[i].y0)/(faze[i].t1-faze[i].t0));
                 ctx.beginPath();
-                ctx.fillStyle='#FF000055';
+                ctx.fillStyle = cssVar('--danger') + '55';
                 
                 ctx.moveTo(px0,py0);
                 ctx.lineTo(px1,py0);
@@ -2673,7 +2835,7 @@ const vizualniAsistentPlugin = {
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.strokeStyle='#FF0000';
+                ctx.strokeStyle = cssVar('--danger');
                 ctx.lineWidth = 3;
                 ctx.moveTo(px1,py0);
                 ctx.lineTo(px1,py1);
@@ -2759,9 +2921,9 @@ const vizualniAsistentPlugin = {
             ctx.globalAlpha = 1;
             
             if (y0 && y1) {   // PRAVOKUTNIK  (postoji ako su oba y razlicita od 0)
-                crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
-                crtajDiskSVrijednosti(px0,(py0+p0)/2,'#000000aa','');
-                crtajDiskSVrijednosti((px0+px1)/2,(py0+p0)/2,'#000',20);
+                crtajDiskSVrijednosti((px0+px1)/2,py,(DM ? '#ffffffaa' : '#000000aa'),'');
+                crtajDiskSVrijednosti(px0,(py0+p0)/2,(DM ? '#ffffffaa' : '#000000aa'),'');
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+p0)/2,(DM ? '#FFF' : '#000'),20);
                 
                 dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
                 dopisiYVrijednost(px0,(py0+p0)/2,'#000',Math.abs(y));
@@ -2774,10 +2936,10 @@ const vizualniAsistentPlugin = {
                 const pMinV = yAxis.getPixelForValue(minV);
                 
                 if (!dxOznacen) 
-                    crtajDiskSVrijednosti((px0+px1)/2,py,'#000000aa','');
-                crtajDiskSVrijednosti(px0,(py0+py1)/2,'#000000aa','');
+                    crtajDiskSVrijednosti((px0+px1)/2,py,(DM ? '#ffffffaa': '#000000aa'),'');
+                crtajDiskSVrijednosti(px0,(py0+py1)/2,(DM ? '#FFFFFFaa' : '#000000aa'),'');
                 crtajDiskSVrijednosti((px0+px1)/2-20,(py0+py1)/2-20,'#F00',12);
-                crtajDiskSVrijednosti((px0+px1)/2,(py0+py1)/2,'#000',20);
+                crtajDiskSVrijednosti((px0+px1)/2,(py0+py1)/2,(DM ? '#FFF' : '#000'),20);
                 
                 if (!dxOznacen) 
                     dopisiYVrijednost((px0+px1)/2,py,'#000','×'+(t1-t0));
@@ -3194,7 +3356,7 @@ feedbackBox.addEventListener('click', (e) => {
 
     // 2. Generate img tags from the list
     const imgTags = svgs
-        .map(name => `<img src="svg/${name}.svg" alt="${name}" />`)
+        .map(name => `<img src="${svgPath(name)}" alt="${name}" />`)
         .join('');
 
     // 3. Create the overlay container
@@ -3473,7 +3635,7 @@ function dodajTockicu(postotak, brzina) {
     tockica.className = 'tockica-gibanja';
     tockica.style.left = `${2+postotak*0.96}%`;
     tockica.style.top = `${(brzina < 0 ? 8 : 14)-0.2+Math.random(0.4)}px`;
-    tockica.style.background = `${brzina < 0 ? '#930000' : '#29319c'}`;
+    tockica.style.background = DM ? (brzina < 0 ? '#fca5a5' : '#93c5fd') : `${brzina < 0 ? '#930000' : '#29319c'}`;
     tockica.style.opacity = Math.random(0.4)+0.6;
     papirTraka.appendChild(tockica);
 }
