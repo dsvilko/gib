@@ -512,6 +512,13 @@
             text-align: left;
         }
 
+				.box-text { 
+					margin: 5px;
+					text-align: center;
+					border: 1px solid var(--text);
+                    font-size: 1.3em;
+				}
+
         .nefizikalno {
             margin: 15px;
             color: var(--nefizikalno-color);
@@ -772,7 +779,7 @@
 
         .chart-hint-overlay {
             position: absolute;
-            bottom: 16px;
+            bottom: 45px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--grafovi-hint-bg);
@@ -784,8 +791,16 @@
             z-index: 100;
             pointer-events: none;
             animation: fadeIn 0.2s ease;
+            transition: opacity 0.5s ease;
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .chart-hint-overlay.already-seen {
+            animation: none;
+            opacity: 0.4;
+        }
+        .chart-hint-overlay.fading-out {
+            opacity: 0 !important;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -1105,6 +1120,7 @@
         localStorage.setItem('darkMode', DM);
         updateSimulationColors();
         updateShalabahterImage();
+        updateExplanationBoxImages();
         
         // Recreate charts with new colors (inline functions only evaluate at creation)
         if (trenutniZadatak) {
@@ -1112,6 +1128,14 @@
             if (ostaliGrafoviVidljivi) prikaziOstaleGrafove();
             if (trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
         }
+    }
+
+    function updateExplanationBoxImages() {
+        const images = explanationBox.querySelectorAll('img[src^="svg/"]');
+        images.forEach(img => {
+            const fileName = img.src.split('/').pop().replace('.svg', '');
+            img.src = svgPath(fileName);
+        });
     }
 
     function updateShalabahterImage() {
@@ -2168,8 +2192,8 @@ function oblikujPitanjeIZadatak(zadatak) {
             infoObjasnjene += `<p>Akceleraciju <b>NIKAD ne računamo</b> tako da podijelimo <span style="color:#5BC2C2"><b>broj na y-osi</b></span> i <span style="color:#D298FC"><b>broj na x-osi</b></span>! Akceleracija nije trenutna brzina / trenutno vrijeme.`;
             infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
         }
-        infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<br>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
-        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<br>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<br>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<br>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<br>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<br>Krenimo od prvog člana: 2·<i>t</i>³. <br><b>Ovo je pravilo: derivacija od a·x<sup>b</sup> je a·b·x<sup>(b-1)</sup></b> (potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan).<br>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<br>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<br>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<br>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<br>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <br>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<br>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<br>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
+        infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<p>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
+        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<p>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<p>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<p>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<p>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<p>Krenimo od prvog člana: 2·<i>t</i>³. <p><b>Ovo je pravilo:</b><br><div class='box-text'><span style='font-size: 0.8em'>derivacija od&emsp;</span><b>a·x<sup>b</sup></b>&emsp; <span style='font-size: 0.8em'> je </span><b>&emsp; a·b·x<sup>(b-1)</sup></b></b></div><i>(potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan)</i><p>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<p>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<p>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<p>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<p>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <p>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<p>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<p>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
         if (racunaSeSrednja === 1) 
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[index].t0, t1: faze[index+1].t1, y0: faze[index].y0, y1: faze[index+1].y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
         else
@@ -2361,22 +2385,36 @@ function provjeriOdgovor() {
 
     danOdgovor = 1;
 
-    // Show hint overlay if user hasn't clicked chart yet
+    // Show hint overlay
+    const existing = chartContainer.querySelector('.chart-hint-overlay');
+    if (existing) existing.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'chart-hint-overlay';
+    overlay.textContent = 'Klikni za prikaz ostalih grafova';
+    
     if (!userHasClickedChart) {
-        const existing = chartContainer.querySelector('.chart-hint-overlay');
-        if (existing) existing.remove();
-        
-        const overlay = document.createElement('div');
-        overlay.className = 'chart-hint-overlay';
-        overlay.textContent = 'Klikni za prikaz ostalih grafova';
-        chartContainer.appendChild(overlay);
-        
+        // First time: show at full opacity, fade to 0.4 after 4s (0.5s transition via CSS)
         overlay._hintTimeout = setTimeout(() => {
-            if (overlay.parentNode === chartContainer) overlay.remove();
+            if (overlay.parentNode === chartContainer) {
+                overlay.style.opacity = '0.4';
+            }
         }, 4000);
-        
-        chartContainer._hintOverlay = overlay;
+    } else {
+        // User has clicked before: show at 0.4 opacity immediately, fade out after 4s
+        overlay.classList.add('already-seen');
+        overlay._hintTimeout = setTimeout(() => {
+            if (overlay.parentNode === chartContainer) {
+                overlay.classList.add('fading-out');
+                setTimeout(() => {
+                    if (overlay.parentNode === chartContainer) overlay.remove();
+                }, 500);
+            }
+        }, 4000);
     }
+    
+    chartContainer.appendChild(overlay);
+    chartContainer._hintOverlay = overlay;
 
     prikaziOstaleGrafove();
     if(trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
@@ -3810,14 +3848,16 @@ gradivoSelect.addEventListener("change", (e) => {
 */
 
 function procesirajKlikNaGrafove() {
+    // Remove hint overlay on click (if visible)
+    const overlay = chartContainer._hintOverlay;
+    if (overlay) {
+        clearTimeout(overlay._hintTimeout);
+        overlay.remove();
+        chartContainer._hintOverlay = null;
+    }
+    
     if (!userHasClickedChart) {
         userHasClickedChart = true;
-        const overlay = chartContainer._hintOverlay;
-        if (overlay) {
-            clearTimeout(overlay._hintTimeout);
-            overlay.remove();
-            chartContainer._hintOverlay = null;
-        }
     }
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 
