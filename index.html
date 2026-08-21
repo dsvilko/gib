@@ -1762,6 +1762,7 @@ while(!isDobarGraf && pokusaji2 < 10) {
     if (maxAkceleracija === 0) maxAkceleracija = 1; // Osigurač protiv dijeljenja s 0
 
     trenutniZadatak.simulacijaProps = { minS, maxS, maxBrzina, maxAkceleracija };
+    trenutniZadatak.papirTrakaConfig = izracunajPapirTrakaConfig();
     azurirajAuto(0);
 }
 
@@ -4105,13 +4106,19 @@ function azurirajBrzinomjer(brzina, maxBrzina) {
 
 // --- TOČKICE TRAGA (svakih 0.1s tijekom prvog prolaska) ---
 
-function dodajTockicu(postotak, brzina) {
+function dodajTockicu(postotak, brzina, row) {
     const tockica = document.createElement('div');
     tockica.className = 'tockica-gibanja';
     tockica.style.left = `${2+postotak*0.96}%`;
-    tockica.style.top = `${(brzina < 0 ? 8 : 14)-0.2+Math.random(0.4)}px`;
+    
+    const config = trenutniZadatak?.papirTrakaConfig;
+    const rowHeight = config?.rowHeight || 4;
+    const r = row !== undefined ? row : (brzina < 0 ? 0 : 1);
+    const topBase = rowHeight * (r + 1);
+    const jitter = (Math.random() - 0.5) * 0.8;
+    tockica.style.top = `${topBase + jitter}px`;
     tockica.style.background = brzina < 0 ? '#930000' : '#29319c';
-    tockica.style.opacity = Math.random(0.4)+0.6;
+    tockica.style.opacity = Math.random() * 0.4 + 0.6;
     papirTraka.appendChild(tockica);
 }
 
@@ -4135,12 +4142,88 @@ function dodajFazneLinije() {
     });
 }
 
+function izracunajPapirTrakaConfig() {
+    if (!trenutniZadatak || !trenutniZadatak.faze) return null;
+    
+    const faze = trenutniZadatak.faze;
+    const EPS = 1e-9;
+    const TRACK_HEIGHT = 20;
+    
+    const segments = [];
+    
+    for (let i = 0; i < faze.length; i++) {
+        const faza = faze[i];
+        const t0 = faza.t0;
+        const t1 = faza.t1;
+        const v0 = faza.kinematika.v0;
+        const a = faza.kinematika.a;
+        const dt = t1 - t0;
+        const v1 = v0 + a * dt;
+        
+        const sign0 = v0 > EPS ? 1 : (v0 < -EPS ? -1 : 0);
+        const sign1 = v1 > EPS ? 1 : (v1 < -EPS ? -1 : 0);
+        
+        if (Math.abs(v0) < EPS && Math.abs(v1) < EPS) {
+            segments.push({ t0, t1, sign: 0, phaseIndex: i });
+        } else if (sign0 === sign1 || sign0 === 0 || sign1 === 0) {
+            const sign = sign0 !== 0 ? sign0 : sign1;
+            segments.push({ t0, t1, sign, phaseIndex: i });
+        } else {
+            const tCross = t0 - v0 / a;
+            if (tCross > t0 + EPS && tCross < t1 - EPS) {
+                segments.push({ t0, t1: tCross, sign: sign0, phaseIndex: i });
+                segments.push({ t0: tCross, t1, sign: sign1, phaseIndex: i });
+            } else {
+                segments.push({ t0, t1, sign: sign0, phaseIndex: i });
+            }
+        }
+    }
+    
+    let merged = [];
+    for (const seg of segments) {
+        if (merged.length === 0) {
+            merged.push({ ...seg });
+        } else {
+            const last = merged[merged.length - 1];
+            if (last.sign === 0 && seg.sign !== 0) {
+                last.t1 = seg.t1;
+                last.sign = seg.sign;
+                last.phaseIndex = seg.phaseIndex;
+            } else if (last.sign !== 0 && seg.sign === 0) {
+                last.t1 = seg.t1;
+            } else if (last.sign === seg.sign) {
+                last.t1 = seg.t1;
+            } else {
+                merged.push({ ...seg });
+            }
+        }
+    }
+    
+    const numSegments = merged.length;
+    const numRows = Math.min(numSegments, 3);
+    const rowHeight = TRACK_HEIGHT / (numRows + 1);
+    
+    segments.length = 0;
+    for (let i = 0; i < merged.length; i++) {
+        segments.push({ t0: merged[i].t0, t1: merged[i].t1, sign: merged[i].sign, phaseIndex: merged[i].phaseIndex, row: Math.min(i, numRows - 1) });
+    }
+    
+    return { numRows, rowHeight, segments };
+}
+
 function azurirajTockice(t) {
     const idx = Math.floor(t / 0.2 + 1e-9);
     if (tockiceDodane.has(idx)) return;
     tockiceDodane.add(idx);
     const { postotak, brzina } = izracunajStanjeGibanja(idx * 0.2);
-    dodajTockicu(postotak, brzina);
+    
+    let row = 1;
+    const config = trenutniZadatak?.papirTrakaConfig;
+    if (config && config.segments) {
+        const seg = config.segments.find(s => t >= s.t0 - 1e-9 && t <= s.t1 + 1e-9);
+        if (seg) row = seg.row;
+    }
+    dodajTockicu(postotak, brzina, row);
 }
 
 // ostale interakcije
