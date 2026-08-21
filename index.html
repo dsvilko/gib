@@ -3506,6 +3506,46 @@ const simulacijaPlugin = {
         ctx.strokeStyle = 'red';
         ctx.stroke();
         ctx.restore();
+
+        const t = trenutnoVrijemeSimulacije;
+        const hasAcceleration = trenutniZadatak?.faze?.some(f => Math.abs(f.kinematika.a) > 1e-9);
+        const isSorTChart = chart.canvas.id === 'gibanjaChart' 
+            ? trenutniZadatak?.vrstaGrafa === 's/t-krivo'
+            : chart.config.options.plugins?.skolskaOs?.simbol === 's';
+            
+        if (!hasAcceleration || !isSorTChart) return;
+
+        const faze = trenutniZadatak.faze;
+        const faza = faze.find(f => t >= f.t0 && t <= f.t1) || faze[faze.length - 1];
+        const dt = t - faza.t0;
+        const { s0, v0, a } = faza.kinematika;
+        
+        const s = s0 + v0 * dt + 0.5 * a * dt * dt;
+        const v = v0 + a * dt;
+        
+        const xMin = xAxis.min;
+        const xMax = xAxis.max;
+        const y1 = s + v * (xMin - t);
+        const y2 = s + v * (xMax - t);
+        
+        const px1 = xAxis.getPixelForValue(xMin);
+        const py1 = yAxis.getPixelForValue(y1);
+        const px2 = xAxis.getPixelForValue(xMax);
+        const py2 = yAxis.getPixelForValue(y2);
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(px1, py1);
+        ctx.lineTo(px2, py2);
+        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = DM? '#4186FF':'blue';
+        ctx.stroke();
+        ctx.font = '14px Arial';
+        ctx.fillStyle = DM? '#4186FF':'blue';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('v = nagib', xAxis.right - 2, yAxis.top - 20);
+        ctx.restore();
     }
 };
 
@@ -3659,7 +3699,7 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
     let natpis = '';
     let natpis2 = '';
     
-    if(simbolY === 's') natpis = 'v = nagib!';
+    //if(simbolY === 's') natpis = 'v = nagib!';
     if(simbolY === 'a' && (gradivoSelect.value === 'jednoliko' || zadatak.vrstaGrafa === 's/t') ) natpis2 = "NEFIZIKALNO!";
     else if(simbolY === 'v' && zadatak.gradivo === 'sva') natpis = 'a = nagib!';
     
