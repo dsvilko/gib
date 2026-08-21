@@ -8,6 +8,7 @@
   	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 		
     <style>
         :root {
@@ -226,6 +227,7 @@
         /*max-width: 130px;
         flex-shrink: 1;*/
         flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
+        text-align: center;
     }
 
     /* toggle kao tipka koja mijenja boju prema stanju */
@@ -1154,7 +1156,7 @@
                     </section>
                     <section>
                         <h3>Simulacija gibanja</h3>
-                        <p>Nakon što date svoj odgovor na pitanje, automatski će se pokrenuti malena simulacija tog zadanog gibanja. Neposredno same simulacije, na 'papirnatoj' traci, to će gibanje biti zapisano i virtualnim 'tipkalom' koje prati gibanje automobila i ostavlja točkicu na trenutni položaj svakih 0.1 s (10 točaka u sekundi).</p>
+                        <p>Nakon što date svoj odgovor na pitanje, automatski će se pokrenuti malena simulacija tog zadanog gibanja. Pored vozila, ako akcelleracija nije nula, biti će prikazan vektor akceleracije a time i rezultantne sile (žuta strelica). Na kazaljci brzinomjera također možete pratiti tenutni iznos brzine gibanja.<br> Neposredno ispod same simulacije, na 'papirnatoj' traci, to će gibanje biti zapisano i virtualnim 'tipkalom' koje prati gibanje automobila i ostavlja točkicu na trenutni položaj svakih 0.1 s (10 točaka u sekundi).</p>
                         <p>Klikim na simulaciju možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje.</p>
                     </section>
                     <section>
@@ -1242,6 +1244,9 @@
     let levelMastered = {};
     let currentLevelKey = null;
     let hintUsed = false;
+
+    // Debug flag: if true, fire confetti on every answer submission
+    let debug_confetti =false;
 
     function cssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -1398,8 +1403,50 @@
             let baseLabel = opt.dataset.baseLabel || opt.textContent;
             baseLabel = baseLabel.replace(/^\d+\.\s*/, '').replace(/\s*\([★☆*]+\)/, '').trim();
             opt.dataset.baseLabel = baseLabel;
-            opt.textContent = `${starCount}⭐ ${baseLabel}`;
+            opt.textContent = mastered ? `🏆 ${baseLabel}` : `${starCount}★ ${baseLabel}`;
         });
+    }
+
+    // Confetti celebration for level mastery (5 stars)
+    function triggerLevelUpConfetti() {
+        if (typeof confetti === 'undefined') return;
+        // Respect prefers-reduced-motion (canvas-confetti handles this internally)
+
+        const scene = document.getElementById('gibScena');
+        if (!scene) return;
+        const rect = scene.getBoundingClientRect();
+        const origin = {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight
+        };
+
+        const burstDefaults = {
+            spread: 360,
+            ticks: 60,
+            gravity: 0,
+            decay: 0.92,
+            startVelocity: 15,
+            colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+        };
+
+        const fireBurst = (delay, particleCount, scalar, shapes, velocityJitter = 5) => {
+            setTimeout(() => {
+                confetti({
+                    ...burstDefaults,
+                    particleCount,
+                    scalar,
+                    shapes,
+                    startVelocity: burstDefaults.startVelocity + (Math.random() - 0.5) * velocityJitter,
+                    origin
+                });
+            }, delay);
+        };
+
+        // 4 staggered bursts over ~350ms
+        fireBurst(0,   65, 1.2, ['star']);
+        fireBurst(80,  22, 0.7, ['circle']);
+        fireBurst(160, 40, 0.9, ['star'], 8);
+        fireBurst(240, 25, 0.6, ['circle', 'star'], 10);
     }
 
     function updateShalabahterImage() {
@@ -2733,10 +2780,12 @@ function provjeriOdgovor() {
                 levelMastered[currentLevelKey] = true;
                 nivo++;
                 generirajNoviKrajolik();
+                triggerLevelUpConfetti();
             }
             updateStarDisplay();
         }
-    } else {
+
+        } else {
         feedbackBox.innerHTML = "";
         feedbackBox.className = "feedback incorrect";
         feedbackBox.style.display = "block";
@@ -2784,6 +2833,11 @@ function provjeriOdgovor() {
             explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
         }
         explanationBox.style.display = "flow-root";
+    }
+
+    // Debug: fire confetti on every answer if debug_confetti is true
+    if (debug_confetti) {
+        triggerLevelUpConfetti();
     }
 }    
     
@@ -3965,6 +4019,11 @@ gibScena.addEventListener('click', () => {
         gibPrednji.style.opacity=100;
     }
     prednjiPrikazan = !prednjiPrikazan;
+
+    const starOverlay = document.getElementById('starOverlay');
+    if (starOverlay) {
+        starOverlay.style.opacity = prednjiPrikazan ? 1 : 0.5;
+    }
 });
 
 
@@ -4115,10 +4174,10 @@ function dodajTockicu(postotak, brzina, row) {
     const rowHeight = config?.rowHeight || 4;
     const r = row !== undefined ? row : (brzina < 0 ? 0 : 1);
     const topBase = rowHeight * (r + 1);
-    const jitter = (Math.random() - 0.5) * 0.8;
+    const jitter = (Math.random() - 0.5) * 0.2;
     tockica.style.top = `${topBase + jitter}px`;
     tockica.style.background = brzina < 0 ? '#930000' : '#29319c';
-    tockica.style.opacity = Math.random() * 0.4 + 0.6;
+    tockica.style.opacity = Math.random() * 0.2 + 0.8;
     papirTraka.appendChild(tockica);
 }
 
