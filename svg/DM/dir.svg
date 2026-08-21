@@ -900,7 +900,7 @@
            d="M 31.196394,77.250211 82.219325,50.957589"
            id="path22732-9-3" />
         <path
-           style="fill:none;fill-opacity:1;stroke:#ef1af4;stroke-width:2.165;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:4.33, 2.165;stroke-dashoffset:0;stroke-opacity:1"
+           style="fill:none;fill-opacity:1;stroke:#ff33ff;stroke-width:2.165;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:4.33, 2.165;stroke-dashoffset:0;stroke-opacity:1"
            d="m 13.39018,63.403809 43.726954,0.08954 -0.01825,21.993449"
            id="path23132-2-1"
            sodipodi:nodetypes="ccc" />
@@ -920,13 +920,13 @@
              x="21.940876"
              y="39.311478">DIREKTNO!</tspan></text>
         <circle
-           style="fill:#ff00eb;fill-opacity:1;stroke:none;stroke-width:6.07564"
+           style="fill:#ff33ff;fill-opacity:1;stroke:none;stroke-width:6.07564"
            id="path12166-7-4"
            cx="12.783566"
            cy="63.311607"
            r="4.301702" />
         <circle
-           style="fill:#ff00eb;fill-opacity:1;stroke:none;stroke-width:6.07564"
+           style="fill:#ff33ff;fill-opacity:1;stroke:none;stroke-width:6.07564"
            id="path12166-7-4-9"
            cx="57.227169"
            cy="85.56337"

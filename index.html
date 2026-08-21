@@ -8,6 +8,7 @@
   	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 		
     <style>
         :root {
@@ -226,6 +227,7 @@
         /*max-width: 130px;
         flex-shrink: 1;*/
         flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
+        text-align: center;
     }
 
     /* toggle kao tipka koja mijenja boju prema stanju */
@@ -366,7 +368,7 @@
             margin-bottom: 8px;
         }
         
-        .shalabahterBtn {
+.shalabahterBtn {
             background-color: var(--shalabahter-btn-bg);
             color: var(--shalabahter-btn-text);
             border: none;
@@ -378,46 +380,144 @@
             border: 1px solid var(--border);
         }
         
-        .shalabahterOverlay {
+        /* Help Overlay */
+        .help-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--shalabahter-overlay-bg);
-            justify-content: center;
-            align-items: center;
+            inset: 0;
             z-index: 1000;
-        }
-        
-         /* This box sizes to the image, not the screen */
-        .shalabahterOverlay-content {
-            display: inline-block;   /* shrink-wraps to content */
-            padding: 16px;           /* space between image and box edge */
-            margin: 24px;            /* space between box and viewport edge */
-            background: var(--shalabahter-content-bg);
-            border-radius: 8px;      /* optional styling */
-            border: 2px solid var(--shalabahter-content-border);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            /* Center content via flexbox */
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* spacing from viewport edges on small screens */
             box-sizing: border-box;
-            max-width: calc(100vw - 48px);   /* 100vw minus 2x margin */
-            max-height: calc(100vh - 48px);  /* 100vh minus 2x margin */
-        }
-
-        .shalabahterOverlay-content img {
-            display: block;
-            max-width: 100%;
-            max-height: calc(100vh - 48px - 32px); /* account for margin + padding */
-            
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            cursor: pointer;
         }
         
-
-        .shalabahterOverlay.active {
+        .help-overlay.active {
             display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .help-overlay-backdrop {
+            position: absolute;
+            inset: 0;
+            background: var(--shalabahter-overlay-bg);
+            z-index: 0;
+        }
+        
+        .help-overlay-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 700px;
+            height: 80vh;
+            max-height: 80vh;
+            background: var(--shalabahter-content-bg);
+            border-radius: 12px;
+            border: 2px solid var(--shalabahter-content-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .help-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        
+        .help-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .help-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            line-height: 1;
+            border-radius: 4px;
+            transition: background 0.15s, color 0.15s;
+        }
+        
+        .help-close-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .help-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* Typography inside help */
+        .help-body h3 {
+            margin: 24px 0 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .help-body h3:first-child {
+            margin-top: 0;
+        }
+        
+        .help-body p {
+            margin: 0 0 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .help-body ul, .help-body ol {
+            margin: 0 0 12px;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+        
+        .help-body li {
+            margin: 6px 0;
+        }
+        
+        .help-body table,td,th {
+            border: 1px solid var(--text-secondary);
+            padding: 4px 6px 4px 6px;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* SVG/Image scaling - fill width, maintain aspect ratio */
+        .help-body svg,
+        .help-body img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin: 16px 0;
+            border-radius: 8px;
+        }
+        
+        /* Optional: section spacing */
+        .help-body section {
+            margin-bottom: 24px;
+        }
+        
+        .help-body section:last-child {
+            margin-bottom: 0;
         }
 
         
@@ -512,6 +612,13 @@
             text-align: left;
         }
 
+				.box-text { 
+					margin: 5px;
+					text-align: center;
+					border: 1px solid var(--text);
+                    font-size: 1.3em;
+				}
+
         .nefizikalno {
             margin: 15px;
             color: var(--nefizikalno-color);
@@ -560,6 +667,24 @@
             line-height: 0; /* uklanja whitespace ispod inline slike */
             margin-top: 10px;
         }
+
+        /* Star overlay in top-left of scene */
+        .star-overlay {
+            position: absolute;
+            top: -4px;
+            left: 0px;
+            z-index: 10;
+            display: flex;
+            gap: 3px;
+            padding: 2px 4px;
+            font-size: 1.1rem;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+        .star-overlay .star { color: #888; }
+        .star-overlay .star.filled { color: #facc15; text-shadow: 1px 1px 2px #000, 0 0 4px #facc15; }
+        .star-overlay .star.mastered { color: #facc15; text-shadow: 1px 1px 2px #000, 0 0 6px #facc15; }
 
         /* Sloj 1: pozadinska slika (cesta, nebo, drveće u daljini...) - određuje visinu scene */
         .gib-pozadina-slika {
@@ -772,7 +897,7 @@
 
         .chart-hint-overlay {
             position: absolute;
-            bottom: 16px;
+            bottom: 45px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--grafovi-hint-bg);
@@ -784,8 +909,16 @@
             z-index: 100;
             pointer-events: none;
             animation: fadeIn 0.2s ease;
+            transition: opacity 0.5s ease;
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .chart-hint-overlay.already-seen {
+            animation: none;
+            opacity: 0.4;
+        }
+        .chart-hint-overlay.fading-out {
+            opacity: 0 !important;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -893,7 +1026,15 @@
     
     
     <div class="gib-scena" id="gibScena">
-        <img id= "gibPozadina" class="gib-pozadina-slika" src="https://dsvilko.github.io/gib/pozadine/France/bg2.jpg" alt="Pozadina ceste">
+        <img id= "gibPozadina" class="gib-pozadina-slika" src="pozadine/France/bg2.jpg" alt="Pozadina ceste">
+
+        <div id="starOverlay" class="star-overlay" aria-label="Razina napretka">
+            <span class="star" data-idx="1">☆</span>
+            <span class="star" data-idx="2">☆</span>
+            <span class="star" data-idx="3">☆</span>
+            <span class="star" data-idx="4">☆</span>
+            <span class="star" data-idx="5">☆</span>
+        </div>
 
         <div class="gib-vozilo-sloj" id="gibVoziloSloj">
            
@@ -912,10 +1053,10 @@
                         <text id="akcOznaka" x="100" y="3" fill="#facc15" font-size="13" text-anchor="middle" font-weight="bold" font-style="italic">a, Fʀ</text>
                     </g>
             </svg>
-            <img id="gibAuto" class="gib-auto" src="https://dsvilko.github.io/gib/vozila/mini.png" alt="Vozilo">
+            <img id="gibAuto" class="gib-auto" src="vozila/mini.png" alt="Vozilo">
         </div>
 
-        <img id="gibPrednji" class="gib-prednji-plan-slika" src="https://dsvilko.github.io/gib/pozadine/France/fg.png" alt="Prednji plan" onerror="this.style.display='none'">
+        <img id="gibPrednji" class="gib-prednji-plan-slika" src="pozadine/France/fg.png" alt="Prednji plan" onerror="this.style.display='none'">
 
         <div class="gib-brzinomjer" id="gibBrzinomjerSloj">
             <svg viewBox="0 0 100 100">
@@ -938,9 +1079,95 @@
             <button id="shalabahterBtn" class="shalabahterBtn" style="width: 50px">?</button>
         </div>
         
-        <div class="shalabahterOverlay" id="shalabahterOverlay">
-            <div class="shalabahterOverlay-content">
-                <img alt="Overlay image" id="shalabahterOverlayImg">
+        <div class="help-overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+            <div class="help-overlay-backdrop"></div>
+            <div class="help-overlay-content">
+                <header class="help-header">
+                    <h2 id="helpTitle">Pomoć</h2>
+                    <button class="help-close-btn" aria-label="Zatvori" type="button">✕</button>
+                </header>
+                <div class="help-body">
+                    <section>
+                        <h3>Šalabahter</h3>
+                        <img src="svg/salabahter.svg">
+                    </section>
+                    <section id="help-graphs">
+                        <h3>Osnovne upute</h3>
+                        <p>Stranica služi za vježbu razumijevanje grafičkog prikaza gibanja, posebno za učenike osnovne i srednje škole.</p>
+                        <p>Na vrhu možete odabrati koje gradivo želite vježbati:</p>
+                        <table>
+                            <tr>
+                                <td>jednolika</td>
+                                <td>Samo jednolika gibanja (stalna brzina).</td>
+                            </tr>
+                            <tr>
+                                <td>ubrzana</td>
+                                <td>Jednoliko ubrzana/usporedna gibanja.</td>
+                            </tr>
+                            <tr>
+                                <td>"zakrivljena"</td>
+                                <td><span class='x-t'>s-t</span> grafovi kod ubrzanih gibanja.</td>
+                            </tr>
+                        </table><br>
+                       <p>... kao i jednu od sedam vješina, na odabranoj vrsti gibanja:</p>
+                        <table>
+                            <tr>
+                                <td>Vrsta?</td>
+                                <td>Iz grafičkog prikaza prepoznaj o kojoj se vrsti gibanja radi.</td>
+                            </tr>
+                            <tr>
+                                <td>Direktno</td>
+                                <td>Direktno očitavanje tražene vrijednosti s grafa.</td>
+                            </tr>
+                            <tr>
+                                <td>Promjena?</td>
+                                <td>Računaje promjena vrijednosti iz grafa.</td>
+                            </tr>
+                            <tr>
+                                <td>Max?</td>
+                                <td>Uspoređivanje nagiba.</td>
+                            </tr>
+                            <tr>
+                                <td>Nagib?</td>
+                                <td>Odgovaranje na pitanje računanjem nagiba.</td>
+                            </tr>
+                            <tr>
+                                <td>Površina?</td>
+                                <td>Odgovaranje na piranjem računajući površinu ispod grafa.</td>
+                            </tr>
+                            <tr>
+                                <td>Pretvori</td>
+                                <td>Pretvori jedan grafički prikaz u drugi (višestruki izbor).</td>
+                            </tr>
+
+                        </table>
+                        <br>
+                        <p>Svaka kombinacija gradiva i vještine može imati više različitih oblika pitanja</p>
+                        <p>Možete vježbati <b>samo</b> tu kombinaciju ili, za malo veći izazov i kvalitetnije ponavljenje, odaberete <b>sve do</b> (klik na tipku) kako biste vježbali i ponavljali i sve prethodne vještine i gradiva (slučajan odabir).</p>
+                        <p>Svoj odgovor dajete upisom broja ili odabirom iz padajućih izbornika na samom dnu ekrana te klikom na tipku <b>Provjeri</b>. Ako ste dali pogrešan odgovor, na glavni graf često će biti dodana dodatna grafička pojašnjenja načina na koji ste trebali doći do točnog odgovora, a na samom dnu stranice (skrolajte) dobiti ćete i tekstualno objašnjenje odgovora.</p>
+                    </section>
+                    <section>
+                        <h3>Mala pomoć</h3>
+                        <p>Klikom na tipku neposredno ispod teksta pitanja, uvijek možete dobiti neki mali 'hint' ili pomoć u obliku crtaža - podsjetnik na način kojim trebate doći do točnog odgovora. Samo malo upozorenje, ako sakupljate zvjezdice, klikom na ovaj hint više ne možete dobiti zvjezdicu za točan odgovor, no barem (nadate se) nećete izgubiti zvjezdice za pogrešan odgovor 😄</p>
+                    </section>
+                    <section>
+                        <h3>Dodatni grafovi</h3>
+                        <p>Jednom kada ste dali svoj odgovor, možete kliknuti na glavni graf te tako dobiti preostala dva moguća grafička prikaza tog istog gibanja, za lakšu usporedbu. Na isti način te dodatne grafove možete ponovno sakriti.</p>
+                    </section>
+                    <section>
+                        <h3>Simulacija gibanja</h3>
+                        <p>Nakon što date svoj odgovor na pitanje, automatski će se pokrenuti malena simulacija tog zadanog gibanja. Pored vozila, ako akcelleracija nije nula, biti će prikazan vektor akceleracije a time i rezultantne sile (žuta strelica). Na kazaljci brzinomjera također možete pratiti tenutni iznos brzine gibanja.<br> Neposredno ispod same simulacije, na 'papirnatoj' traci, to će gibanje biti zapisano i virtualnim 'tipkalom' koje prati gibanje automobila i ostavlja točkicu na trenutni položaj svakih 0.1 s (10 točaka u sekundi).</p>
+                        <p>Klikim na simulaciju možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje.</p>
+                    </section>
+                    <section>
+                        <h3>Sakupljanje zvjezdica ⭐</h3>
+                        <p>Svaka kombinacija koju odaberete u izborniku na vrhu predstavlja zaseban 'nivo'. U svakom nivou cilj je sakupiti barem 5⭐. Točni odgovori (ako ne koristite pomoć) donose Vam 1⭐ dok u slučaju pogrešnog odgovora gubite 2⭐. Jednom kada na nekom nivou sakupite 5⭐ prikazati će se nova pozadina simulacije i novo vozilo. Ako nakon toga želite vidjeti još neki novi cool pejsaž, morati ćete sakupiti 5⭐ na nekom drugom novou (drugoj vještini, dugom gradivu ili možda samo tako što uključite 'sve do' umjesto 'samo'). Svaki se dan na slučajno odabere redoslijed pozadina tako da ako želite vidjeti što više pozadina možete intezivno vježbati jedan dan (riješiti puno nivoa) ili vježbati na različite dane.</p>
+                    </section>
+                    <section>
+                        <h3>O autoru...</h3>
+                        <p>Ovu je stranicu osmislio i izradio <i>Domjan Svilković</i>, profesor fizike u OŠ Remete i OŠ Jabukovac, Zagreb.</p>
+                    </section>
+                </div>
             </div>
         </div>
         
@@ -1011,6 +1238,15 @@
     let ostaliGrafoviVidljivi = false;
     let tockiceDodane = new Set();
     let userHasClickedChart = false;
+
+    // Star system state
+    let levelStars = {};
+    let levelMastered = {};
+    let currentLevelKey = null;
+    let hintUsed = false;
+
+    // Debug flag: if true, fire confetti on every answer submission
+    let debug_confetti =false;
 
     function cssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -1105,6 +1341,8 @@
         localStorage.setItem('darkMode', DM);
         updateSimulationColors();
         updateShalabahterImage();
+        updateExplanationBoxImages();
+        updateHelpOverlayImages();
         
         // Recreate charts with new colors (inline functions only evaluate at creation)
         if (trenutniZadatak) {
@@ -1112,6 +1350,103 @@
             if (ostaliGrafoviVidljivi) prikaziOstaleGrafove();
             if (trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
         }
+    }
+
+    function updateHelpOverlayImages() {
+        const helpOverlay = document.getElementById('helpOverlay');
+        if (!helpOverlay) return;
+        const images = helpOverlay.querySelectorAll('img[src^="svg/"]');
+        images.forEach(img => {
+            const fileName = img.src.split('/').pop().replace('.svg', '');
+            img.src = svgPath(fileName);
+        });
+    }
+
+    function updateExplanationBoxImages() {
+        const images = explanationBox.querySelectorAll('img[src^="svg/"]');
+        images.forEach(img => {
+            const fileName = img.src.split('/').pop().replace('.svg', '');
+            img.src = svgPath(fileName);
+        });
+    }
+
+    function updateStarDisplay() {
+        const starOverlay = document.getElementById('starOverlay');
+        if (!starOverlay) return;
+        const stars = starOverlay.querySelectorAll('.star');
+        const count = levelStars[currentLevelKey] || 0;
+        const mastered = levelMastered[currentLevelKey];
+        stars.forEach((s, i) => {
+            s.classList.remove('filled', 'mastered');
+            if (mastered) {
+                s.classList.add('mastered');
+                s.textContent = '★';
+            } else if (i < count) {
+                s.classList.add('filled');
+                s.textContent = '★';
+            } else {
+                s.textContent = '☆';
+            }
+        });
+
+        // Update tezinaSelect option labels: "(4*) Vrsta?" format
+        const gradivo = gradivoSelect.value;
+        const lakse = chkLakse.dataset.active === 'true';
+        const tezinaOptions = tezinaSelect.querySelectorAll('option');
+        tezinaOptions.forEach(opt => {
+            const tezina = opt.value;
+            const key = `${gradivo}-${tezina}-${lakse}`;
+            const stars = levelStars[key] || 0;
+            const mastered = levelMastered[key];
+            const starCount = mastered ? 5 : stars;
+            // Extract base label without leading number and dot, and without star suffix
+            let baseLabel = opt.dataset.baseLabel || opt.textContent;
+            baseLabel = baseLabel.replace(/^\d+\.\s*/, '').replace(/\s*\([★☆*]+\)/, '').trim();
+            opt.dataset.baseLabel = baseLabel;
+            opt.textContent = mastered ? `🏆 ${baseLabel}` : `${starCount}★ ${baseLabel}`;
+        });
+    }
+
+    // Confetti celebration for level mastery (5 stars)
+    function triggerLevelUpConfetti() {
+        if (typeof confetti === 'undefined') return;
+        // Respect prefers-reduced-motion (canvas-confetti handles this internally)
+
+        const scene = document.getElementById('gibScena');
+        if (!scene) return;
+        const rect = scene.getBoundingClientRect();
+        const origin = {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight
+        };
+
+        const burstDefaults = {
+            spread: 360,
+            ticks: 60,
+            gravity: 0,
+            decay: 0.92,
+            startVelocity: 15,
+            colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+        };
+
+        const fireBurst = (delay, particleCount, scalar, shapes, velocityJitter = 5) => {
+            setTimeout(() => {
+                confetti({
+                    ...burstDefaults,
+                    particleCount,
+                    scalar,
+                    shapes,
+                    startVelocity: burstDefaults.startVelocity + (Math.random() - 0.5) * velocityJitter,
+                    origin
+                });
+            }, delay);
+        };
+
+        // 4 staggered bursts over ~350ms
+        fireBurst(0,   65, 1.2, ['star']);
+        fireBurst(80,  22, 0.7, ['circle']);
+        fireBurst(160, 40, 0.9, ['star'], 8);
+        fireBurst(240, 25, 0.6, ['circle', 'star'], 10);
     }
 
     function updateShalabahterImage() {
@@ -1128,6 +1463,7 @@
     // Initial color setup for simulation
     updateSimulationColors();
     updateShalabahterImage();
+    updateHelpOverlayImages();
 
     svgs = [];
     svgHide = '';
@@ -1195,6 +1531,11 @@ function generirajZadatak() {
         oldOverlay.remove();
         chartContainer._hintOverlay = null;
     }
+
+    // Star system: determine current level key and reset hint flag
+    currentLevelKey = `${gradivoSelect.value}-${tezinaSelect.value}-${chkLakse.dataset.active === 'true'}`;
+    hintUsed = false;
+    updateStarDisplay();
 
     // Reset točkica traga na cesti
     ocistiTockice();
@@ -1468,6 +1809,7 @@ while(!isDobarGraf && pokusaji2 < 10) {
     if (maxAkceleracija === 0) maxAkceleracija = 1; // Osigurač protiv dijeljenja s 0
 
     trenutniZadatak.simulacijaProps = { minS, maxS, maxBrzina, maxAkceleracija };
+    trenutniZadatak.papirTrakaConfig = izracunajPapirTrakaConfig();
     azurirajAuto(0);
 }
 
@@ -2168,8 +2510,8 @@ function oblikujPitanjeIZadatak(zadatak) {
             infoObjasnjene += `<p>Akceleraciju <b>NIKAD ne računamo</b> tako da podijelimo <span style="color:#5BC2C2"><b>broj na y-osi</b></span> i <span style="color:#D298FC"><b>broj na x-osi</b></span>! Akceleracija nije trenutna brzina / trenutno vrijeme.`;
             infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
         }
-        infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<br>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
-        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<br>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<br>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<br>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<br>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<br>Krenimo od prvog člana: 2·<i>t</i>³. <br><b>Ovo je pravilo: derivacija od a·x<sup>b</sup> je a·b·x<sup>(b-1)</sup></b> (potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan).<br>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<br>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<br>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<br>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<br>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <br>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<br>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<br>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
+        infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<p>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
+        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<p>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<p>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<p>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<p>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<p>Krenimo od prvog člana: 2·<i>t</i>³. <p><b>Ovo je pravilo:</b><br><div class='box-text'><span style='font-size: 0.8em'>derivacija od&emsp;</span><b>a·x<sup>b</sup></b>&emsp; <span style='font-size: 0.8em'> je </span><b>&emsp; a·b·x<sup>(b-1)</sup></b></b></div><i>(potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan)</i><p>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<p>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<p>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<p>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<p>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <p>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<p>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<p>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
         if (racunaSeSrednja === 1) 
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[index].t0, t1: faze[index+1].t1, y0: faze[index].y0, y1: faze[index+1].y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
         else
@@ -2361,22 +2703,36 @@ function provjeriOdgovor() {
 
     danOdgovor = 1;
 
-    // Show hint overlay if user hasn't clicked chart yet
+    // Show hint overlay
+    const existing = chartContainer.querySelector('.chart-hint-overlay');
+    if (existing) existing.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'chart-hint-overlay';
+    overlay.textContent = 'Klikni za prikaz ostalih grafova';
+    
     if (!userHasClickedChart) {
-        const existing = chartContainer.querySelector('.chart-hint-overlay');
-        if (existing) existing.remove();
-        
-        const overlay = document.createElement('div');
-        overlay.className = 'chart-hint-overlay';
-        overlay.textContent = 'Klikni za prikaz ostalih grafova';
-        chartContainer.appendChild(overlay);
-        
+        // First time: show at full opacity, fade to 0.4 after 4s (0.5s transition via CSS)
         overlay._hintTimeout = setTimeout(() => {
-            if (overlay.parentNode === chartContainer) overlay.remove();
+            if (overlay.parentNode === chartContainer) {
+                overlay.style.opacity = '0.4';
+            }
         }, 4000);
-        
-        chartContainer._hintOverlay = overlay;
+    } else {
+        // User has clicked before: show at 0.4 opacity immediately, fade out after 4s
+        overlay.classList.add('already-seen');
+        overlay._hintTimeout = setTimeout(() => {
+            if (overlay.parentNode === chartContainer) {
+                overlay.classList.add('fading-out');
+                setTimeout(() => {
+                    if (overlay.parentNode === chartContainer) overlay.remove();
+                }, 500);
+            }
+        }, 4000);
     }
+    
+    chartContainer.appendChild(overlay);
+    chartContainer._hintOverlay = overlay;
 
     prikaziOstaleGrafove();
     if(trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
@@ -2415,13 +2771,32 @@ function provjeriOdgovor() {
         feedbackBox.style.display = "block";
         feedbackBox.style.visibility = 'visible';
         btnDalje.style.background = cssVar('--success');
-        nivo++;
-    } else {
+        
+        // Star system: award star if no hint used and level not mastered
+        if (!hintUsed && !levelMastered[currentLevelKey]) {
+            const prevStars = levelStars[currentLevelKey] || 0;
+            levelStars[currentLevelKey] = Math.min(5, prevStars + 1);
+            if (levelStars[currentLevelKey] === 5) {
+                levelMastered[currentLevelKey] = true;
+                nivo++;
+                generirajNoviKrajolik();
+                triggerLevelUpConfetti();
+            }
+            updateStarDisplay();
+        }
+
+        } else {
         feedbackBox.innerHTML = "";
         feedbackBox.className = "feedback incorrect";
         feedbackBox.style.display = "block";
         feedbackBox.style.visibility = 'visible';
         btnDalje.style.background = cssVar('--danger');
+        
+        // Star system: deduct 2 stars on wrong answer (if not mastered)
+        if (!levelMastered[currentLevelKey]) {
+            levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 2);
+            updateStarDisplay();
+        }
         
         let tocno = "";
         
@@ -2458,6 +2833,11 @@ function provjeriOdgovor() {
             explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
         }
         explanationBox.style.display = "flow-root";
+    }
+
+    // Debug: fire confetti on every answer if debug_confetti is true
+    if (debug_confetti) {
+        triggerLevelUpConfetti();
     }
 }    
     
@@ -2998,7 +3378,7 @@ const vizualniAsistentPlugin = {
                 ctx.save();
                 ctx.setLineDash([6, 4]);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000';
+                ctx.strokeStyle = (DM ? '#FFF' : '#000');
                 ctx.beginPath();
                 ctx.moveTo(px0, p0);
                 ctx.lineTo(px0, py0);
@@ -3024,7 +3404,7 @@ const vizualniAsistentPlugin = {
                 ctx.save();
                 ctx.setLineDash([6, 4]);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000';
+                ctx.strokeStyle = (DM ? '#FFF' : '#000');
                 ctx.beginPath();
                 ctx.moveTo(px0, py0);
                 ctx.lineTo(px0, py1);
@@ -3179,14 +3559,14 @@ function prikaziGraf(zadatak) {
                 label: `Graf ${zadatak.vrstaGrafa}`,
                 data: chartData,
                 borderColor: (DM ? '#ffffff' : '#000000'),
-                borderWidth: 3,
+                borderWidth: 4,
                 pointRadius: (ctx) => (ctx.raw && ctx.raw.isKraj === false) ? 0 : 4,
                 pointBackgroundColor: (DM ? '#ffffff' : '#000000'),
                 fill: false,
                 tension: 0,
                 clip: false,
                 segment: {
-                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffffaa' : '#00000033') : (DM ? '#ffffffaa' : '#000000')
+                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff' : '#000000') : (DM ? '#ffffff' : '#000000')
                 }
             },
             {
@@ -3484,6 +3864,7 @@ feedbackBox.addEventListener('click', (e) => {
     overlay.id = 'hint-overlay';
     overlay.className = 'hint-overlay';
     overlay.innerHTML = imgTags;
+    hintUsed = true;
 
     // 4. Append to body to measure its rendered height accurately
     document.body.appendChild(overlay);
@@ -3503,16 +3884,40 @@ feedbackBox.addEventListener('click', (e) => {
 });
 
 
+const helpOverlay = document.getElementById('helpOverlay');
+const helpBackdrop = helpOverlay?.querySelector('.help-overlay-backdrop');
+const helpCloseBtn = helpOverlay?.querySelector('.help-close-btn');
 const shalabahterBtn = document.getElementById('shalabahterBtn');
-const shalabahterOverlay = document.getElementById('shalabahterOverlay');
-const shalabahterOverlayImg = document.getElementById('shalabahterOverlayImg');
 
-shalabahterBtn.addEventListener('click', () => {
-      shalabahterOverlay.classList.add('active');
+function openHelpOverlay() {
+    helpOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    helpOverlay.querySelector('.help-body')?.scrollTo({ top: 0, behavior: 'instant' });
+    helpCloseBtn?.focus();
+}
+
+function closeHelpOverlay() {
+    helpOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+shalabahterBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openHelpOverlay();
 });
 
-shalabahterOverlayImg.addEventListener('click', () => {
-      shalabahterOverlay.classList.remove('active');
+helpBackdrop?.addEventListener('click', closeHelpOverlay);
+
+helpCloseBtn?.addEventListener('click', closeHelpOverlay);
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && helpOverlay?.classList.contains('active')) {
+        closeHelpOverlay();
+    }
+});
+
+helpOverlay?.querySelector('.help-overlay-content')?.addEventListener('click', (e) => {
+    e.stopPropagation();
 });
 
 
@@ -3615,6 +4020,11 @@ gibScena.addEventListener('click', () => {
         gibPrednji.style.opacity=100;
     }
     prednjiPrikazan = !prednjiPrikazan;
+
+    const starOverlay = document.getElementById('starOverlay');
+    if (starOverlay) {
+        starOverlay.style.opacity = prednjiPrikazan ? 1 : 0.5;
+    }
 });
 
 
@@ -3756,13 +4166,19 @@ function azurirajBrzinomjer(brzina, maxBrzina) {
 
 // --- TOČKICE TRAGA (svakih 0.1s tijekom prvog prolaska) ---
 
-function dodajTockicu(postotak, brzina) {
+function dodajTockicu(postotak, brzina, row) {
     const tockica = document.createElement('div');
     tockica.className = 'tockica-gibanja';
     tockica.style.left = `${2+postotak*0.96}%`;
-    tockica.style.top = `${(brzina < 0 ? 8 : 14)-0.2+Math.random(0.4)}px`;
+    
+    const config = trenutniZadatak?.papirTrakaConfig;
+    const rowHeight = config?.rowHeight || 4;
+    const r = row !== undefined ? row : (brzina < 0 ? 0 : 1);
+    const topBase = rowHeight * (r + 1);
+    const jitter = (Math.random() - 0.5) * 0.2;
+    tockica.style.top = `${topBase + jitter}px`;
     tockica.style.background = brzina < 0 ? '#930000' : '#29319c';
-    tockica.style.opacity = Math.random(0.4)+0.6;
+    tockica.style.opacity = Math.random() * 0.2 + 0.8;
     papirTraka.appendChild(tockica);
 }
 
@@ -3786,12 +4202,88 @@ function dodajFazneLinije() {
     });
 }
 
+function izracunajPapirTrakaConfig() {
+    if (!trenutniZadatak || !trenutniZadatak.faze) return null;
+    
+    const faze = trenutniZadatak.faze;
+    const EPS = 1e-9;
+    const TRACK_HEIGHT = 20;
+    
+    const segments = [];
+    
+    for (let i = 0; i < faze.length; i++) {
+        const faza = faze[i];
+        const t0 = faza.t0;
+        const t1 = faza.t1;
+        const v0 = faza.kinematika.v0;
+        const a = faza.kinematika.a;
+        const dt = t1 - t0;
+        const v1 = v0 + a * dt;
+        
+        const sign0 = v0 > EPS ? 1 : (v0 < -EPS ? -1 : 0);
+        const sign1 = v1 > EPS ? 1 : (v1 < -EPS ? -1 : 0);
+        
+        if (Math.abs(v0) < EPS && Math.abs(v1) < EPS) {
+            segments.push({ t0, t1, sign: 0, phaseIndex: i });
+        } else if (sign0 === sign1 || sign0 === 0 || sign1 === 0) {
+            const sign = sign0 !== 0 ? sign0 : sign1;
+            segments.push({ t0, t1, sign, phaseIndex: i });
+        } else {
+            const tCross = t0 - v0 / a;
+            if (tCross > t0 + EPS && tCross < t1 - EPS) {
+                segments.push({ t0, t1: tCross, sign: sign0, phaseIndex: i });
+                segments.push({ t0: tCross, t1, sign: sign1, phaseIndex: i });
+            } else {
+                segments.push({ t0, t1, sign: sign0, phaseIndex: i });
+            }
+        }
+    }
+    
+    let merged = [];
+    for (const seg of segments) {
+        if (merged.length === 0) {
+            merged.push({ ...seg });
+        } else {
+            const last = merged[merged.length - 1];
+            if (last.sign === 0 && seg.sign !== 0) {
+                last.t1 = seg.t1;
+                last.sign = seg.sign;
+                last.phaseIndex = seg.phaseIndex;
+            } else if (last.sign !== 0 && seg.sign === 0) {
+                last.t1 = seg.t1;
+            } else if (last.sign === seg.sign) {
+                last.t1 = seg.t1;
+            } else {
+                merged.push({ ...seg });
+            }
+        }
+    }
+    
+    const numSegments = merged.length;
+    const numRows = Math.min(numSegments, 3);
+    const rowHeight = TRACK_HEIGHT / (numRows + 1);
+    
+    segments.length = 0;
+    for (let i = 0; i < merged.length; i++) {
+        segments.push({ t0: merged[i].t0, t1: merged[i].t1, sign: merged[i].sign, phaseIndex: merged[i].phaseIndex, row: Math.min(i, numRows - 1) });
+    }
+    
+    return { numRows, rowHeight, segments };
+}
+
 function azurirajTockice(t) {
     const idx = Math.floor(t / 0.2 + 1e-9);
     if (tockiceDodane.has(idx)) return;
     tockiceDodane.add(idx);
     const { postotak, brzina } = izracunajStanjeGibanja(idx * 0.2);
-    dodajTockicu(postotak, brzina);
+    
+    let row = 1;
+    const config = trenutniZadatak?.papirTrakaConfig;
+    if (config && config.segments) {
+        const seg = config.segments.find(s => t >= s.t0 - 1e-9 && t <= s.t1 + 1e-9);
+        if (seg) row = seg.row;
+    }
+    dodajTockicu(postotak, brzina, row);
 }
 
 // ostale interakcije
@@ -3810,14 +4302,16 @@ gradivoSelect.addEventListener("change", (e) => {
 */
 
 function procesirajKlikNaGrafove() {
+    // Remove hint overlay on click (if visible)
+    const overlay = chartContainer._hintOverlay;
+    if (overlay) {
+        clearTimeout(overlay._hintTimeout);
+        overlay.remove();
+        chartContainer._hintOverlay = null;
+    }
+    
     if (!userHasClickedChart) {
         userHasClickedChart = true;
-        const overlay = chartContainer._hintOverlay;
-        if (overlay) {
-            clearTimeout(overlay._hintTimeout);
-            overlay.remove();
-            chartContainer._hintOverlay = null;
-        }
     }
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 

@@ -62,7 +62,7 @@
        id="style6">@import url(https://fonts.googleapis.com/css2?family=Charis+SIL%3Aital%2Cwght%400%2C400%3B0%2C700%3B1%2C400%3B1%2C700&amp;display=swap);</style>
   </defs>
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
      x="401.38867"
      y="284.35974"
      id="text15401-9-85-2"
@@ -72,7 +72,7 @@
        x="401.38867"
        y="284.35974" /></text>
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
      x="486.15158"
      y="325.12592"
      id="text15401-0-2-4-0"
@@ -82,7 +82,7 @@
        x="486.15158"
        y="325.12592" /></text>
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
      x="433.37344"
      y="322.11877"
      id="text25466"
@@ -92,7 +92,7 @@
        x="433.37344"
        y="322.11877" /></text>
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
      x="466.42505"
      y="340.46625"
      id="text28484"
@@ -102,7 +102,7 @@
        x="466.42505"
        y="340.46625" /></text>
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.264583; white-space: pre;"
      x="-36.551624"
      y="58.874622"
      id="text132276"
@@ -112,16 +112,16 @@
        x="-36.551624"
        y="58.874622" /></text>
   <path
-     style="fill: none; stroke: white; stroke-width: 1.696; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; marker-end: url(&quot;#Arrow1Send-6-3-9-6&quot;);"
+     style="fill: none; stroke: rgb(255, 255, 255); stroke-width: 1.696; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; marker-end: url(&quot;#Arrow1Send-6-3-9-6&quot;);"
      d="M 2.154 56.226 L 2.154 4.677"
      id="path857-6-0-9-0" />
   <path
-     style="fill: none; stroke: white; stroke-width: 1.793; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; marker-end: url(&quot;#Arrow1Send-3-5-3&quot;); transform-box: fill-box; transform-origin: 50% 50%;"
+     style="fill: none; stroke: rgb(255, 255, 255); stroke-width: 1.793; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; marker-end: url(&quot;#Arrow1Send-3-5-3&quot;); transform-box: fill-box; transform-origin: 50% 50%;"
      d="M 1.448 55.598 L 75.719 55.598"
      id="path857-68-9-5"
      transform="matrix(1, 0, 0, 1, -0.000002, 0.000004)" />
   <text
-     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.265; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 10.5833px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.265; white-space: pre;"
      x="39.436"
      y="18.527"
      id="text3735-9-4-6"
@@ -164,11 +164,11 @@
      d="M 29.265 50.783 L 72.866 6.551"
      id="path22732-4-9-5" />
   <path
-     style="fill: none; stroke: white; stroke-width: 2.065; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; transform-box: fill-box; transform-origin: 50% 50%;"
+     style="fill: none; stroke: rgb(255, 255, 255); stroke-width: 2.065; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dasharray: none; stroke-opacity: 1; transform-box: fill-box; transform-origin: 50% 50%;"
      d="M 6.463 16.206 L 32.545 16.206"
      id="path51760-7-6" />
   <text
-     style="font-style: normal; font-weight: normal; font-size: 13.3852px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: white; fill-opacity: 1; stroke: none; stroke-width: 0.33463; white-space: pre;"
+     style="font-style: normal; font-weight: normal; font-size: 13.3852px; line-height: 1.25; font-family: sans-serif; letter-spacing: 0px; word-spacing: 0px; fill: rgb(255, 255, 255); fill-opacity: 1; stroke: none; stroke-width: 0.33463; white-space: pre;"
      x="322.88928"
      y="380.55933"
      id="text40412-3-3"><tspan
@@ -177,21 +177,21 @@
        x="322.88928"
        y="380.55933">-</tspan></text>
   <ellipse
-     style="stroke: white; fill: rgb(92, 195, 195);"
+     style="stroke: rgb(255, 255, 255); fill: rgb(92, 195, 195);"
      cx="2.55"
      cy="38.896"
      rx="2.448"
      ry="2.375"
      id="ellipse31" />
   <ellipse
-     style="stroke: white; stroke-width: 1; fill: rgb(200, 128, 252);"
+     style="stroke: rgb(255, 255, 255); stroke-width: 1; fill: rgb(200, 128, 252);"
      cx="42.629"
      cy="54.974"
      rx="2.448"
      ry="2.375"
      id="ellipse33" />
   <ellipse
-     style="stroke: white; stroke-width: 1;"
+     style="stroke: rgb(255, 255, 255); stroke-width: 1;"
      cx="42.332"
      cy="37.879"
      rx="2.448"
