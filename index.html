@@ -1026,7 +1026,7 @@
     
     
     <div class="gib-scena" id="gibScena">
-        <img id= "gibPozadina" class="gib-pozadina-slika" src="https://dsvilko.github.io/gib/pozadine/France/bg2.jpg" alt="Pozadina ceste">
+        <img id= "gibPozadina" class="gib-pozadina-slika" src="pozadine/France/bg2.jpg" alt="Pozadina ceste">
 
         <div id="starOverlay" class="star-overlay" aria-label="Razina napretka">
             <span class="star" data-idx="1">☆</span>
@@ -1053,10 +1053,10 @@
                         <text id="akcOznaka" x="100" y="3" fill="#facc15" font-size="13" text-anchor="middle" font-weight="bold" font-style="italic">a, Fʀ</text>
                     </g>
             </svg>
-            <img id="gibAuto" class="gib-auto" src="https://dsvilko.github.io/gib/vozila/mini.png" alt="Vozilo">
+            <img id="gibAuto" class="gib-auto" src="vozila/mini.png" alt="Vozilo">
         </div>
 
-        <img id="gibPrednji" class="gib-prednji-plan-slika" src="https://dsvilko.github.io/gib/pozadine/France/fg.png" alt="Prednji plan" onerror="this.style.display='none'">
+        <img id="gibPrednji" class="gib-prednji-plan-slika" src="pozadine/France/fg.png" alt="Prednji plan" onerror="this.style.display='none'">
 
         <div class="gib-brzinomjer" id="gibBrzinomjerSloj">
             <svg viewBox="0 0 100 100">
@@ -3378,7 +3378,7 @@ const vizualniAsistentPlugin = {
                 ctx.save();
                 ctx.setLineDash([6, 4]);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000';
+                ctx.strokeStyle = (DM ? '#FFF' : '#000');
                 ctx.beginPath();
                 ctx.moveTo(px0, p0);
                 ctx.lineTo(px0, py0);
@@ -3404,7 +3404,7 @@ const vizualniAsistentPlugin = {
                 ctx.save();
                 ctx.setLineDash([6, 4]);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000';
+                ctx.strokeStyle = (DM ? '#FFF' : '#000');
                 ctx.beginPath();
                 ctx.moveTo(px0, py0);
                 ctx.lineTo(px0, py1);
@@ -3559,14 +3559,14 @@ function prikaziGraf(zadatak) {
                 label: `Graf ${zadatak.vrstaGrafa}`,
                 data: chartData,
                 borderColor: (DM ? '#ffffff' : '#000000'),
-                borderWidth: 3,
+                borderWidth: 4,
                 pointRadius: (ctx) => (ctx.raw && ctx.raw.isKraj === false) ? 0 : 4,
                 pointBackgroundColor: (DM ? '#ffffff' : '#000000'),
                 fill: false,
                 tension: 0,
                 clip: false,
                 segment: {
-                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffffaa' : '#00000033') : (DM ? '#ffffffaa' : '#000000')
+                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff' : '#000000') : (DM ? '#ffffff' : '#000000')
                 }
             },
             {
@@ -3892,6 +3892,7 @@ const shalabahterBtn = document.getElementById('shalabahterBtn');
 function openHelpOverlay() {
     helpOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    helpOverlay.querySelector('.help-body')?.scrollTo({ top: 0, behavior: 'instant' });
     helpCloseBtn?.focus();
 }
 
