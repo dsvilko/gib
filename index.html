@@ -696,7 +696,6 @@
             border-radius: 50%;
             background: #00000000;
             border: 0px;
-            font-size: 1.8rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -705,6 +704,11 @@
             transition: background 0.15s, transform 0.1s;
             opacity: 0.7;
             color: white;
+        }
+        .simulacija-pauza-btn img {
+            width: 24px;
+            height: 24px;
+            display: block;
         }
         .simulacija-pauza-btn:active { transform: scale(0.95); }
         
@@ -1060,7 +1064,9 @@
             <span class="star" data-idx="5">☆</span>
         </div>
 
-        <button id="btnPauzaSimulacija" class="simulacija-pauza-btn" title="Pauza" aria-label="Pauza simulacije" style="display: none;">⏸️</button>
+        <button id="btnPauzaSimulacija" class="simulacija-pauza-btn" title="Pauza" aria-label="Pauza simulacije" style="display: none;">
+            <img src="svg/pause.svg" alt="" aria-hidden="true">
+        </button>
 
         <div class="gib-vozilo-sloj" id="gibVoziloSloj">
            
@@ -1351,7 +1357,8 @@
 
     function toggleSimulacijaPauza() {
         isSimulacijaPauzirana = !isSimulacijaPauzirana;
-        btnPauzaSimulacija.textContent = isSimulacijaPauzirana ? '▸' : '⏸';
+        const img = btnPauzaSimulacija.querySelector('img');
+        img.src = isSimulacijaPauzirana ? 'svg/play.svg' : 'svg/pause.svg';
         btnPauzaSimulacija.title = isSimulacijaPauzirana ? 'Nastavi' : 'Pauza';
     }
 
@@ -1557,7 +1564,7 @@ function generirajZadatak() {
     
     // Hide and reset pause button
     btnPauzaSimulacija.style.display = 'none';
-    btnPauzaSimulacija.textContent = '⏸';
+    btnPauzaSimulacija.querySelector('img').src = 'svg/pause.svg';
     btnPauzaSimulacija.title = 'Pauza';
     isSimulacijaPauzirana = false;
     
