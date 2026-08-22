@@ -696,14 +696,15 @@
             border-radius: 50%;
             background: #00000000;
             border: 0px;
-            font-size: 1.1rem;
+            font-size: 1.8rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.583);
             transition: background 0.15s, transform 0.1s;
             opacity: 0.7;
+            color: white;
         }
         .simulacija-pauza-btn:active { transform: scale(0.95); }
         
@@ -934,6 +935,7 @@
             transition: opacity 0.5s ease;
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0.4;
         }
         .chart-hint-overlay.already-seen {
             animation: none;
@@ -1259,7 +1261,6 @@
     let animacijaFrameId = null;
     let isSimulacijaPauzirana = false;
     let pauzaStartVrijeme = 0;
-    let ukupnoPauzaVrijeme = 0;
     let ostaliChartInstances = [null, null];
     let pitanjeChartInstances = [];
     let ostaliGrafoviVidljivi = false;
@@ -1350,7 +1351,7 @@
 
     function toggleSimulacijaPauza() {
         isSimulacijaPauzirana = !isSimulacijaPauzirana;
-        btnPauzaSimulacija.textContent = isSimulacijaPauzirana ? '▶️' : '⏸️';
+        btnPauzaSimulacija.textContent = isSimulacijaPauzirana ? '▸' : '⏸';
         btnPauzaSimulacija.title = isSimulacijaPauzirana ? 'Nastavi' : 'Pauza';
     }
 
@@ -1386,7 +1387,7 @@
         // Recreate charts with new colors (inline functions only evaluate at creation)
         if (trenutniZadatak) {
             prikaziGraf(trenutniZadatak);
-            if (ostaliGrafoviVidljivi) prikaziOstaleGrafove();
+            if (prikazaniDodatniGrafovi) prikaziOstaleGrafove();
             if (trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
         }
     }
@@ -1556,7 +1557,7 @@ function generirajZadatak() {
     
     // Hide and reset pause button
     btnPauzaSimulacija.style.display = 'none';
-    btnPauzaSimulacija.textContent = '⏸️';
+    btnPauzaSimulacija.textContent = '⏸';
     btnPauzaSimulacija.title = 'Pauza';
     isSimulacijaPauzirana = false;
     
@@ -2761,6 +2762,7 @@ function provjeriOdgovor() {
     overlay.className = 'chart-hint-overlay';
     overlay.textContent = 'Klikni za prikaz ostalih grafova';
     
+    
     if (!userHasClickedChart) {
         // First time: show at full opacity, fade to 0.4 after 4s (0.5s transition via CSS)
         overlay._hintTimeout = setTimeout(() => {
@@ -2778,7 +2780,7 @@ function provjeriOdgovor() {
                     if (overlay.parentNode === chartContainer) overlay.remove();
                 }, 500);
             }
-        }, 4000);
+        }, 2000);
     }
     
     chartContainer.appendChild(overlay);
@@ -4138,7 +4140,6 @@ function zaustaviSimulaciju() {
 function pokreniAnimaciju() {
     const ukupnoVrijeme = trenutniZadatak.faze[2].t1;
     let startVrijeme = performance.now();
-    ukupnoPauzaVrijeme = 0;
     pauzaStartVrijeme = 0;
     isSimulacijaPauzirana = false;
     akceleracijaStrelica.style.opacity=1;
@@ -4156,8 +4157,8 @@ function pokreniAnimaciju() {
         // Handle pause: accumulate paused duration, don't advance simulation time
         if (isSimulacijaPauzirana) {
             if (pauzaStartVrijeme === 0) pauzaStartVrijeme = vrijeme;
-            startVrijeme += (performance.now() - pauzaStartVrijeme);
-            pauzaStartVrijeme = performance.now();
+            startVrijeme += (vrijeme - pauzaStartVrijeme);
+            pauzaStartVrijeme = vrijeme;
         } else {
             pauzaStartVrijeme = 0;
         }
