@@ -134,7 +134,7 @@
             --paper-dot-bg: #0f3da7;
             --paper-pos-bg: #ff0404;
             --speedometer-bg: #0f172a;
-            --speedometer-border: #334155;
+            --speedometer-border: #f8fbff;
             --svg-overlay-bg: #1E293B;
             --hint-overlay-bg: #1e293b;
             --hint-overlay-border: #334155;
@@ -796,7 +796,7 @@
             transform: translateX(-50%);
             border-radius: 50%;
             background-color: var(--speedometer-bg);
-            border: 0px solid var(--speedometer-border);
+            border: 1.5px solid var(--speedometer-border);
             box-shadow: 0 1px 4px rgba(255, 255, 255, 0.2);
             z-index: 4;
             /*transition: left 0.15s ease;*/
@@ -1274,7 +1274,7 @@
     let hintUsed = false;
 
     // Debug flag: if true, fire confetti on every answer submission
-    let debug_confetti =false;
+    let debug_confetti =true;
 
     function cssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -2889,6 +2889,8 @@ function provjeriOdgovor() {
 
     // Debug: fire confetti on every answer if debug_confetti is true
     if (debug_confetti) {
+        nivo++;
+        generirajNoviKrajolik();
         triggerLevelUpConfetti();
     }
 }    
@@ -3658,7 +3660,7 @@ function prikaziGraf(zadatak) {
                 tension: 0,
                 clip: false,
                 segment: {
-                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff' : '#000000') : (DM ? '#ffffff' : '#000000')
+                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff11' : '#00000011') : (DM ? '#ffffff' : '#000000')
                 }
             },
             {
