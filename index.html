@@ -36,7 +36,7 @@
             --cp-toggle-active-text: #ffffff;
 
             /* Question/interaction boxes */
-            --question-bg: #eff6ff;
+            --question-bg: #c5dcfb;
             --interaction-bg: #f8fafc;
 
             /* Shalabahter */
@@ -102,7 +102,7 @@
             --cp-toggle-active-text: #ffffff;
 
             /* Question/interaction boxes */
-            --question-bg: #1e3a5f;
+            --question-bg: #0f1822;;
             --interaction-bg: #1e293b;
 
             /* Shalabahter */
@@ -368,7 +368,7 @@
             margin-bottom: 8px;
         }
         
-.shalabahterBtn {
+        .shalabahterBtn {
             background-color: var(--shalabahter-btn-bg);
             color: var(--shalabahter-btn-text);
             border: none;
@@ -526,7 +526,6 @@
             border-radius: 8px;
             font-weight: 600;
             font-size: 1.4em;
-            display: block;
             text-align: center;
             width: 100%;
             display: flex;
@@ -685,6 +684,29 @@
         .star-overlay .star { color: #888; }
         .star-overlay .star.filled { color: #facc15; text-shadow: 1px 1px 2px #000, 0 0 4px #facc15; }
         .star-overlay .star.mastered { color: #facc15; text-shadow: 1px 1px 2px #000, 0 0 6px #facc15; }
+
+        /* Pause/Play button in top-right of simulation scene */
+        .simulacija-pauza-btn {
+            position: absolute;
+            top: -3px;
+            right: 0px;
+            z-index: 20;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00000000;
+            border: 0px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: background 0.15s, transform 0.1s;
+            opacity: 0.7;
+        }
+        .simulacija-pauza-btn:active { transform: scale(0.95); }
+        
 
         /* Sloj 1: pozadinska slika (cesta, nebo, drveće u daljini...) - određuje visinu scene */
         .gib-pozadina-slika {
@@ -1036,6 +1058,8 @@
             <span class="star" data-idx="5">☆</span>
         </div>
 
+        <button id="btnPauzaSimulacija" class="simulacija-pauza-btn" title="Pauza" aria-label="Pauza simulacije" style="display: none;">⏸️</button>
+
         <div class="gib-vozilo-sloj" id="gibVoziloSloj">
            
             <svg id="akceleracijaStrelica" class="strelica-akceleracije" viewBox="0 0 200 20">
@@ -1233,6 +1257,9 @@
     let isSimulacijaAktivna = false;
     let trenutnoVrijemeSimulacije = null;
     let animacijaFrameId = null;
+    let isSimulacijaPauzirana = false;
+    let pauzaStartVrijeme = 0;
+    let ukupnoPauzaVrijeme = 0;
     let ostaliChartInstances = [null, null];
     let pitanjeChartInstances = [];
     let ostaliGrafoviVidljivi = false;
@@ -1314,6 +1341,18 @@
     btnProvjeri.addEventListener('click', provjeriOdgovor);
     btnDalje.addEventListener('click', () => btnGeneriraj.click());
     btnDarkMode.addEventListener('click', toggleDarkMode);
+
+    const btnPauzaSimulacija = document.getElementById('btnPauzaSimulacija');
+    btnPauzaSimulacija.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSimulacijaPauza();
+    });
+
+    function toggleSimulacijaPauza() {
+        isSimulacijaPauzirana = !isSimulacijaPauzirana;
+        btnPauzaSimulacija.textContent = isSimulacijaPauzirana ? '▶️' : '⏸️';
+        btnPauzaSimulacija.title = isSimulacijaPauzirana ? 'Nastavi' : 'Pauza';
+    }
 
     let DM = 0; // Dark mode flag (0 = light, 1 = dark)
 
@@ -1514,6 +1553,13 @@ function generirajZadatak() {
     inputOdgovor.disabled = false;
     danOdgovor = 0;
     sakrijMinMax = 0;
+    
+    // Hide and reset pause button
+    btnPauzaSimulacija.style.display = 'none';
+    btnPauzaSimulacija.textContent = '⏸️';
+    btnPauzaSimulacija.title = 'Pauza';
+    isSimulacijaPauzirana = false;
+    
     zaustaviSimulaciju(); // Resetiraj animaciju
 
     // Varijable za simulaciju
@@ -2240,7 +2286,8 @@ function oblikujPitanjeIZadatak(zadatak) {
                     } 
                     if(tocanVrsta !== 'mirovanje') svgs.push('smjer');
                     if(tocanVrsta === 'ubrzano' || tocanVrsta === 'usporeno') {
-                            praviloPodsjetnik += '<p>Crne crtkane linije u gornjem grafu prikazuju kako bi izgledalo jednoliko gibanje (stalnom brzinom) između tih točaka. Usporednom s tim prikazom jednolikog gibanja, lakše možete primijetiti da graf zavija i na koju stranu.';
+                            praviloPodsjetnik += '<p>Crtkane linije u gornjem grafu prikazuju kako bi izgledalo jednoliko gibanje (stalnom brzinom) između tih točaka. Usporednom s tim prikazom jednolikog gibanja, lakše možete primijetiti da graf zavija i na koju stranu.';
+                            praviloPodsjetnik += '<details><summary>Za znatiželjne</summary>Ako bismo pred sobom na papiru imali ovakav "zakrivljen" graf i od nas se tražilo da procijenimo brzinu u nekoj točki, kako bismo to mogli učiniti?<br>Trebali bismo nacrtati tangentu na našu liniju (ravnu liniju koja u toj točki ima jednak nagib - kao što je to prikazano plavom linijom gore na grafu) i onda možemo puno lakše odrediti brzinu računajući nagib te ravne linije.</details>';
                     }
         } else if (vrstaGrafa === 'v/t') {
                     praviloPodsjetnik = "<b>Podsjetnik:</b> ";
@@ -2258,10 +2305,10 @@ function oblikujPitanjeIZadatak(zadatak) {
                         praviloPodsjetnik += "<span class='usporeno'>U <span class='x-t'>v–t</span> grafu, kosa linija koja \"se približava\" x-osi (brzini nula, odnosno mirovanju) je jednoliko usporeno gibanje.</span> ";
                     }
                     if(tocanSmjer === 'naprijed') { 
-                        praviloPodsjetnik += "<span class='naprijedVT'><p>U <span class='x-t'>v–t</span> grafu, sva gibanja <b>iznad nule</b> (pozitivna brzina) su gibanja <b>naprijed</b>.</span> ";
+                        praviloPodsjetnik += "<span class='naprijed'><p>U <span class='x-t'>v–t</span> grafu, sva gibanja <b>iznad nule</b> (pozitivna brzina) su gibanja <b>naprijed</b>.</span> ";
                     svgs.push('smjer');
                     } else if(tocanSmjer === 'unazad') {
-                            praviloPodsjetnik += "<span class='unazadVT'><p>U <span class='x-t'>v–t</span> grafu, sva gibanja <b>ispod nule</b> (negativna brzina) su gibanja <b>unazad</b>.</span> ";
+                            praviloPodsjetnik += "<span class='unazad'><p>U <span class='x-t'>v–t</span> grafu, sva gibanja <b>ispod nule</b> (negativna brzina) su gibanja <b>unazad</b>.</span> ";
                             svgs.push('smjer');
                     }
                             
@@ -2703,6 +2750,9 @@ function provjeriOdgovor() {
 
     danOdgovor = 1;
 
+    // Show pause/play button
+    btnPauzaSimulacija.style.display = 'flex';
+
     // Show hint overlay
     const existing = chartContainer.querySelector('.chart-hint-overlay');
     if (existing) existing.remove();
@@ -2814,7 +2864,7 @@ function provjeriOdgovor() {
             tocno = `<span style="font-size: 0.8em">${vrstaText} ${sm}</span>`;
         }
 
-        feedbackBox.innerHTML = `<span class="arrow">&#x2193;</span><span class="text" style="width: 80%;display: inline-block;">${tocno}</span><span class="arrow">&#x2193;</span>`;
+        feedbackBox.innerHTML = `<span class="arrow">&#x2193;</span><span class="text" style="width: 80%;">${tocno}</span><span class="arrow">&#x2193;</span>`;
         
         // Osvježi graf s vizualnim pojašnjenjima (ako postoje)
         if (trenutniZadatak.pomocData) {
@@ -4070,9 +4120,10 @@ gibScena.addEventListener('click', () => {
 
 function zaustaviSimulaciju() {
     isSimulacijaAktivna = false;
+    isSimulacijaPauzirana = false;
     trenutnoVrijemeSimulacije = null;
     akceleracijaStrelica.style.opacity=0;
- 
+  
     if (animacijaFrameId) {
         cancelAnimationFrame(animacijaFrameId);
         animacijaFrameId = null;
@@ -4087,6 +4138,9 @@ function zaustaviSimulaciju() {
 function pokreniAnimaciju() {
     const ukupnoVrijeme = trenutniZadatak.faze[2].t1;
     let startVrijeme = performance.now();
+    ukupnoPauzaVrijeme = 0;
+    pauzaStartVrijeme = 0;
+    isSimulacijaPauzirana = false;
     akceleracijaStrelica.style.opacity=1;
 
     dodajFazneLinije();
@@ -4098,6 +4152,15 @@ function pokreniAnimaciju() {
     
     function loop(vrijeme) {
         if (!isSimulacijaAktivna) return;
+        
+        // Handle pause: accumulate paused duration, don't advance simulation time
+        if (isSimulacijaPauzirana) {
+            if (pauzaStartVrijeme === 0) pauzaStartVrijeme = vrijeme;
+            startVrijeme += (performance.now() - pauzaStartVrijeme);
+            pauzaStartVrijeme = performance.now();
+        } else {
+            pauzaStartVrijeme = 0;
+        }
         
         // Real-time protekle sekunde s beskonačnom petljom (loop)
         let proteklo = (vrijeme - startVrijeme) / 1000;
