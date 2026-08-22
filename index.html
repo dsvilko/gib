@@ -532,6 +532,7 @@
             align-items: center;
             justify-content: space-between; /* Pushes arrows to edges, keeps text centered */
             box-sizing: border-box;
+            padding-top: 11px;
         }
 
         .feedback.correct {
@@ -1280,7 +1281,12 @@
     let hintUsed = false;
 
     // Debug flag: if true, fire confetti on every answer submission
-    let debug_confetti =true;
+    let debug_confetti = false;
+
+    // Enable debug_confetti via ?debug URL parameter
+    if (new URLSearchParams(window.location.search).has('debug')) {
+        debug_confetti = true;
+    }
 
     function cssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -1454,25 +1460,28 @@
         });
     }
 
-    // Confetti celebration for level mastery (5 stars)
-    function triggerLevelUpConfetti() {
+    // Confetti celebration for level mastery (5 stars) or star burst (smaller)
+    function triggerLevelUpConfetti(options = {}) {
         if (typeof confetti === 'undefined') return;
-        // Respect prefers-reduced-motion (canvas-confetti handles this internally)
+        const { origin, scale = 1 } = options;
 
-        const scene = document.getElementById('gibScena');
-        if (!scene) return;
-        const rect = scene.getBoundingClientRect();
-        const origin = {
-            x: (rect.left + rect.width / 2) / window.innerWidth,
-            y: (rect.top + rect.height / 2) / window.innerHeight
-        };
+        let burstOrigin = origin;
+        if (!burstOrigin) {
+            const scene = document.getElementById('gibScena');
+            if (!scene) return;
+            const rect = scene.getBoundingClientRect();
+            burstOrigin = {
+                x: (rect.left + rect.width / 2) / window.innerWidth,
+                y: (rect.top + rect.height / 2) / window.innerHeight
+            };
+        }
 
         const burstDefaults = {
             spread: 360,
             ticks: 60,
             gravity: 0,
             decay: 0.92,
-            startVelocity: 15,
+            startVelocity: 15 * scale,
             colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
         };
 
@@ -1480,20 +1489,36 @@
             setTimeout(() => {
                 confetti({
                     ...burstDefaults,
-                    particleCount,
-                    scalar,
+                    particleCount: Math.round(particleCount * scale),
+                    scalar: scalar * scale,
                     shapes,
                     startVelocity: burstDefaults.startVelocity + (Math.random() - 0.5) * velocityJitter,
-                    origin
+                    origin: burstOrigin
                 });
             }, delay);
         };
 
-        // 4 staggered bursts over ~350ms
+        // 4 staggered bursts over ~350ms (scaled by 'scale' parameter)
         fireBurst(0,   65, 1.2, ['star']);
         fireBurst(80,  22, 0.7, ['circle']);
         fireBurst(160, 40, 0.9, ['star'], 8);
         fireBurst(240, 25, 0.6, ['circle', 'star'], 10);
+    }
+
+    // Smaller burst effect centered on a newly gained star
+    function triggerStarBurst(starIndex) {
+        const starOverlay = document.getElementById('starOverlay');
+        if (!starOverlay) return;
+        const stars = starOverlay.querySelectorAll('.star');
+        const star = stars[starIndex - 1]; // 1-based index
+        if (!star) return;
+
+        const rect = star.getBoundingClientRect();
+        const origin = {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight
+        };
+        triggerLevelUpConfetti({ origin, scale: 0.3 });
     }
 
     function updateShalabahterImage() {
@@ -2835,6 +2860,7 @@ function provjeriOdgovor() {
         if (!hintUsed && !levelMastered[currentLevelKey]) {
             const prevStars = levelStars[currentLevelKey] || 0;
             levelStars[currentLevelKey] = Math.min(5, prevStars + 1);
+            triggerStarBurst(levelStars[currentLevelKey]);
             if (levelStars[currentLevelKey] === 5) {
                 levelMastered[currentLevelKey] = true;
                 nivo++;
