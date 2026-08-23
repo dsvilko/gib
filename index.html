@@ -11,6 +11,15 @@
 		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 		
     <style>
+        /* Hide scrollbars globally, keep scroll functionality */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -73,7 +82,7 @@
             --svg-overlay-bg: #F8FAFC;
             --hint-overlay-bg: #ffffff;
             --hint-overlay-border: #cbd5e1;
-            --phase-line-color: #888;
+            --phase-line-color: #c6c6c6;
 
             /* Chart hint overlay */
             --grafovi-hint-bg: #2563eb;
@@ -134,7 +143,7 @@
             --paper-dot-bg: #0f3da7;
             --paper-pos-bg: #ff0404;
             --speedometer-bg: #0f172a;
-            --speedometer-border: #334155;
+            --speedometer-border: #f8fbff;
             --svg-overlay-bg: #1E293B;
             --hint-overlay-bg: #1e293b;
             --hint-overlay-border: #334155;
@@ -173,6 +182,7 @@
             flex-direction: column;
             align-items: center;
             font-size: 11pt;
+            overflow-x: hidden;
         }
 
         .container {
@@ -203,7 +213,7 @@
         color: var(--cp-text);
         padding: 5px 8px;
         border-radius: 0;
-        margin: -25px -20px 5px -20px;   /* edge-to-edge unutar containera */
+        margin: -25px -25px 5px -20px;   /* edge-to-edge unutar containera */
         font-size: 0.9rem;
         font-family: 'Roboto Condensed', 'Segoe UI', Tahoma, sans-serif;
         -webkit-overflow-scrolling: touch;
@@ -227,7 +237,7 @@
         /*max-width: 130px;
         flex-shrink: 1;*/
         flex: 1 1 auto;   /* popuni preostali raspoloživi prostor u retku */
-        text-align: center;
+        text-align: left;
     }
 
     /* toggle kao tipka koja mijenja boju prema stanju */
@@ -355,7 +365,7 @@
             margin-bottom: 12px;
             flex-wrap: wrap;
             background: var(--interaction-bg);
-            padding: 10px;
+            padding: 6px;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
@@ -423,7 +433,14 @@
             overflow: hidden;
             z-index: 1;
         }
-        
+
+        /* Krajolik overlay - smaller, fits content */
+        .krajolik-overlay .help-overlay-content {
+            height: auto;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
         .help-header {
             display: flex;
             align-items: center;
@@ -519,7 +536,63 @@
         .help-body section:last-child {
             margin-bottom: 0;
         }
-
+        
+        /* Krajolik overlay items */
+        .krajolik-item {
+            margin: 6px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s;
+            margin-bottom: 8px;
+        }
+        .krajolik-item:hover {
+            background: var(--interaction-bg);
+            border-color: var(--primary);
+            transform: translateX(0px);
+        }
+        .krajolik-item.current {
+            border-color: var(--success);
+            background: var(--feedback-correct-bg);
+        }
+        .krajolik-info-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 12px 8px 4px;
+            margin-top: 4px;
+        }
+        .krajolik-preview {
+            position: relative;
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #ddd;
+        }
+        .krajolik-preview .bg-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0;
+            border-radius: 0;
+        }
+        .krajolik-preview .fg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            pointer-events: none;
+            margin: 0;
+            border-radius: 0;
+        }
+        .help-body.krajolik-list {
+            padding: 0px;
+        }
+        
         
         .feedback {
             padding: 8px 0 8px;
@@ -532,6 +605,7 @@
             align-items: center;
             justify-content: space-between; /* Pushes arrows to edges, keeps text centered */
             box-sizing: border-box;
+            padding-top: 11px;
         }
 
         .feedback.correct {
@@ -696,14 +770,19 @@
             border-radius: 50%;
             background: #00000000;
             border: 0px;
-            font-size: 1.1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.583);
             transition: background 0.15s, transform 0.1s;
             opacity: 0.7;
+            color: white;
+        }
+        .simulacija-pauza-btn img {
+            width: 24px;
+            height: 24px;
+            display: block;
         }
         .simulacija-pauza-btn:active { transform: scale(0.95); }
         
@@ -795,7 +874,7 @@
             transform: translateX(-50%);
             border-radius: 50%;
             background-color: var(--speedometer-bg);
-            border: 0px solid var(--speedometer-border);
+            border: 1.5px solid var(--speedometer-border);
             box-shadow: 0 1px 4px rgba(255, 255, 255, 0.2);
             z-index: 4;
             /*transition: left 0.15s ease;*/
@@ -934,6 +1013,7 @@
             transition: opacity 0.5s ease;
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0.4;
         }
         .chart-hint-overlay.already-seen {
             animation: none;
@@ -1058,7 +1138,9 @@
             <span class="star" data-idx="5">☆</span>
         </div>
 
-        <button id="btnPauzaSimulacija" class="simulacija-pauza-btn" title="Pauza" aria-label="Pauza simulacije" style="display: none;">⏸️</button>
+        <button id="btnPauzaSimulacija" class="simulacija-pauza-btn" title="Pauza" aria-label="Pauza simulacije" style="display: none;">
+            <img src="svg/pause.svg" alt="" aria-hidden="true">
+        </button>
 
         <div class="gib-vozilo-sloj" id="gibVoziloSloj">
            
@@ -1181,17 +1263,28 @@
                     <section>
                         <h3>Simulacija gibanja</h3>
                         <p>Nakon što date svoj odgovor na pitanje, automatski će se pokrenuti malena simulacija tog zadanog gibanja. Pored vozila, ako akcelleracija nije nula, biti će prikazan vektor akceleracije a time i rezultantne sile (žuta strelica). Na kazaljci brzinomjera također možete pratiti tenutni iznos brzine gibanja.<br> Neposredno ispod same simulacije, na 'papirnatoj' traci, to će gibanje biti zapisano i virtualnim 'tipkalom' koje prati gibanje automobila i ostavlja točkicu na trenutni položaj svakih 0.1 s (10 točaka u sekundi).</p>
-                        <p>Klikim na simulaciju možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje.</p>
+                        <p>Klikim na simulaciju (donja polovica krajolika) možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje. Klikom na gornju polovicu krajolika možete odabrati neki od već viđenih, ovisno o broju sakupljenih zvjezdica.</p>
                     </section>
                     <section>
                         <h3>Sakupljanje zvjezdica ⭐</h3>
-                        <p>Svaka kombinacija koju odaberete u izborniku na vrhu predstavlja zaseban 'nivo'. U svakom nivou cilj je sakupiti barem 5⭐. Točni odgovori (ako ne koristite pomoć) donose Vam 1⭐ dok u slučaju pogrešnog odgovora gubite 2⭐. Jednom kada na nekom nivou sakupite 5⭐ prikazati će se nova pozadina simulacije i novo vozilo. Ako nakon toga želite vidjeti još neki novi cool pejsaž, morati ćete sakupiti 5⭐ na nekom drugom novou (drugoj vještini, dugom gradivu ili možda samo tako što uključite 'sve do' umjesto 'samo'). Svaki se dan na slučajno odabere redoslijed pozadina tako da ako želite vidjeti što više pozadina možete intezivno vježbati jedan dan (riješiti puno nivoa) ili vježbati na različite dane.</p>
+                        <p>Svaka kombinacija koju odaberete u izborniku na vrhu predstavlja zaseban 'nivo'. U svakom nivou cilj je sakupiti barem 5⭐. Točni odgovori (ako ne koristite pomoć) donose Vam 1⭐ dok u slučaju pogrešnog odgovora gubite 3⭐. Jednom kada na nekom nivou sakupite 5⭐ prikazati će se novi krajolik simulacije i novo vozilo. Ako nakon toga želite vidjeti još neki novi cool krajolik, morati ćete sakupiti 5⭐ na nekom drugom novou (drugoj vještini, dugom gradivu ili možda samo tako što uključite 'sve do' umjesto 'samo'). Svaki se dan na slučajno odabere redoslijed krajolika tako da ako ih želite vidjeti što više možete intezivno vježbati jedan dan (riješiti puno nivoa) ili vježbati na različite dane.</p>
                     </section>
                     <section>
                         <h3>O autoru...</h3>
                         <p>Ovu je stranicu osmislio i izradio <i>Domjan Svilković</i>, profesor fizike u OŠ Remete i OŠ Jabukovac, Zagreb.</p>
                     </section>
                 </div>
+            </div>
+        </div>
+        
+        <div class="help-overlay krajolik-overlay" id="krajolikOverlay" role="dialog" aria-modal="true" aria-labelledby="krajolikTitle">
+            <div class="help-overlay-backdrop"></div>
+            <div class="help-overlay-content">
+                <header class="help-header">
+                    <h2 id="krajolikTitle">Odaberi krajolik</h2>
+                    <button class="help-close-btn" aria-label="Zatvori" type="button">✕</button>
+                </header>
+                <div class="help-body krajolik-list" id="krajolikList"></div>
             </div>
         </div>
         
@@ -1259,7 +1352,6 @@
     let animacijaFrameId = null;
     let isSimulacijaPauzirana = false;
     let pauzaStartVrijeme = 0;
-    let ukupnoPauzaVrijeme = 0;
     let ostaliChartInstances = [null, null];
     let pitanjeChartInstances = [];
     let ostaliGrafoviVidljivi = false;
@@ -1271,9 +1363,15 @@
     let levelMastered = {};
     let currentLevelKey = null;
     let hintUsed = false;
+    let odabrani_krajolik = 0;
 
     // Debug flag: if true, fire confetti on every answer submission
-    let debug_confetti =false;
+    let debug_confetti = false;
+
+    // Enable debug_confetti via ?debug URL parameter
+    if (new URLSearchParams(window.location.search).has('debug')) {
+        debug_confetti = true;
+    }
 
     function cssVar(name) {
         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -1350,7 +1448,8 @@
 
     function toggleSimulacijaPauza() {
         isSimulacijaPauzirana = !isSimulacijaPauzirana;
-        btnPauzaSimulacija.textContent = isSimulacijaPauzirana ? '▶️' : '⏸️';
+        const img = btnPauzaSimulacija.querySelector('img');
+        img.src = isSimulacijaPauzirana ? 'svg/play.svg' : 'svg/pause.svg';
         btnPauzaSimulacija.title = isSimulacijaPauzirana ? 'Nastavi' : 'Pauza';
     }
 
@@ -1382,11 +1481,12 @@
         updateShalabahterImage();
         updateExplanationBoxImages();
         updateHelpOverlayImages();
+        updateHintOverlayImages();
         
         // Recreate charts with new colors (inline functions only evaluate at creation)
         if (trenutniZadatak) {
             prikaziGraf(trenutniZadatak);
-            if (ostaliGrafoviVidljivi) prikaziOstaleGrafove();
+            if (prikazaniDodatniGrafovi) prikaziOstaleGrafove();
             if (trenutniZadatak.tezina === 6) prikaziKandidateGrafova(trenutniZadatak);
         }
     }
@@ -1395,6 +1495,16 @@
         const helpOverlay = document.getElementById('helpOverlay');
         if (!helpOverlay) return;
         const images = helpOverlay.querySelectorAll('img[src^="svg/"]');
+        images.forEach(img => {
+            const fileName = img.src.split('/').pop().replace('.svg', '');
+            img.src = svgPath(fileName);
+        });
+    }
+
+    function updateHintOverlayImages() {
+        const hintOverlay = document.getElementById('hint-overlay');
+        if (!hintOverlay) return;
+        const images = hintOverlay.querySelectorAll('img[src^="svg/"]');
         images.forEach(img => {
             const fileName = img.src.split('/').pop().replace('.svg', '');
             img.src = svgPath(fileName);
@@ -1442,29 +1552,32 @@
             let baseLabel = opt.dataset.baseLabel || opt.textContent;
             baseLabel = baseLabel.replace(/^\d+\.\s*/, '').replace(/\s*\([★☆*]+\)/, '').trim();
             opt.dataset.baseLabel = baseLabel;
-            opt.textContent = mastered ? `🏆 ${baseLabel}` : `${starCount}★ ${baseLabel}`;
+            opt.innerHTML = mastered ? `🏆 ${baseLabel}` : `${starCount}⭐ ${baseLabel}`;
         });
     }
 
-    // Confetti celebration for level mastery (5 stars)
-    function triggerLevelUpConfetti() {
+    // Confetti celebration for level mastery (5 stars) or star burst (smaller)
+    function triggerLevelUpConfetti(options = {}) {
         if (typeof confetti === 'undefined') return;
-        // Respect prefers-reduced-motion (canvas-confetti handles this internally)
+        const { origin, scale = 1 } = options;
 
-        const scene = document.getElementById('gibScena');
-        if (!scene) return;
-        const rect = scene.getBoundingClientRect();
-        const origin = {
-            x: (rect.left + rect.width / 2) / window.innerWidth,
-            y: (rect.top + rect.height / 2) / window.innerHeight
-        };
+        let burstOrigin = origin;
+        if (!burstOrigin) {
+            const scene = document.getElementById('gibScena');
+            if (!scene) return;
+            const rect = scene.getBoundingClientRect();
+            burstOrigin = {
+                x: (rect.left + rect.width / 2) / window.innerWidth,
+                y: (rect.top + rect.height / 2) / window.innerHeight
+            };
+        }
 
         const burstDefaults = {
             spread: 360,
             ticks: 60,
             gravity: 0,
             decay: 0.92,
-            startVelocity: 15,
+            startVelocity: 15 * scale,
             colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
         };
 
@@ -1472,20 +1585,36 @@
             setTimeout(() => {
                 confetti({
                     ...burstDefaults,
-                    particleCount,
-                    scalar,
+                    particleCount: Math.round(particleCount * scale),
+                    scalar: scalar * scale,
                     shapes,
                     startVelocity: burstDefaults.startVelocity + (Math.random() - 0.5) * velocityJitter,
-                    origin
+                    origin: burstOrigin
                 });
             }, delay);
         };
 
-        // 4 staggered bursts over ~350ms
+        // 4 staggered bursts over ~350ms (scaled by 'scale' parameter)
         fireBurst(0,   65, 1.2, ['star']);
         fireBurst(80,  22, 0.7, ['circle']);
         fireBurst(160, 40, 0.9, ['star'], 8);
         fireBurst(240, 25, 0.6, ['circle', 'star'], 10);
+    }
+
+    // Smaller burst effect centered on a newly gained star
+    function triggerStarBurst(starIndex) {
+        const starOverlay = document.getElementById('starOverlay');
+        if (!starOverlay) return;
+        const stars = starOverlay.querySelectorAll('.star');
+        const star = stars[starIndex - 1]; // 1-based index
+        if (!star) return;
+
+        const rect = star.getBoundingClientRect();
+        const origin = {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight
+        };
+        triggerLevelUpConfetti({ origin, scale: 0.3 });
     }
 
     function updateShalabahterImage() {
@@ -1556,7 +1685,7 @@ function generirajZadatak() {
     
     // Hide and reset pause button
     btnPauzaSimulacija.style.display = 'none';
-    btnPauzaSimulacija.textContent = '⏸️';
+    btnPauzaSimulacija.querySelector('img').src = 'svg/pause.svg';
     btnPauzaSimulacija.title = 'Pauza';
     isSimulacijaPauzirana = false;
     
@@ -2743,6 +2872,9 @@ function odbaceni(broj) {
 
     
 function provjeriOdgovor() {
+    const hintOverlay = document.getElementById('hint-overlay');
+    if (hintOverlay) hintOverlay.remove();
+
     btnProvjeri.disabled = true;
     btnProvjeri.classList.add('hidden');
     btnDalje.classList.remove('hidden');
@@ -2761,6 +2893,7 @@ function provjeriOdgovor() {
     overlay.className = 'chart-hint-overlay';
     overlay.textContent = 'Klikni za prikaz ostalih grafova';
     
+    
     if (!userHasClickedChart) {
         // First time: show at full opacity, fade to 0.4 after 4s (0.5s transition via CSS)
         overlay._hintTimeout = setTimeout(() => {
@@ -2778,7 +2911,7 @@ function provjeriOdgovor() {
                     if (overlay.parentNode === chartContainer) overlay.remove();
                 }, 500);
             }
-        }, 4000);
+        }, 2000);
     }
     
     chartContainer.appendChild(overlay);
@@ -2826,9 +2959,11 @@ function provjeriOdgovor() {
         if (!hintUsed && !levelMastered[currentLevelKey]) {
             const prevStars = levelStars[currentLevelKey] || 0;
             levelStars[currentLevelKey] = Math.min(5, prevStars + 1);
+            triggerStarBurst(levelStars[currentLevelKey]);
             if (levelStars[currentLevelKey] === 5) {
                 levelMastered[currentLevelKey] = true;
                 nivo++;
+                odabrani_krajolik = nivo;
                 generirajNoviKrajolik();
                 triggerLevelUpConfetti();
             }
@@ -2842,9 +2977,9 @@ function provjeriOdgovor() {
         feedbackBox.style.visibility = 'visible';
         btnDalje.style.background = cssVar('--danger');
         
-        // Star system: deduct 2 stars on wrong answer (if not mastered)
+        // Star system: deduct stars on wrong answer (if not mastered)
         if (!levelMastered[currentLevelKey]) {
-            levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 2);
+            levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 3);
             updateStarDisplay();
         }
         
@@ -2887,6 +3022,9 @@ function provjeriOdgovor() {
 
     // Debug: fire confetti on every answer if debug_confetti is true
     if (debug_confetti) {
+        nivo++;
+        odabrani_krajolik = nivo;
+        generirajNoviKrajolik();
         triggerLevelUpConfetti();
     }
 }    
@@ -3656,7 +3794,7 @@ function prikaziGraf(zadatak) {
                 tension: 0,
                 clip: false,
                 segment: {
-                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff' : '#000000') : (DM ? '#ffffff' : '#000000')
+                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? (DM ? '#ffffff11' : '#00000011') : (DM ? '#ffffff' : '#000000')
                 }
             },
             {
@@ -3959,13 +4097,21 @@ feedbackBox.addEventListener('click', (e) => {
     // 4. Append to body to measure its rendered height accurately
     document.body.appendChild(overlay);
 
-    // 5. Position bottom of overlay right over the top of feedbackBox
-    const overlayHeight = overlay.offsetHeight;
-    
-    overlay.style.top = `${rect.top + window.scrollY - overlayHeight}px`;
-    //overlay.style.left = `${rect.left + window.scrollX}px`;
-    overlay.style.top = `${rect.top + window.scrollY - overlayHeight}px`;
-    overlay.style.left = `50%`;
+    // 5. Wait for images to load, then position overlay
+    const images = overlay.querySelectorAll('img');
+    const loadPromises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+        });
+    });
+
+    Promise.all(loadPromises).then(() => {
+        const overlayHeight = overlay.offsetHeight;
+        overlay.style.top = `${rect.top - overlayHeight}px`;
+        overlay.style.left = `50%`;
+    });
     
     // 6. Close overlay on click
     overlay.addEventListener('click', () => {
@@ -3988,7 +4134,7 @@ function openHelpOverlay() {
 
 function closeHelpOverlay() {
     helpOverlay.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.style.overflow = 'auto';
 }
 
 shalabahterBtn?.addEventListener('click', (e) => {
@@ -4044,24 +4190,82 @@ function shuffle(array) {
   return result;
 }
 
-var VOZILA = shuffle(['mini', 'beetle', 'mustang','vw-van','yaris','yazz']);
-var POZADINE = shuffle(['Alps','Constable','Dalmacija','English-village','France','GorskiKotar','Hvar','Istra','Istra2','jesen','jesen2','Kornati','Lika','Nizozemska','obala','obala2','Pag','Plitvice','pored-mora','Slavonia','Slavonija2','Slovenia','solarna','sumska-cesta','vinograd','Zadar','Zagorje1','Zagorje2','zima1','zima2','zima3','zima4']);
+var VOZILA = shuffle(['beetle', 'mini', 'mustang', 'vw-van', 'yaris', 'yazz']);
+var POZADINE = shuffle(['Alps', 'Amalfi', 'Austria', 'Constable', 'Dalmacija', 'English-village', 'France', 'GorskiKotar', 'Hrastovi', 'Hrastovi2', 'Hvar', 'Istra', 'Istra2', 'Kornati', 'Lika', 'Lika-kisa', 'Motovun', 'Nizozemska', 'Pag', 'Plitvice', 'Slavonia', 'Slavonia2', 'Slavonija2', 'Slovenia', 'Velebit', 'Velebit-jesen', 'Zadar', 'Zagorje1', 'Zagorje2', 'jesen', 'jesen2', 'obala', 'obala2', 'pored-mora', 'solarna', 'sumska-cesta', 'vinograd', 'vocnjak', 'zima1', 'zima2', 'zima3', 'zima4']);
 var nivo = 0;
 
 
 function generirajNoviKrajolik() {
 
     
-    gibAuto.src = 'vozila/' + VOZILA[nivo%VOZILA.length] + '.png';
+    gibAuto.src = 'vozila/' + VOZILA[odabrani_krajolik%VOZILA.length] + '.png';
     
-    gibPozadina.src = 'pozadine/' + POZADINE[nivo%POZADINE.length] + '/bg.jpg';
+    gibPozadina.src = 'pozadine/' + POZADINE[odabrani_krajolik%POZADINE.length] + '/bg.jpg';
     gibPrednji.style.display='block';
     gibPrednji.style.opacity=1;
-    gibPrednji.src = 'pozadine/' + POZADINE[nivo%POZADINE.length] + '/fg.png';
+    gibPrednji.src = 'pozadine/' + POZADINE[odabrani_krajolik%POZADINE.length] + '/fg.png';
 }
 
 
 generirajNoviKrajolik();
+
+// Krajolik selector overlay
+const krajolikOverlay = document.getElementById('krajolikOverlay');
+const krajolikBackdrop = krajolikOverlay?.querySelector('.help-overlay-backdrop');
+const krajolikCloseBtn = krajolikOverlay?.querySelector('.help-close-btn');
+const krajolikList = document.getElementById('krajolikList');
+
+function openKrajolikOverlay() {
+    krajolikList.innerHTML = '';
+    for (let i = 0; i <= Math.min(nivo,POZADINE.length-1); i++) {
+        const name = POZADINE[i % POZADINE.length];
+        const item = document.createElement('div');
+        item.className = 'krajolik-item' + (i === odabrani_krajolik ? ' current' : '');
+        item.dataset.index = i;
+        item.innerHTML = `
+            <div class="krajolik-preview">
+                <img class="bg-img" src="pozadine/${name}/bg.jpg" alt="${name}" loading="lazy">
+                <img class="fg-img" src="pozadine/${name}/fg.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            </div>
+        `;
+        krajolikList.appendChild(item);
+    }
+    // Add info text
+    const info = document.createElement('div');
+    info.className = 'krajolik-info-text';
+    info.innerHTML = 'Sakupite po 5 zvjezdica na nivou za dodatne krajolike!<br>Točan odgovor donoosi 1⭐ (ako niste koristili <i>hint</i>), a pogrešan -3⭐.';
+    krajolikList.appendChild(info);
+    krajolikOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    krajolikCloseBtn?.focus();
+}
+
+function closeKrajolikOverlay() {
+    krajolikOverlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function selectKrajolik(index) {
+    odabrani_krajolik = index;
+    generirajNoviKrajolik();
+    closeKrajolikOverlay();
+}
+
+krajolikBackdrop?.addEventListener('click', closeKrajolikOverlay);
+krajolikCloseBtn?.addEventListener('click', closeKrajolikOverlay);
+krajolikList?.addEventListener('click', (e) => {
+    const item = e.target.closest('.krajolik-item');
+    if (item) selectKrajolik(parseInt(item.dataset.index, 10));
+});
+krajolikOverlay?.querySelector('.help-overlay-content')?.addEventListener('click', (e) => e.stopPropagation());
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && krajolikOverlay?.classList.contains('active')) {
+        closeKrajolikOverlay();
+    }
+});
+
+
+
 
 
 
@@ -4103,11 +4307,21 @@ function slucajan(list) {
     
 
 
-gibScena.addEventListener('click', () => {
-    if(prednjiPrikazan) {
-        gibPrednji.style.opacity=0;
+gibScena.addEventListener('click', (e) => {
+    const rect = gibScena.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const isUpperHalf = clickY < rect.height / 2;
+
+    if (isUpperHalf && nivo > -1) {
+        openKrajolikOverlay();
+        return;
+    }
+
+    // Lower half: toggle foreground opacity
+    if (prednjiPrikazan) {
+        gibPrednji.style.opacity = 0;
     } else {
-        gibPrednji.style.opacity=100;
+        gibPrednji.style.opacity = 1;
     }
     prednjiPrikazan = !prednjiPrikazan;
 
@@ -4138,7 +4352,6 @@ function zaustaviSimulaciju() {
 function pokreniAnimaciju() {
     const ukupnoVrijeme = trenutniZadatak.faze[2].t1;
     let startVrijeme = performance.now();
-    ukupnoPauzaVrijeme = 0;
     pauzaStartVrijeme = 0;
     isSimulacijaPauzirana = false;
     akceleracijaStrelica.style.opacity=1;
@@ -4156,8 +4369,8 @@ function pokreniAnimaciju() {
         // Handle pause: accumulate paused duration, don't advance simulation time
         if (isSimulacijaPauzirana) {
             if (pauzaStartVrijeme === 0) pauzaStartVrijeme = vrijeme;
-            startVrijeme += (performance.now() - pauzaStartVrijeme);
-            pauzaStartVrijeme = performance.now();
+            startVrijeme += (vrijeme - pauzaStartVrijeme);
+            pauzaStartVrijeme = vrijeme;
         } else {
             pauzaStartVrijeme = 0;
         }
