@@ -1480,6 +1480,7 @@
         updateShalabahterImage();
         updateExplanationBoxImages();
         updateHelpOverlayImages();
+        updateHintOverlayImages();
         
         // Recreate charts with new colors (inline functions only evaluate at creation)
         if (trenutniZadatak) {
@@ -1493,6 +1494,16 @@
         const helpOverlay = document.getElementById('helpOverlay');
         if (!helpOverlay) return;
         const images = helpOverlay.querySelectorAll('img[src^="svg/"]');
+        images.forEach(img => {
+            const fileName = img.src.split('/').pop().replace('.svg', '');
+            img.src = svgPath(fileName);
+        });
+    }
+
+    function updateHintOverlayImages() {
+        const hintOverlay = document.getElementById('hint-overlay');
+        if (!hintOverlay) return;
+        const images = hintOverlay.querySelectorAll('img[src^="svg/"]');
         images.forEach(img => {
             const fileName = img.src.split('/').pop().replace('.svg', '');
             img.src = svgPath(fileName);
@@ -2860,6 +2871,9 @@ function odbaceni(broj) {
 
     
 function provjeriOdgovor() {
+    const hintOverlay = document.getElementById('hint-overlay');
+    if (hintOverlay) hintOverlay.remove();
+
     btnProvjeri.disabled = true;
     btnProvjeri.classList.add('hidden');
     btnDalje.classList.remove('hidden');
@@ -4082,13 +4096,21 @@ feedbackBox.addEventListener('click', (e) => {
     // 4. Append to body to measure its rendered height accurately
     document.body.appendChild(overlay);
 
-    // 5. Position bottom of overlay right over the top of feedbackBox
-    const overlayHeight = overlay.offsetHeight;
-    
-    overlay.style.top = `${rect.top + window.scrollY - overlayHeight}px`;
-    //overlay.style.left = `${rect.left + window.scrollX}px`;
-    overlay.style.top = `${rect.top + window.scrollY - overlayHeight}px`;
-    overlay.style.left = `50%`;
+    // 5. Wait for images to load, then position overlay
+    const images = overlay.querySelectorAll('img');
+    const loadPromises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+        });
+    });
+
+    Promise.all(loadPromises).then(() => {
+        const overlayHeight = overlay.offsetHeight;
+        overlay.style.top = `${rect.top - overlayHeight}px`;
+        overlay.style.left = `50%`;
+    });
     
     // 6. Close overlay on click
     overlay.addEventListener('click', () => {
@@ -4210,7 +4232,7 @@ function openKrajolikOverlay() {
     // Add info text
     const info = document.createElement('div');
     info.className = 'krajolik-info-text';
-    info.textContent = 'Sakupite po 5 zvjezdica na nivou za dodatne krajolike!';
+    info.innerHTML = 'Sakupite po 5 zvjezdica na nivou za dodatne krajolike!<br>Točan odgovor donoosi 1⭐ (ako niste koristili <i>hint</i>), a pogrešan -3⭐.';
     krajolikList.appendChild(info);
     krajolikOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
