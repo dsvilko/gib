@@ -2613,19 +2613,52 @@ function oblikujPitanjeIZadatak(zadatak) {
     } 
     else if (tezina === 3) {
         // MAX NAGIB
-        let iznosiNagiba = faze.map(f => Math.abs((f.y1 - f.y0) / (f.t1 - f.t0)));
-        let iznosiNagiba2 = faze.map(f => Math.abs((f.y1 - f.y0) / (f.t1 - f.t0)));
-        let maxNagib = Math.max(...iznosiNagiba);
-        let minNagib = Math.min(...iznosiNagiba2.filter(n => n > 0));
-        tocanOdgovor = iznosiNagiba.indexOf(maxNagib) + 1;
+        let signedSlopes = faze.map(f => (f.y1 - f.y0) / (f.t1 - f.t0));
+        let absSlopes = signedSlopes.map(s => Math.abs(s));
+        let maxSlope = Math.max(...absSlopes);
+        tocanOdgovor = absSlopes.indexOf(maxSlope) + 1;
         
         oznaciDio = 4;
         if (vrstaGrafa === 's/t') {
-            if(iznosiNagiba2.filter(n => n > 0).length >= 2 && Math.random(1)<0.2) {
-                tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najstrmija</b>?`;
-                infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrimiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
-                infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
-                tocanOdgovor = iznosiNagiba.indexOf(minNagib) + 1;
+            let positiveCount = signedSlopes.filter(s => s > 0).length;
+            if (positiveCount >= 2 && Math.random() < 0.6) {
+                const traziNajstrmije = Math.random() < 0.5;
+                
+                if (traziNajstrmije) {
+                    tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najstrmija</b>?`;
+                    infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrimiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                    infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
+                    
+                    let minAbs = Infinity;
+                    let minPhase = 1;
+                    signedSlopes.forEach((slope, i) => {
+                        if (slope > 0) {
+                            let abs = Math.abs(slope);
+                            if (abs < minAbs) {
+                                minAbs = abs;
+                                minPhase = i + 1;
+                            }
+                        }
+                    });
+                    tocanOdgovor = minPhase;
+                } else {
+                    tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najmanje strma</b>?`;
+                    infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najmanje strma, planinaru je bilo najlakše penjati se pa mu je tamo brzina vjerojatno bila najveća. Najveću brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najvećem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najveći nagib vjerojatno pokazuje najmanje strmi dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                    infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
+                    
+                    let maxAbs = -Infinity;
+                    let maxPhase = 1;
+                    signedSlopes.forEach((slope, i) => {
+                        if (slope > 0) {
+                            let abs = Math.abs(slope);
+                            if (abs > maxAbs) {
+                                maxAbs = abs;
+                                maxPhase = i + 1;
+                            }
+                        }
+                    });
+                    tocanOdgovor = maxPhase;
+                }
             } else {
                 tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) <b><u>brzina bila najveća</u></b>, po iznosu?`;
                 infoObjasnjene = `Brzina na <span class='x-t'>s–t</span> grafu određena je nagibom (strminom) linije. Jasno je da dio broj <b>${tocanOdgovor}</b> ima najveći nagib pa je tu tijelo bilo i najbrže.`;
