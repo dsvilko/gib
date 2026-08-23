@@ -11,6 +11,15 @@
 		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 		
     <style>
+        /* Hide scrollbars globally, keep scroll functionality */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -423,7 +432,14 @@
             overflow: hidden;
             z-index: 1;
         }
-        
+
+        /* Krajolik overlay - smaller, fits content */
+        .krajolik-overlay .help-overlay-content {
+            height: auto;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
         .help-header {
             display: flex;
             align-items: center;
@@ -519,7 +535,63 @@
         .help-body section:last-child {
             margin-bottom: 0;
         }
-
+        
+        /* Krajolik overlay items */
+        .krajolik-item {
+            margin: 6px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s;
+            margin-bottom: 8px;
+        }
+        .krajolik-item:hover {
+            background: var(--interaction-bg);
+            border-color: var(--primary);
+            transform: translateX(0px);
+        }
+        .krajolik-item.current {
+            border-color: var(--success);
+            background: var(--feedback-correct-bg);
+        }
+        .krajolik-info-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 12px 8px 4px;
+            margin-top: 4px;
+        }
+        .krajolik-preview {
+            position: relative;
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #ddd;
+        }
+        .krajolik-preview .bg-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0;
+            border-radius: 0;
+        }
+        .krajolik-preview .fg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            pointer-events: none;
+            margin: 0;
+            border-radius: 0;
+        }
+        .help-body.krajolik-list {
+            padding: 0px;
+        }
+        
         
         .feedback {
             padding: 8px 0 8px;
@@ -1190,17 +1262,28 @@
                     <section>
                         <h3>Simulacija gibanja</h3>
                         <p>Nakon što date svoj odgovor na pitanje, automatski će se pokrenuti malena simulacija tog zadanog gibanja. Pored vozila, ako akcelleracija nije nula, biti će prikazan vektor akceleracije a time i rezultantne sile (žuta strelica). Na kazaljci brzinomjera također možete pratiti tenutni iznos brzine gibanja.<br> Neposredno ispod same simulacije, na 'papirnatoj' traci, to će gibanje biti zapisano i virtualnim 'tipkalom' koje prati gibanje automobila i ostavlja točkicu na trenutni položaj svakih 0.1 s (10 točaka u sekundi).</p>
-                        <p>Klikim na simulaciju možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje.</p>
+                        <p>Klikim na simulaciju (donja polovica krajolika) možete prikazati/sakriti objekte u prvom planu ceste, ako takvi postoje. Klikom na gornju polovicu krajolika možete odabrati neki od već viđenih, ovisno o broju sakupljenih zvjezdica.</p>
                     </section>
                     <section>
                         <h3>Sakupljanje zvjezdica ⭐</h3>
-                        <p>Svaka kombinacija koju odaberete u izborniku na vrhu predstavlja zaseban 'nivo'. U svakom nivou cilj je sakupiti barem 5⭐. Točni odgovori (ako ne koristite pomoć) donose Vam 1⭐ dok u slučaju pogrešnog odgovora gubite 2⭐. Jednom kada na nekom nivou sakupite 5⭐ prikazati će se nova pozadina simulacije i novo vozilo. Ako nakon toga želite vidjeti još neki novi cool pejsaž, morati ćete sakupiti 5⭐ na nekom drugom novou (drugoj vještini, dugom gradivu ili možda samo tako što uključite 'sve do' umjesto 'samo'). Svaki se dan na slučajno odabere redoslijed pozadina tako da ako želite vidjeti što više pozadina možete intezivno vježbati jedan dan (riješiti puno nivoa) ili vježbati na različite dane.</p>
+                        <p>Svaka kombinacija koju odaberete u izborniku na vrhu predstavlja zaseban 'nivo'. U svakom nivou cilj je sakupiti barem 5⭐. Točni odgovori (ako ne koristite pomoć) donose Vam 1⭐ dok u slučaju pogrešnog odgovora gubite 3⭐. Jednom kada na nekom nivou sakupite 5⭐ prikazati će se novi krajolik simulacije i novo vozilo. Ako nakon toga želite vidjeti još neki novi cool krajolik, morati ćete sakupiti 5⭐ na nekom drugom novou (drugoj vještini, dugom gradivu ili možda samo tako što uključite 'sve do' umjesto 'samo'). Svaki se dan na slučajno odabere redoslijed krajolika tako da ako ih želite vidjeti što više možete intezivno vježbati jedan dan (riješiti puno nivoa) ili vježbati na različite dane.</p>
                     </section>
                     <section>
                         <h3>O autoru...</h3>
                         <p>Ovu je stranicu osmislio i izradio <i>Domjan Svilković</i>, profesor fizike u OŠ Remete i OŠ Jabukovac, Zagreb.</p>
                     </section>
                 </div>
+            </div>
+        </div>
+        
+        <div class="help-overlay krajolik-overlay" id="krajolikOverlay" role="dialog" aria-modal="true" aria-labelledby="krajolikTitle">
+            <div class="help-overlay-backdrop"></div>
+            <div class="help-overlay-content">
+                <header class="help-header">
+                    <h2 id="krajolikTitle">Odaberi krajolik</h2>
+                    <button class="help-close-btn" aria-label="Zatvori" type="button">✕</button>
+                </header>
+                <div class="help-body krajolik-list" id="krajolikList"></div>
             </div>
         </div>
         
@@ -1279,6 +1362,7 @@
     let levelMastered = {};
     let currentLevelKey = null;
     let hintUsed = false;
+    let odabrani_krajolik = 0;
 
     // Debug flag: if true, fire confetti on every answer submission
     let debug_confetti = false;
@@ -1456,7 +1540,7 @@
             let baseLabel = opt.dataset.baseLabel || opt.textContent;
             baseLabel = baseLabel.replace(/^\d+\.\s*/, '').replace(/\s*\([★☆*]+\)/, '').trim();
             opt.dataset.baseLabel = baseLabel;
-            opt.textContent = mastered ? `🏆 ${baseLabel}` : `${starCount}★ ${baseLabel}`;
+            opt.innerHTML = mastered ? `🏆 ${baseLabel}` : `${starCount}⭐ ${baseLabel}`;
         });
     }
 
@@ -2864,6 +2948,7 @@ function provjeriOdgovor() {
             if (levelStars[currentLevelKey] === 5) {
                 levelMastered[currentLevelKey] = true;
                 nivo++;
+                odabrani_krajolik = nivo;
                 generirajNoviKrajolik();
                 triggerLevelUpConfetti();
             }
@@ -2877,9 +2962,9 @@ function provjeriOdgovor() {
         feedbackBox.style.visibility = 'visible';
         btnDalje.style.background = cssVar('--danger');
         
-        // Star system: deduct 2 stars on wrong answer (if not mastered)
+        // Star system: deduct stars on wrong answer (if not mastered)
         if (!levelMastered[currentLevelKey]) {
-            levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 2);
+            levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 3);
             updateStarDisplay();
         }
         
@@ -2923,6 +3008,7 @@ function provjeriOdgovor() {
     // Debug: fire confetti on every answer if debug_confetti is true
     if (debug_confetti) {
         nivo++;
+        odabrani_krajolik = nivo;
         generirajNoviKrajolik();
         triggerLevelUpConfetti();
     }
@@ -4025,7 +4111,7 @@ function openHelpOverlay() {
 
 function closeHelpOverlay() {
     helpOverlay.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.style.overflow = 'auto';
 }
 
 shalabahterBtn?.addEventListener('click', (e) => {
@@ -4089,16 +4175,74 @@ var nivo = 0;
 function generirajNoviKrajolik() {
 
     
-    gibAuto.src = 'vozila/' + VOZILA[nivo%VOZILA.length] + '.png';
+    gibAuto.src = 'vozila/' + VOZILA[odabrani_krajolik%VOZILA.length] + '.png';
     
-    gibPozadina.src = 'pozadine/' + POZADINE[nivo%POZADINE.length] + '/bg.jpg';
+    gibPozadina.src = 'pozadine/' + POZADINE[odabrani_krajolik%POZADINE.length] + '/bg.jpg';
     gibPrednji.style.display='block';
     gibPrednji.style.opacity=1;
-    gibPrednji.src = 'pozadine/' + POZADINE[nivo%POZADINE.length] + '/fg.png';
+    gibPrednji.src = 'pozadine/' + POZADINE[odabrani_krajolik%POZADINE.length] + '/fg.png';
 }
 
 
 generirajNoviKrajolik();
+
+// Krajolik selector overlay
+const krajolikOverlay = document.getElementById('krajolikOverlay');
+const krajolikBackdrop = krajolikOverlay?.querySelector('.help-overlay-backdrop');
+const krajolikCloseBtn = krajolikOverlay?.querySelector('.help-close-btn');
+const krajolikList = document.getElementById('krajolikList');
+
+function openKrajolikOverlay() {
+    krajolikList.innerHTML = '';
+    for (let i = 0; i <= nivo; i++) {
+        const name = POZADINE[i % POZADINE.length];
+        const item = document.createElement('div');
+        item.className = 'krajolik-item' + (i === odabrani_krajolik ? ' current' : '');
+        item.dataset.index = i;
+        item.innerHTML = `
+            <div class="krajolik-preview">
+                <img class="bg-img" src="pozadine/${name}/bg.jpg" alt="${name}" loading="lazy">
+                <img class="fg-img" src="pozadine/${name}/fg.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            </div>
+        `;
+        krajolikList.appendChild(item);
+    }
+    // Add info text
+    const info = document.createElement('div');
+    info.className = 'krajolik-info-text';
+    info.textContent = 'Sakupite po 5 zvjezdica na nivou za dodatne krajolike!';
+    krajolikList.appendChild(info);
+    krajolikOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    krajolikCloseBtn?.focus();
+}
+
+function closeKrajolikOverlay() {
+    krajolikOverlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function selectKrajolik(index) {
+    odabrani_krajolik = index;
+    generirajNoviKrajolik();
+    closeKrajolikOverlay();
+}
+
+krajolikBackdrop?.addEventListener('click', closeKrajolikOverlay);
+krajolikCloseBtn?.addEventListener('click', closeKrajolikOverlay);
+krajolikList?.addEventListener('click', (e) => {
+    const item = e.target.closest('.krajolik-item');
+    if (item) selectKrajolik(parseInt(item.dataset.index, 10));
+});
+krajolikOverlay?.querySelector('.help-overlay-content')?.addEventListener('click', (e) => e.stopPropagation());
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && krajolikOverlay?.classList.contains('active')) {
+        closeKrajolikOverlay();
+    }
+});
+
+
+
 
 
 
@@ -4140,11 +4284,21 @@ function slucajan(list) {
     
 
 
-gibScena.addEventListener('click', () => {
-    if(prednjiPrikazan) {
-        gibPrednji.style.opacity=0;
+gibScena.addEventListener('click', (e) => {
+    const rect = gibScena.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const isUpperHalf = clickY < rect.height / 2;
+
+    if (isUpperHalf && nivo > -1) {
+        openKrajolikOverlay();
+        return;
+    }
+
+    // Lower half: toggle foreground opacity
+    if (prednjiPrikazan) {
+        gibPrednji.style.opacity = 0;
     } else {
-        gibPrednji.style.opacity=100;
+        gibPrednji.style.opacity = 1;
     }
     prednjiPrikazan = !prednjiPrikazan;
 
