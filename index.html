@@ -1083,7 +1083,7 @@
                 <option value="0" selected>0. Vrsta?</option>
                 <option value="1">1. Direktno.</option>
                 <option value="2">2. Promjene?</option>
-                <option value="3">3. Max?</option>
+                <option value="3">3. Strmije?</option>
                 <option value="4">4. Nagib?</option>
                 <option value="5">5. Površina?</option>
                 <option value="6">6. Pretvori.</option>
@@ -1310,6 +1310,10 @@
                 </select>
             </div>
 
+            <div id="unosVisestrukiBox" style="display: none; align-items: center; gap: 10px;">
+                <select id="selectVisestruki" style="width: auto; min-width: 180px;"></select>
+            </div>
+
             <button id="btnProvjeri" class="btn-primary">Provjeri</button>
             <button id="btnDalje" class="btn-primary hidden" style="background-color: var(--success)">Novi</button>
             
@@ -1394,6 +1398,9 @@
     const unosPrepoznavanjeBox = document.getElementById('unosPrepoznavanjeBox');
     const selectVrsta = document.getElementById('selectVrsta');
     const selectSmjer = document.getElementById('selectSmjer');
+
+    const unosVisestrukiBox = document.getElementById('unosVisestrukiBox');
+    const selectVisestruki = document.getElementById('selectVisestruki');
 
     const btnProvjeri = document.getElementById('btnProvjeri');
     const btnDalje = document.getElementById('btnDalje');
@@ -1719,6 +1726,8 @@ function generirajZadatak() {
     selectSmjer.value = "";
     selectVrsta.disabled = false;
     selectSmjer.disabled = false;
+    selectVisestruki.value = "";
+    selectVisestruki.disabled = false;
 
     btnProvjeri.disabled = false;
     btnProvjeri.classList.remove('hidden');
@@ -1935,17 +1944,30 @@ while(!isDobarGraf && pokusaji2 < 10) {
     
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
     
-    if (tezina === 0) {
+    if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
+        unosBrojaBox.style.display = 'none';
+        unosPrepoznavanjeBox.style.display = 'none';
+        unosVisestrukiBox.style.display = 'flex';
+        pitanjeGrafoviRed.style.display = 'none';
+        mjernaJedinica.textContent = '';
+        selectVisestruki.innerHTML = trenutniZadatak.opcije
+            .map((opt, i) => `<option value="${i}">${opt}</option>`).join('');
+        selectVisestruki.value = '';
+    } else if (trenutniZadatak.tezina === 0) {
         unosBrojaBox.style.display = 'none';
         unosPrepoznavanjeBox.style.display = 'flex';
+        unosVisestrukiBox.style.display = 'none';
         pitanjeGrafoviRed.style.display = 'none';
-    } else if (tezina === 6) {
-        unosBrojaBox.style.display = 'flex';       // isti numerički input kao za 1-5
+        mjernaJedinica.textContent = '';
+    } else if (trenutniZadatak.tezina === 6) {
+        unosBrojaBox.style.display = 'flex';
         unosPrepoznavanjeBox.style.display = 'none';
-        pitanjeGrafoviRed.style.display = 'flex';  // ali dodatno prikaži 4 grafa
+        unosVisestrukiBox.style.display = 'none';
+        pitanjeGrafoviRed.style.display = 'flex';
     } else {
         unosBrojaBox.style.display = 'flex';
         unosPrepoznavanjeBox.style.display = 'none';
+        unosVisestrukiBox.style.display = 'none';
         pitanjeGrafoviRed.style.display = 'none';
     }
 
@@ -2279,13 +2301,15 @@ function usporediPotpise(fazeA, fazeB, tipGrafa) {
 // vs '112') namjerno unosi slučajnost - da NE bude uvijek točno jedan distraktor
 // po razini.
 const OBRASCI_TEZINE_KANDIDATA = ['123', '123'];
-
 function odaberiCiljaneRazine() {
     const izbor = OBRASCI_TEZINE_KANDIDATA[Math.floor(Math.random() * OBRASCI_TEZINE_KANDIDATA.length)];
     return izbor.split('').map(Number); // npr. "112" -> [1, 1, 2]
 }
 
-
+function postaviVisestrukiIzbor(zadatak, opcije) {
+    zadatak.odgovorTip = 'visestruki-izbor';
+    zadatak.opcije = opcije;
+}
 
 
 
@@ -2660,16 +2684,70 @@ function oblikujPitanjeIZadatak(zadatak) {
                     tocanOdgovor = maxPhase;
                 }
             } else {
-                tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) <b><u>brzina bila najveća</u></b>, po iznosu?`;
-                infoObjasnjene = `Brzina na <span class='x-t'>s–t</span> grafu određena je nagibom (strminom) linije. Jasno je da dio broj <b>${tocanOdgovor}</b> ima najveći nagib pa je tu tijelo bilo i najbrže.`;
-                infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
-                infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>s–t</span> grafu zato <b>je</b> brzina!</details>`;
+                // 50% šanse za novo pitanje: promjena brzine na granici faza
+                if (Math.random() < 0.5) {
+                    const boundaryIdx = Math.floor(Math.random() * 2);
+                    const slopeBefore = absSlopes[boundaryIdx];
+                    const slopeAfter = absSlopes[boundaryIdx + 1];
+                    
+                    if (Math.abs(slopeBefore - slopeAfter) > 1e-10 && slopeBefore > 0 && slopeAfter > 0) {
+                        const vrijemeGranice = faze[boundaryIdx].t1;
+                        const povecalaSe = slopeAfter > slopeBefore;
+                        
+                        const opcijeBrzina = ['Povećala se', 'Smanjila se'];
+                        tekst = `Što se dogodilo s brzinom u <b>${vrijemeGranice}. sekundi</b>?`;
+                        infoObjasnjene = `U <span class='x-t'>s–t</span> grafu brzina je jednaka nagibu linije (po iznosu). Na granici između ${boundaryIdx + 1}. i ${boundaryIdx + 2}. dijela gibanja, nagib linije se ${povecalaSe ? '<b>povećao</b>' : '<b>smanjio</b>'} pa se i brzina ${povecalaSe ? '<b>povećala</b>' : '<b>smanjila</b>'}.<p>Visina crvenih trokuta dodanih u gornji graf predstavlja brzinu u tom dijelu gibanja!`;
+                        tocanOdgovor = povecalaSe ? 0 : 1;
+                        
+                        postaviVisestrukiIzbor(zadatak, opcijeBrzina);
+                        
+                        zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0, granicaIdx: boundaryIdx };
+                    } else {
+                        gotoMaxBrzina();
+                    }
+                } else {
+                    gotoMaxBrzina();
+                }
+                
+                function gotoMaxBrzina() {
+                    tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) <b><u>brzina bila najveća</u></b>, po iznosu?`;
+                    infoObjasnjene = `Brzina na <span class='x-t'>s–t</span> grafu određena je nagibom (strminom) linije. Jasno je da dio broj <b>${tocanOdgovor}</b> ima najveći nagib pa je tu tijelo bilo i najbrže.`;
+                    infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
+                    infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>s</i>₂ - <i>s</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo brzina (<span class="dy">Δ<i>s</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>s–t</span> grafu zato <b>je</b> brzina!</details>`;
+                }
             }
         } else {
-            tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
-            infoObjasnjene = `Akceleracija na <span class='x-t'>v–t</span> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
-            infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja promjenu tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo akceleracija (promjena brzine po sekundi) a ujedno i nagib te linije!';
-            infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
+            // 50% šanse za novo pitanje: promjena akceleracije na granici faza (v/t graf)
+            if (Math.random() < 0.5) {
+                const boundaryIdx = Math.floor(Math.random() * 2);
+                const slopeBefore = absSlopes[boundaryIdx];
+                const slopeAfter = absSlopes[boundaryIdx + 1];
+                
+                if (Math.abs(slopeBefore - slopeAfter) > 1e-10 && slopeBefore > 0 && slopeAfter > 0) {
+                    const vrijemeGranice = faze[boundaryIdx].t1;
+                    const povecalaSe = slopeAfter > slopeBefore;
+                    
+                    const opcijeAkceleracija = ['Povećala se', 'Smanjila se'];
+                    tekst = `Što se dogodilo s akceleracijom u <b>${vrijemeGranice}. sekundi</b>?`;
+                    infoObjasnjene = `U <span class='x-t'>v–t</span> grafu akceleracija jednaka je nagibu linije (po iznosu). Na granici između ${boundaryIdx + 1}. i ${boundaryIdx + 2}. dijela nagib se ${povecalaSe ? '<b>povećao</b>' : '<b>smanjio</b>'} pa se i akceleracija ${povecalaSe ? '<b>povećala</b>' : '<b>smanjila</b>'}.<p>Visina crvenih trokuta dodanih u gornji graf predstavlja akceleraciju u tom dijelu gibanja!`;
+                    tocanOdgovor = povecalaSe ? 0 : 1;
+                    
+                    postaviVisestrukiIzbor(zadatak, opcijeAkceleracija);
+                    
+                    zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0, granicaIdx: boundaryIdx };
+                } else {
+                    gotoMaxAkceleracija();
+                }
+            } else {
+                gotoMaxAkceleracija();
+            }
+            
+            function gotoMaxAkceleracija() {
+                tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
+                infoObjasnjene = `Akceleracija na <span class='x-t'>v–t</span> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
+                infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja promjenu tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo akceleracija (promjena brzine po sekundi) a ujedno i nagib te linije!';
+                infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
+            }
         }
         //zadatak.pomocData = null;
         zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0 };
@@ -2959,8 +3037,14 @@ function provjeriOdgovor() {
     
     pokreniAnimaciju();
     
+    // Viestruki izbor pitanja
+    if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
+        const odabran = parseInt(selectVisestruki.value);
+        selectVisestruki.disabled = true;
+        isCorrect = !isNaN(odabran) && odabran === trenutniZadatak.tocanOdgovor;
+    }
     // Provjera ako smo na nultoj vještini (prepoznavanje)
-    if (trenutniZadatak.tezina === 0) {
+    else if (trenutniZadatak.tezina === 0) {
         const odabranaVrsta = selectVrsta.value;
         const odabraniSmjer = selectSmjer.value;
 
@@ -3018,7 +3102,11 @@ function provjeriOdgovor() {
         
         let tocno = "";
         
-        if (trenutniZadatak.tezina !== 0) {   // izmijenjeno 6->7
+        if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
+            const opcija = trenutniZadatak.opcije[trenutniZadatak.tocanOdgovor];
+            const label = opcija.charAt(0).toLowerCase() + opcija.slice(1);
+            tocno = `<b>${label}</b>`;
+        } else if (trenutniZadatak.tezina !== 0) {   // izmijenjeno 6->7
             tocno = `<span style="font-size: 0.8em">Točan odgovor je</span> <b>${trenutniZadatak.tocanOdgovor}</b> ${mjernaJedinica.textContent}`;
         } else {
             let sm = trenutniZadatak.tocanOdgovor.smjer;
