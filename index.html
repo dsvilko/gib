@@ -2812,7 +2812,52 @@ function oblikujPitanjeIZadatak(zadatak) {
         const f = faze[1]; const dt = f.t1 - f.t0;
         oznaciDio = 1;
         if (vrstaGrafa === 'v/t' ) {
-            if(Math.random(1)<0.3 && trenutniZadatak.gradivo === 'jednoliko') {
+            // NOVI POD-ZADATAK: 20% šansa za "koji dio ima najveći pomak" (samo v/t + jednoliko)
+            // Provjeri da li ima jedinstven maksimum pomaka (bez neriješenih)
+            const pomaciCheck = faze.map(faza => faza.kinematika.s1 - faza.kinematika.s0);
+            const apsolutniPomaciCheck = pomaciCheck.map(p => Math.abs(p));
+            const maxVrijednostCheck = Math.max(...apsolutniPomaciCheck);
+            const maxIndeksiCheck = apsolutniPomaciCheck.map((v, i) => v === maxVrijednostCheck ? i : -1).filter(i => i !== -1);
+            const imaJedinstveniMaksimum = maxIndeksiCheck.length === 1;
+
+            if (Math.random() < 0.2 && trenutniZadatak.gradivo === 'jednoliko' && imaJedinstveniMaksimum) {
+                // Izračunaj pomak (Δs) za svaku fazu iz kinematike
+                const pomaci = faze.map(faza => faza.kinematika.s1 - faza.kinematika.s0);
+                const apsolutniPomaci = pomaci.map(p => Math.abs(p));
+                const maxVrijednost = Math.max(...apsolutniPomaci);
+                // Pronađi sve faze s maksimalnim pomakom
+                const maxIndeksi = apsolutniPomaci.map((v, i) => v === maxVrijednost ? i : -1).filter(i => i !== -1);
+                const odabraniIndex = maxIndeksi[0];
+                tocanOdgovor = odabraniIndex; // 0-based za select (1. dio = 0, 2. dio = 1, 3. dio = 2)
+
+                tekst = `U kojem dijelu gibanja je <b>pomak (Δ<i>s</i>)</b> po veličini bio najveći?`;
+
+                // Postavi višestruki izbor
+                postaviVisestrukiIzbor(zadatak, ['1. dio', '2. dio', '3. dio']);
+
+                // Objašnjenje
+                infoObjasnjene = `Pomak (Δ<i>s</i>) u svakom dijelu jednako je <b>površini ispod <span class='x-t'>v–t</span> grafa</b> u tom dijelu. `;
+                infoObjasnjene += `Kod jednolikog gibanja su to pravokutnici čija je visina brzina, a širina trajanje dijela.<br>`;
+                
+                faze.forEach((faza, i) => {
+                    const ds = pomaci[i];
+                    const apsDs = Math.abs(ds);
+                    const predznak = ds >= 0 ? '+' : '';
+                    infoObjasnjene += `<br><b>${i + 1}. dio:</b> v = ${faza.y0} m/s, Δt = ${faza.t1 - faza.t0} s → P = ${apsDs} m${ds < 0 ? ' (negativan pomak)' : ''}.`;
+                });
+                
+                infoObjasnjene += `<br><br>Najveća površina (po apsolutnoj vrijednosti) je u <b>${tocanOdgovor + 1}. dijelu</b>.`;
+                
+                infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Za jednoliko gibanje vrijedi Δ<i>s</i> = <i>v</i> · Δ<i>t</i>. To je upravo formula za površinu pravokutnika: visina (brzina) puta širina (vrijeme). Usporedimo površine svih tri pravokutnika da vidimo koji je najveći.</details>`;
+
+                oznaciDio = 4; // označi sve dijelove
+                svgs.push('u-lijevo');
+                svgs.push('pov');
+                zadatak.pomocData = { tip: 'povrsina-sve' };
+                sakrijMinMax = 1;
+            }
+            // POSTOJEĆI: 30% šansa za pitanja o cijelom gibanju (ukupan pomak / ukupan put)
+            else if(Math.random()<0.3 && trenutniZadatak.gradivo === 'jednoliko') {
                 if(Math.random(1)<0.5) {
                     tekst = `Koliko se završni položaj razlikuje od početnog, ako promatramo cijelo prikazano gibanje?`;
                     tocanOdgovor = (faze[0].y1)*(faze[0].t1-faze[0].t0)+(faze[1].y1)*(faze[1].t1-faze[1].t0)+(faze[2].y1)*(faze[2].t1-faze[2].t0);
