@@ -1764,188 +1764,209 @@ function generirajZadatak() {
         }
     });
         
-    
-    
-    // Logika za opciju "ili lakše"
-    let odabranaTezina = parseInt(tezinaSelect.value);
-    let odabranoGradivo = gradivoSelect.value;
-    const ciljanaTezina = odabranaTezina;
-    if (chkLakse.dataset.active === 'true') {
-        if(odabranoGradivo === 'sva') 
-            odabranoGradivo = slucajan(['jednoliko','sva','sva']);
-        else if(odabranoGradivo === 'krivo')
-            odabranoGradivo = slucajan(['jednoliko','sva','krivo']);
-        if(odabranoGradivo === 'krivo') 
-            if(odabranaTezina<6)
-                odabranaTezina = 6;
-            else
-                odabranaTezina = slucajan([0,6]);
-        else 
-            odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
-    }
-    let tezina = odabranaTezina;
-    let gradivo = odabranoGradivo;
-    
-    let dopusteniGrafovi = [];
-    if (gradivo === 'jednoliko') {
-        if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
-        else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t'];
-        else if (tezina === 5) dopusteniGrafovi = ['v/t'];
-        else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
-    } else {
-        if (tezina === 0) { 
-            if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
-            else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
-        }
-        else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
-        else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
-        else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
-        else if (tezina === 6) dopusteniGrafovi = 
-                          (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
-        //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
-    }
-
-    const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
-
-    let faze = [];
-    let isDobarGraf = false;
-    let uspjesno = false;
-    let pokusaji = 0;
+    var vanjskiPokusaj = 0;
     let pokusaji2 = 0;
-    let kandidati = null;
-    
-    while(!isDobarGraf && pokusaji2 < 10) {
-        pokusaji2++;
+    let isDobarGraf = false;
+    let tezina = '';
+    let gradivo = '';
+    let faze = [];
+
+    while(vanjskiPokusaj < 5 && !isDobarGraf ) {
+
         
-        while (!isDobarGraf && pokusaji < 150) {
-            pokusaji++;
-            // Svaki pokušaj koristi novi nasumični raspored trajanja triju faza
-            const trajanja = [2, 3, 4, 2, 3, 5, 1].sort(() => Math.random() - 0.5);
-
-            // 1. korak: generiraj sirove y0/y1 vrijednosti po fazama
-            const rezultat = generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina);
-            faze = rezultat.faze;
-            if (!rezultat.isDobar) continue; // odbaci ako je prekršeno "nema prelaska preko nule"
-
-            // 2. korak: odbaci "dosadne" grafove (ponovljeni nagibi/vrijednosti)
-            if (!provjeriZanimljivost(faze, vrstaGrafa, gradivo, tezina)) continue;
-
-            // 3. korak: izračunaj stvarnu kinematiku (s0, v0, a, s1) za svaku fazu
-            izracunajKinematikuZaFaze(faze, vrstaGrafa);
-
-            // 4. korak: provjere koje ovise o (tek izračunatoj) kinematici
-            isDobarGraf = provjeriValjanostKinematike(faze, vrstaGrafa, tezina);
-            
-            //zakrpa za težinu 6: iz nekog razloga v/t graf ne smije imati mirovanje u 2. fazi
-            if(tezina === 6 && vrstaGrafa === 'v/t' && gradivo === 'jednoliko' && faze[1].kinematika.v0 == 0) isDobarGraf = false;
+        // Logika za opciju "ili lakše"
+        let odabranaTezina = parseInt(tezinaSelect.value);
+        let odabranoGradivo = gradivoSelect.value;
+        const ciljanaTezina = odabranaTezina;
+        if (chkLakse.dataset.active === 'true') {
+            if(odabranoGradivo === 'sva') 
+                odabranoGradivo = slucajan(['jednoliko','sva','sva']);
+            else if(odabranoGradivo === 'krivo')
+                odabranoGradivo = slucajan(['jednoliko','sva','krivo']);
+            if(odabranoGradivo === 'krivo') 
+                if(odabranaTezina<6)
+                    odabranaTezina = 6;
+                else
+                    odabranaTezina = slucajan([0,6]);
+            else 
+                odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
+        }
+        tezina = odabranaTezina;
+        gradivo = odabranoGradivo;
+        
+        let dopusteniGrafovi = [];
+        if (gradivo === 'jednoliko') {
+            if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
+            else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t'];
+            else if (tezina === 5) dopusteniGrafovi = ['v/t'];
+            else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
+        } else {
+            if (tezina === 0) { 
+                if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
+                else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
+            }
+            else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
+            else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
+            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
+            else if (tezina === 6) dopusteniGrafovi = 
+                            (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
+            //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
         }
 
-        if (!isDobarGraf) {
-            console.warn('Glavni graf generiran iz ', pokusaji, '. pokušaja, za', vrstaGrafa, gradivo, tezina);
-        }
-    
-        // ZA TEŽINU 6  (KOJI OD GRAFOVA...?)
+        const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
+
         
         
+        let uspjesno = false;
+        let pokusaji = 0;
+       
+        let kandidati = null;
+        
+        while(!isDobarGraf && pokusaji2 < 10) {
+            pokusaji2++;
+            
+            while (!isDobarGraf && pokusaji < 150) {
+                pokusaji++;
+                // Svaki pokušaj koristi novi nasumični raspored trajanja triju faza
+                const trajanja = [2, 3, 4, 2, 3, 5, 1].sort(() => Math.random() - 0.5);
 
-        if (tezina === 6 && isDobarGraf) {
-            // Isti vremenski razmaci kao glavni graf, da su kandidati usporedivi
-            const trajanja = faze.map(f => f.t1 - f.t0);
+                // 1. korak: generiraj sirove y0/y1 vrijednosti po fazama
+                const rezultat = generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina);
+                faze = rezultat.faze;
+                if (!rezultat.isDobar) continue; // odbaci ako je prekršeno "nema prelaska preko nule"
 
-            // "Kanonski" tip glavnog grafa (s/t-krivo se i dalje generira/uspoređuje kao s-t)
-            const glavniKanonski = (vrstaGrafa === 's/t-krivo') ? 's/t' : vrstaGrafa;
-            let moguciTipovi = ['s/t', 'v/t', 'a/t'].filter(v => v !== glavniKanonski);
-            if (gradivo === 'jednoliko') moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
+                // 2. korak: odbaci "dosadne" grafove (ponovljeni nagibi/vrijednosti)
+                if (!provjeriZanimljivost(faze, vrstaGrafa, gradivo, tezina)) continue;
 
-            // Glavni graf je doslovni (nezakrivljeni) s-t => sve faze imaju a=0, pa a/t
-            // kandidat ne bi imao smisla (uvijek bi bila ravna linija na nuli).
-            if (glavniKanonski === 's/t') {
-                moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
+                // 3. korak: izračunaj stvarnu kinematiku (s0, v0, a, s1) za svaku fazu
+                izracunajKinematikuZaFaze(faze, vrstaGrafa);
+
+                // 4. korak: provjere koje ovise o (tek izračunatoj) kinematici
+                isDobarGraf = provjeriValjanostKinematike(faze, vrstaGrafa, tezina);
+                
+                //zakrpa za težinu 6: iz nekog razloga v/t graf ne smije imati mirovanje u 2. fazi
+                if(tezina === 6 && vrstaGrafa === 'v/t' && gradivo === 'jednoliko' && faze[1].kinematika.v0 == 0) isDobarGraf = false;
             }
-            
-            const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
-            if (imaAkceleracije && gradivo !== 'krivo') {
-                moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
+
+            if (!isDobarGraf) {
+                console.warn('Glavni graf generiran iz ', pokusaji, '. pokušaja, za', vrstaGrafa, gradivo, tezina);
             }
+        
+            // ZA TEŽINU 6  (KOJI OD GRAFOVA...?)
             
             
-            pitaniTip = moguciTipovi[Math.floor(Math.random() * moguciTipovi.length)];
 
-            // Ako je ponuđeni tip s-t, a gradivo je 'sva' (dakle točan odgovor je vjerojatno
-            // zakrivljen jer potječe iz v/t ili a/t grafa s akceleracijom), generiraj lažne
-            // kandidate kroz isti "v/t-akceleracijski" mehanizam kao s-t-krivo - ne kroz čisti
-            // s/t generator koji uvijek daje a=0 (uvijek ravne linije). Time zakrivljenost više
-            // nije razlikovno obilježje pravog odgovora.
-            const generatorskiTip = (pitaniTip === 's/t' && gradivo !== 'jednoliko') ? 's/t-krivo' : pitaniTip;
-            
-            if (pitaniTip === 'v/t' && !imaAkceleracije)  gradivo = 'jednoliko';
-            
-            kandidati = [{ faze: faze, ispravan: true, razinaOdbacivanja: null }];
+            if (tezina === 6 && isDobarGraf) {
+                // Isti vremenski razmaci kao glavni graf, da su kandidati usporedivi
+                const trajanja = faze.map(f => f.t1 - f.t0);
 
-            //const ciljaneRazine = odaberiCiljaneRazine();
-            let ciljaneRazine = [1,2,3];
-            if(pokusaji2>5) ciljaneRazine = [1,2,2];
-            if(pokusaji2>7) ciljaneRazine = [1,1,2];
-            
-            for (let k = 0; k < 3; k++) {
-                let lazniFaze = null;
-                let uspjeh = false;
-                let pokusajiL = 0;
-                const ciljanaRazina = ciljaneRazine[k];
+                // "Kanonski" tip glavnog grafa (s/t-krivo se i dalje generira/uspoređuje kao s-t)
+                const glavniKanonski = (vrstaGrafa === 's/t-krivo') ? 's/t' : vrstaGrafa;
+                let moguciTipovi = ['s/t', 'v/t', 'a/t'].filter(v => v !== glavniKanonski);
+                if (gradivo === 'jednoliko') moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
 
-                while (!uspjeh && pokusajiL < 400) {
-                    pokusajiL++;
-                    const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0);
-                    if (!rez.isDobar) continue;
-                    if (!provjeriZanimljivost(rez.faze, generatorskiTip, gradivo, 0)) continue;
+                // Glavni graf je doslovni (nezakrivljeni) s-t => sve faze imaju a=0, pa a/t
+                // kandidat ne bi imao smisla (uvijek bi bila ravna linija na nuli).
+                if (glavniKanonski === 's/t') {
+                    moguciTipovi = moguciTipovi.filter(v => v !== 'a/t');
+                }
+                
+                const imaAkceleracije = faze.some(f => Math.abs(f.kinematika.a) > 1e-9);
+                if (imaAkceleracije && gradivo !== 'krivo') {
+                    moguciTipovi = moguciTipovi.filter(v => v !== 's/t');
+                }
+                
+                
+                pitaniTip = moguciTipovi[Math.floor(Math.random() * moguciTipovi.length)];
 
-                    izracunajKinematikuZaFaze(rez.faze, generatorskiTip);
-                    if (!provjeriValjanostKinematike(rez.faze, generatorskiTip, 0, false)) continue;
+                // Ako je ponuđeni tip s-t, a gradivo je 'sva' (dakle točan odgovor je vjerojatno
+                // zakrivljen jer potječe iz v/t ili a/t grafa s akceleracijom), generiraj lažne
+                // kandidate kroz isti "v/t-akceleracijski" mehanizam kao s-t-krivo - ne kroz čisti
+                // s/t generator koji uvijek daje a=0 (uvijek ravne linije). Time zakrivljenost više
+                // nije razlikovno obilježje pravog odgovora.
+                const generatorskiTip = (pitaniTip === 's/t' && gradivo !== 'jednoliko') ? 's/t-krivo' : pitaniTip;
+                
+                if (pitaniTip === 'v/t' && !imaAkceleracije)  gradivo = 'jednoliko';
+                
+                kandidati = [{ faze: faze, ispravan: true, razinaOdbacivanja: null }];
 
-                    // Mora se razlikovati od TOČNOG odgovora baš na ciljanoj razini
-                    const razinaVsTocan = usporediPotpise(faze, rez.faze, generatorskiTip);
-                    if (razinaVsTocan !== ciljanaRazina) continue;
+                //const ciljaneRazine = odaberiCiljaneRazine();
+                let ciljaneRazine = [1,2,3];
+                if(pokusaji2>5) ciljaneRazine = [1,2,2];
+                if(pokusaji2>7) ciljaneRazine = [1,1,2];
+                
+                for (let k = 0; k < 3; k++) {
+                    let lazniFaze = null;
+                    let uspjeh = false;
+                    let pokusajiL = 0;
+                    const ciljanaRazina = ciljaneRazine[k];
 
-                    // I ne smije biti identičan (razina=null) nekom već prihvaćenom kandidatu
-                    if (kandidati.some(pos => usporediPotpise(pos.faze, rez.faze, generatorskiTip) === null)) continue;
+                    while (!uspjeh && pokusajiL < 400) {
+                        pokusajiL++;
+                        const rez = generirajSiroveFaze(trajanja, generatorskiTip, gradivo, 0);
+                        if (!rez.isDobar) continue;
+                        if (!provjeriZanimljivost(rez.faze, generatorskiTip, gradivo, 0)) continue;
 
-                    lazniFaze = rez.faze;
-                    uspjeh = true;
+                        izracunajKinematikuZaFaze(rez.faze, generatorskiTip);
+                        if (!provjeriValjanostKinematike(rez.faze, generatorskiTip, 0, false)) continue;
+
+                        // Mora se razlikovati od TOČNOG odgovora baš na ciljanoj razini
+                        const razinaVsTocan = usporediPotpise(faze, rez.faze, generatorskiTip);
+                        if (razinaVsTocan !== ciljanaRazina) continue;
+
+                        // I ne smije biti identičan (razina=null) nekom već prihvaćenom kandidatu
+                        if (kandidati.some(pos => usporediPotpise(pos.faze, rez.faze, generatorskiTip) === null)) continue;
+
+                        lazniFaze = rez.faze;
+                        uspjeh = true;
+                    }
+
+                    if (pokusajiL >= 400) {
+                        console.warn('Velik broj neuspjelih pokušaja za razinu ' + ciljanaRazina + ': ' + pokusajiL);
+                        isDobarGraf = false;
+                    } else {
+                        //console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
+                    }
+
+                    // Fallback: ako 100 pokušaja ne uspije pogoditi baš ciljanu razinu, uzmi zadnji
+                    // generirani (ili sami graf kao krajnji fallback) - bolje blaži zadatak nego rušenje.
+                    const konacneFaze = lazniFaze || faze;
+                    const stvarnaRazina = uspjeh ? ciljanaRazina : usporediPotpise(faze, konacneFaze, generatorskiTip);
+                    kandidati.push({ faze: konacneFaze, ispravan: false, razinaOdbacivanja: stvarnaRazina });
                 }
 
-                if (pokusajiL >= 400) {
-                    console.warn('Velik broj neuspjelih pokušaja za razinu ' + ciljanaRazina + ': ' + pokusajiL);
-                    isDobarGraf = false;
-                } else {
-                    //console.warn('  '+k+'. kandidat generiran nakon '+pokusajiL+' pokušaja.');
-                }
-
-                // Fallback: ako 100 pokušaja ne uspije pogoditi baš ciljanu razinu, uzmi zadnji
-                // generirani (ili sami graf kao krajnji fallback) - bolje blaži zadatak nego rušenje.
-                const konacneFaze = lazniFaze || faze;
-                const stvarnaRazina = uspjeh ? ciljanaRazina : usporediPotpise(faze, konacneFaze, generatorskiTip);
-                kandidati.push({ faze: konacneFaze, ispravan: false, razinaOdbacivanja: stvarnaRazina });
+                kandidati.sort(() => Math.random() - 0.5);        
+            
+            
             }
 
-            kandidati.sort(() => Math.random() - 0.5);        
-            
-            
+           
+        }  // glavna petlja s 10 pokušaja
+
+        trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
+        if (tezina === 6) {
+            trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
+        }
         
+        oblikujPitanjeIZadatak(trenutniZadatak);
+        //console.log(trenutniZadatak.gradivo+'-'+trenutniZadatak.tezina+'-'+trenutniZadatak.vrstaGrafa+'-'+trenutniZadatak.tip);
+        //if(prethodniZadatak) console.log(prethodniZadatak.gradivo+'-'+prethodniZadatak.tezina+'-'+prethodniZadatak.vrstaGrafa+'-'+prethodniZadatak.tip);
+        if(prethodniZadatak && 
+            trenutniZadatak.gradivo === prethodniZadatak.gradivo && 
+            trenutniZadatak.tezina === prethodniZadatak.tezina &&
+            trenutniZadatak.vrstaGrafa === prethodniZadatak.vrstaGrafa &&
+            trenutniZadatak.tip === prethodniZadatak.tip) {
+                console.log("Rerenerate!");
+                isDobarGraf = false;
         }
-        if(isDobarGraf) {
-            
-        }
-    }  // glavna petlja s 10 pokušaja
+
+    }  // vanjska petlja (5 pokušaja da se dobije različit zadatak od prethodnog)
+
     if(pokusaji2>1) 
         console.warn("Zadatak generiran iz "+pokusaji2+". pokušaja.");
 
-    trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
-    if (tezina === 6) {
-        trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
-    }
     
-    oblikujPitanjeIZadatak(trenutniZadatak);
-    
+
     // Upravljanje vidljivošću sučelja ovisno o tipu zadatka
     
     if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
@@ -3865,6 +3886,11 @@ function nacrtajOznakeFaza(chart) {
         ctx.textBaseline = 'middle';
         const px = xAxis.getPixelForValue(tSredina) - 0;
         const py = yAxis.getPixelForValue(ySredina) - 0; 
+        
+        //if(trenutniZadatak.interakcija==='faza' && danOdgovor) {
+            
+        //}
+
         if(indeks == oznaciDio) { 
             ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); 
             ctx.fillText(`${indeks + 1}`, px, py);
