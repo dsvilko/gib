@@ -1645,6 +1645,8 @@
     svgHide = '';
     let oznaciDio = 10;
     let danOdgovor = 0;
+    let tocnaFaza = -1;
+    let odabranaFaza = -1;
     let v0Zadan = 0;
     let sakrijMinMax = 0;
     
@@ -1689,6 +1691,8 @@ function generirajZadatak() {
     inputOdgovor.value = "";
     inputOdgovor.disabled = false;
     danOdgovor = 0;
+    tocnaFaza = -1;
+    odabranaFaza = -1;
     sakrijMinMax = 0;
     
     // Hide and reset pause button
@@ -2740,6 +2744,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                         infoObjasnjene = `U <span class='x-t'>s–t</span> grafu brzina je jednaka nagibu linije (po iznosu). Na granici između ${boundaryIdx + 1}. i ${boundaryIdx + 2}. dijela gibanja, nagib linije se ${povecalaSe ? '<b>povećao</b>' : '<b>smanjio</b>'} pa se i brzina ${povecalaSe ? '<b>povećala</b>' : '<b>smanjila</b>'}.<p>Visina crvenih trokuta dodanih u gornji graf predstavlja brzinu u tom dijelu gibanja!`;
                         tocanOdgovor = povecalaSe ? 0 : 1;
                         zadatak.interakcija = '';
+                        oznaciDio = 5;
 
                         postaviVisestrukiIzbor(zadatak, opcijeBrzina);
                         
@@ -3094,6 +3099,19 @@ function provjeriOdgovor() {
     //btnOstaliGrafovi.style.display = 'block';
 
     danOdgovor = 1;
+
+    if (trenutniZadatak?.interakcija === 'faza') {
+        if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
+            tocnaFaza = trenutniZadatak.tocanOdgovor;
+            odabranaFaza = parseInt(selectVisestruki.value);
+        } else {
+            tocnaFaza = trenutniZadatak.tocanOdgovor - 1;
+            odabranaFaza = parseInt(inputOdgovor.value) - 1;
+        }
+    } else {
+        tocnaFaza = -1;
+        odabranaFaza = -1;
+    }
 
     // Show pause/play button
     btnPauzaSimulacija.style.display = 'flex';
@@ -3887,17 +3905,25 @@ function nacrtajOznakeFaza(chart) {
         const px = xAxis.getPixelForValue(tSredina) - 0;
         const py = yAxis.getPixelForValue(ySredina) - 0; 
         
-        //if(trenutniZadatak.interakcija==='faza' && danOdgovor) {
-            
-        //}
-
-        if(indeks == oznaciDio) { 
-            ctx.fillStyle = (DM ? '#26FB' : '#083eaaCC'); 
-            ctx.fillText(`${indeks + 1}`, px, py);
-        } else { 
-            ctx.fillStyle = (DM ? '#ffffff44' : '#00000055'); 
-            ctx.fillText(`${indeks + 1}`, px, py);
+        let boja;
+        if (danOdgovor && tocnaFaza >= 0) {
+            if (indeks === tocnaFaza) {
+                boja = cssVar('--success');
+            } else if (indeks === odabranaFaza && odabranaFaza !== tocnaFaza) {
+                boja = cssVar('--danger');
+            } else {
+                boja = (DM ? '#ffffff44' : '#00000055');
+            }
+        } else {
+            if (indeks == oznaciDio) { 
+                boja = (DM ? '#26FB' : '#083eaaCC'); 
+            } else { 
+                boja = (DM ? '#ffffff44' : '#00000055'); 
+            }
         }
+        
+        ctx.fillStyle = boja;
+        ctx.fillText(`${indeks + 1}`, px, py);
         
     });
     ctx.restore();
