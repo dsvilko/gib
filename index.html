@@ -808,7 +808,7 @@
             position: absolute;
             
             left: 0%; /* mijenja se JS-om */
-            height: 20%; /* postotak visine pozadinske slike */
+            height: 28%; /* postotak visine pozadinske slike */
             width: auto;
             transform: translate(-50%, -50%);
             z-index: 2;
@@ -2581,7 +2581,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 zadatak.pomocData = { tip: 'sve_delte', t0: faze[0].x0, t1: faze[0].x1, y0: faze[0].y0, y1: faze[0].y1, prikaziDx: false, prikaziDy: true, vrstaGrafa };
                 svgs.push('dy');
             } else {
-                if (startIdx === 0 && endIdx === 2) tekst = `Koliko se završni položaj razlikuje od početnog, ako pomatramo cijelo prikazano gibanje?`;
+                if (startIdx === 0 && endIdx === 2) tekst = `Koliko se završni položaj razlikuje od početnog, ako promatramo cijelo prikazano gibanje?`;
                 else if (startIdx === endIdx) { 
                     if(Math.random(1)>0.5) {
                         tekst = `Koliki je <b>pomak (Δ<i>s</i>)</b> tijela u <span class="highlight-blue">${startIdx + 1}. dijelu</span> gibanja?`;
@@ -2650,7 +2650,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 
                 if (traziNajstrmije) {
                     tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najstrmija</b>?`;
-                    infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrimiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                    infoObjasnjene = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrmiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
                     infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
                     
                     let minAbs = Infinity;
@@ -2744,7 +2744,7 @@ function oblikujPitanjeIZadatak(zadatak) {
             
             function gotoMaxAkceleracija() {
                 tekst = `U kojem je dijelu gibanja (<b>1</b>, <b>2</b> ili <b>3</b>) tijelo imalo <b><u>najveću akceleraciju</u></b>, po iznosu?`;
-                infoObjasnjene = `Akceleracija na <span class='x-t'>v–t</span> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracije bila najveća.`; 
+                infoObjasnjene = `Akceleracija na <span class='x-t'>v–t</span> grafu određena je nagibom linije. Jasno je da je dio broj <b>${tocanOdgovor}</b> najstrmiji pa je tu i akceleracija bila najveća.`; 
                 infoObjasnjene += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja promjenu tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo akceleracija (promjena brzine po sekundi) a ujedno i nagib te linije!';
                 infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
             }
@@ -2798,7 +2798,7 @@ function oblikujPitanjeIZadatak(zadatak) {
             infoObjasnjene += `<details><summary>Zašto nagib?</summary>Matematički, nagib linije (koeficijent smjera) računamo formulom<br>&ensp;&emsp;k = <span class="dy">(y₂ - y₁)</span> / <span class="dx">(x₂ - x₁)</span><br>Ovdje je to<br>&ensp;&emsp;k = <span class="dy">(<i>v</i>₂ - <i>v</i>₁)</span> / <span class="dx">(<i>t</i>₂ - <i>t</i>₁)</span><br>... a to je upravo akceleracija (<span class="dy">Δ<i>v</i></span> / <span class="dx">Δ<i>t</i></span>).<br>Nagib u <span class='x-t'>v–t</span> grafu zato <b>je</b> akceleracija!</details>`;
         }
         infoObjasnjene += '<details><summary>Za ZNATIŽELJNE</summary>U matematici (kraj srednje škole/fakultet) <b><a href="https://hr.wikipedia.org/wiki/Derivacija">derivacija</a></b> je alat koji upravo daje odgovor na pitanje koliki je nagib u nekoj točki odnosno koliko se brzo vrijednost na y-osi mijenja. Brzina je zato derivacija položaja (jer govori koliko se brzo naš položaj mijenja). Akceleracija je derivacija brzine (jer govori koliko se brzo naša brzina mijenja).<p>Ako se, kao u našem slučaju, radi o kosom pravcu, nagib (derivaciju) je vrlo lako odrediti. Što ako je linija zakrivljena? Kako tada točno odrediti derivaciju? Jedan od prvih ljudi koji su to proučavali bio je upravo <a href="https://hr.wikipedia.org/wiki/Isaac_Newton">Isaac Newton</a>.';
-        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<p>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<p>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<p>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<p>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<p>Krenimo od prvog člana: 2·<i>t</i>³. <p><b>Ovo je pravilo:</b><br><div class='box-text'><span style='font-size: 0.8em'>derivacija od&emsp;</span><b>a·x<sup>b</sup></b>&emsp; <span style='font-size: 0.8em'> je </span><b>&emsp; a·b·x<sup>(b-1)</sup></b></b></div><i>(potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan)</i><p>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<p>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<p>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<p>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<p>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <p>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<p>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<p>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičati, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
+        infoObjasnjene += `<details><summary>Za LUMENE</summary>Recimo da želimo odrediti brzinu 10 sekundi nakon starta, no oblik našeg <span class='x-t'>s–t</span> grafa nije nešto jednostavno, kao jednoliko gibanje od početnog mjesta na stazi: <i>s</i> = 8 + 2 · <i>t</i> (radi jednostavnosti, ispuštene su mjerne jedinice).<p>Što ako je naša formula za položaj skroz "vijugava", kao recimo ova:<p>&ensp;&emsp;<i>s</i> = 2 <i>t</i>³ + 5 <i>t</i>² + 8 <i>t</i> + 2<p>Kako sada pronaći točan nagib (a time i brzinu) kada je <i>t</i> = 10 (10 sekundi od starta)? Ovdje moramo naučiti kako derivirati gornji izraz jer ako ga deriviramo, dobit ćemo formulu za brzinu tog gibanja.<p>U ovom slučaju deriviranje zapravo nije komplicirano. Postoje jednostavna pravila. Idemo član po član i svaki deriviramo zasebno i to onda zbrojimo.<p>Krenimo od prvog člana: 2·<i>t</i>³. <p><b>Ovo je pravilo:</b><br><div class='box-text'><span style='font-size: 0.8em'>derivacija od&emsp;</span><b>a·x<sup>b</sup></b>&emsp; <span style='font-size: 0.8em'> je </span><b>&emsp; a·b·x<sup>(b-1)</sup></b></b></div><i>(potenciju pomnožimo s faktorom ispred i potenciju umanjimo za jedan)</i><p>Dakle, 2·<i>t</i>³ postaje 2·3·<i>t</i>² odnosno 6·<i>t</i>².<p>Ako deriviramo član koji nema potenciju (8 <i>t</i>), onda <i>t</i> nestane i ostane samo 8. Ako deriviramo član koji je samo brojka (nema uopće <i>t</i>), on cijeli nestane.<p>Primjenom tih pravila, derivirajući gornju formulu za položaj <i>s</i>, dobijemo novu formulu za brzinu:<p>&ensp;&emsp;<i>v</i> = 6·<i>t</i>² + 10·<i>t</i> + 8<p>Sada lako možemo odrediti brzinu u bilo kojem trenutku tako što uvrstimo recimo <i>t</i> = 10 i dobijemo točnu brzinu u 10. sekundi. <p>No ne moramo tu stati. Recimo da nas zanima ne samo brzina, nego i akceleracija. Naučili smo da je akceleracija nagib <span class='x-t'>v–t</span> grafa - to je upravo derivacija brzine. Dakle, samo naš izraz za brzinu još jednom deriviramo i dobili smo formulu za akceleraciju!<p>&ensp;&emsp;<i>a</i> = 12·<i>t</i> + 10.<p>Evo, sad znate nešto što se inače često uči tek na fakultetu!<p>Oznaka koju matematičari koriste za derivaciju (po vremenu) je d/dt. Ako nešto želimo 2 puta derivirati po vremenu oznaka je d²/dt². Matematičari, a od srednje škole i fizičari, položaj vole označiti s <b>x</b>. Prva derivacija položaja je brzina. Druga derivacija je akceleracija. Treća derivacija se naziva trzaj (brzina promjene akceleracije). Na engleski se trzaj kaže <i>jerk</i>. Ako nekada naletite na <a href="https://duckduckgo.com/?q=don%27t+be+a+jerk+math+t-shirt&iar=images&t=ffab&atb=v202-1">ovakvu majicu</a>, sada bi vam trebalo biti jasno što ona poručuje.</details></details>`;
         if (racunaSeSrednja === 1) 
             zadatak.pomocData = { tip: 'nagib_ili_delta', t0: faze[index].t0, t1: faze[index+1].t1, y0: faze[index].y0, y1: faze[index+1].y1, prikaziDx: true, prikaziDy: true, vrstaGrafa };
         else
@@ -2836,7 +2836,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                     let P = Math.abs(tocanOdgovor);
                     let neg = tocanOdgovor < 0 ? "Ako je ta površina ispod x-osi (kada je brzina negativna), pomak je negativan.<br>" : "";
                     infoObjasnjene = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <span class='x-t'>v–t</span> grafa</b> (površini između linije i x-osi) - ovdje se radi o površini pravokutnika.<br>P = ${dy} · ${dt} = <b>${P}</b>.<br>${neg} Pomak je zato <b>${tocanOdgovor} metara</b>.`;
-                    infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja. To da je pomak jednak površini 'ispod' <span class='x-t'>v–t</span> graf vrijedi i opčenito, kada ta površina nije samo jednostavan pravokutnik!</details>`;
+                    infoObjasnjene += `<details><summary>Zašto baš površina?</summary>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu tog pravokutnika mi zapravo računamo pomak tijela kod jednolikog gibanja. To da je pomak jednak površini 'ispod' <span class='x-t'>v–t</span> graf vrijedi i općenito, kada ta površina nije samo jednostavan pravokutnik!</details>`;
                     zadatak.pomocData = { tip: 'povrsina', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y1 };
                     svgs.push('u-lijevo');
                     svgs.push('pov');
@@ -2885,7 +2885,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 svgs.push('smjer');
                 infoObjasnjene += "<span class='redni-broj'>1.</span> <span class='mirovanje'>pogledamo gdje su vodoravne linije u s/t grafu (mirovanje). U tom dijelu (i samo tamo) treba biti linija na nuli u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(1);
                 infoObjasnjene += "<span class='redni-broj'>2.</span> <span class='naprijed'>pogledamo gdje je linija uzlazna u <b><span class='x-t'>s–t</span></b> grafu (gibanje naprijed). U tom dijelu treba biti vodoravna linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu.</span> <span class='unazad'>Ako je u <b><span class='x-t'>s–t</span></b> grafu linija silazna, brzina je negativna (ispod nule u <b><span class='x-t'>v–t</span></b> grafu).</span>"+odbaceni(2);
-                infoObjasnjene += "Ako niti to nije dovoljno... <p><span class='redni-broj'>3.</span> veći nagib u <b><span class='x-t'>s–t</span></b> grafu (veća brzina) znaći odmaknutija vodoravna linija od x-osi u <b><span class='x-t'>v–t</span></b> grafu."+odbaceni(3);
+                infoObjasnjene += "Ako niti to nije dovoljno... <p><span class='redni-broj'>3.</span> veći nagib u <b><span class='x-t'>s–t</span></b> grafu (veća brzina) znači odmaknutija vodoravna linija od x-osi u <b><span class='x-t'>v–t</span></b> grafu."+odbaceni(3);
             }
         } else if(zadatak.vrstaGrafa == 's/t-krivo') {  // s/t za ubrzana gibanja
             if(zadatak.pitaniTip == 'v/t') {  //   u v/t
@@ -2912,7 +2912,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 }
             } else if(zadatak.pitaniTip == 'a/t') {
                 svgs.push('v-a');
-                infoObjasnjene += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><span class='x-t'>v–t</span></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije iznad nule u <b><span class='x-t'>a–t</span></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije ispod nule u <b><span class='x-t'>a–t</span></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> tamo gdje je veći nagib u <b><span class='x-t'>v–t</span></b> grafu (veća akceleracija), vodoravna linija u <b><span class='x-t'>a–t</span></b> grafu mora biti dalje of x-osi (nule)."+odbaceni(3);
+                infoObjasnjene += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><span class='x-t'>v–t</span></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije iznad nule u <b><span class='x-t'>a–t</span></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije ispod nule u <b><span class='x-t'>a–t</span></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> tamo gdje je veći nagib u <b><span class='x-t'>v–t</span></b> grafu (veća akceleracija), vodoravna linija u <b><span class='x-t'>a–t</span></b> grafu mora biti dalje od x-osi (nule)."+odbaceni(3);
             } else {   //  u s-t (ubrzana gibanja)
                 svgs.push('s-v-jednoliko');
                 svgs.push('s-v');
@@ -2921,7 +2921,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         } else {   // zadan a/t graf
             if(zadatak.pitaniTip == 'v/t') {
                 svgs.push('v-a');
-                infoObjasnjene += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><span class='x-t'>a–t</span></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><span class='x-t'>v–t</span></b> grafu mora biti neka vodoravna linija.</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> Tako gdje akceleracija ima veću vrijednost (linija u grafu je udaljenija od nule), kosa linija u <b><span class='x-t'>v–t</span></b> grafu mora imati veći nagib."+odbaceni(3);
+                infoObjasnjene += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><span class='x-t'>a–t</span></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><span class='x-t'>v–t</span></b> grafu mora biti neka vodoravna linija.</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> Tamo gdje akceleracija ima veću vrijednost (linija u grafu je udaljenija od nule), kosa linija u <b><span class='x-t'>v–t</span></b> grafu mora imati veći nagib."+odbaceni(3);
             }
         }
         
@@ -4024,7 +4024,13 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
                 borderWidth: 4,
                 pointRadius: 0,
                 fill: false,
-                tension: 0
+                tension: 0,
+                segment: {
+                    borderColor: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) 
+                        ? (DM ? '#ffffff22' : '#00000022') 
+                        : (DM ? '#ffffff' : '#000000'),
+                    borderWidth: (ctx) => (ctx.p0.parsed.x === ctx.p1.parsed.x) ? 1.5 : 4
+                }
             }]
         },
         options: {
@@ -4531,8 +4537,8 @@ function izracunajStanjeGibanja(t) {
 }
 
 
-const TRAKA_NAPRIJED_AUTO = isMobile ? 74 : 74;
-const TRAKA_NAZAD_AUTO = isMobile ? 66 : 66;
+const TRAKA_NAPRIJED_AUTO = isMobile ? 72 : 72;
+const TRAKA_NAZAD_AUTO = isMobile ? 64 : 64;
 const TRAKA_NAPRIJED_TOCKICA = 75;
 const TRAKA_NAZAD_TOCKICA = 25;
 const MAX_DULJINA_STRELICE_AKC = 50;
@@ -4558,7 +4564,7 @@ function azurirajAuto(t) {
 }
 
     function azurirajStrelicuAkceleracije(akceleracija, maxAkceleracija) {
-            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+20;
+            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+25;
             const smjer = akceleracija >= 0 ? 1 : -1;
             const vrhX = 100 + smjer * duljina;
 
