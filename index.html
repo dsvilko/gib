@@ -1787,11 +1787,11 @@ function generirajZadatak() {
                 odabranoGradivo = slucajan(['jednoliko','sva','sva']);
             else if(odabranoGradivo === 'krivo')
                 odabranoGradivo = slucajan(['jednoliko','sva','krivo']);
-            if(odabranoGradivo === 'krivo') 
-                if(odabranaTezina<6)
-                    odabranaTezina = 6;
-                else
-                    odabranaTezina = slucajan([0,6]);
+            if(odabranoGradivo === 'krivo') {
+                if(odabranaTezina === 6) odabranaTezina = slucajan([0,6]);
+                else if(odabranaTezina >= 3) odabranaTezina = 3;
+                else odabranaTezina = 0;
+            }
             else 
                 odabranaTezina = Math.floor(Math.random() * (odabranaTezina + 1));
         }
@@ -1800,35 +1800,45 @@ function generirajZadatak() {
         
         let dopusteniGrafovi = [];
         if (gradivo === 'jednoliko') {
-            if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
+            // Jednolika gibanja: nema akceleracije, pa ni a/t grafa ni s/t-krivo
+                 if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
             else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t'];
             else if (tezina === 5) dopusteniGrafovi = ['v/t'];
             else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
-        } else {
-            if (tezina === 0) { 
-                if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
-                else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
-            }
-            else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
-            else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];
-            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
-            else if (tezina === 6) dopusteniGrafovi = 
-                            (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
-            //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
+        } else if (gradivo === 'sva') {
+            // Sva gibanja: jednoliko, ubrzano i usporeno - klasični ravnocrtni grafovi
+                 if (tezina === 0) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // vrsta
+            else if (tezina === 1) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // direktno
+            else if (tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // delta
+            else if (tezina === 3) dopusteniGrafovi = ['s/t', 'v/t'];           // usporedba
+            else if (tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];           // nagib
+            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];           // površina
+            else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];           // pretvori
+        } else { // gradivo === 'krivo'
+            // "Zakrivljena" gibanja: s/t graf sa stvarnom akceleracijom (generira se
+            // iz v/t podataka, y0/y1 su brzine)
+                 if (tezina === 0) dopusteniGrafovi = ['s/t-krivo'];            // vrsta
+            else if (tezina === 1) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // direktno
+            else if (tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // delta
+            else if (tezina === 3) dopusteniGrafovi = ['s/t-krivo'];            // usporedba    
+            else if (tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];           // nagib
+            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];           // površina
+            else if (tezina === 6) dopusteniGrafovi = ['v/t', 's/t-krivo'];     // pretvori
         }
 
         const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
 
         
         
-        let uspjesno = false;
-        let pokusaji = 0;
-       
         let kandidati = null;
-        
+
         while(!isDobarGraf && pokusaji2 < 10) {
             pokusaji2++;
-            
+
+            // pokusaji se mora resetirati SVAKU rundu - inače nakon odbijenog zadatka
+            // (isti tip kao prošli) sljedeće runde imaju sve manje svježih pokušaja
+            let uspjesno = false;
+            let pokusaji = 0;
             while (!isDobarGraf && pokusaji < 150) {
                 pokusaji++;
                 // Svaki pokušaj koristi novi nasumični raspored trajanja triju faza
@@ -1947,21 +1957,25 @@ function generirajZadatak() {
            
         }  // glavna petlja s 10 pokušaja
 
-        trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
-        if (tezina === 6) {
-            trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
-        }
-        
-        oblikujPitanjeIZadatak(trenutniZadatak);
-        //console.log(trenutniZadatak.gradivo+'-'+trenutniZadatak.tezina+'-'+trenutniZadatak.vrstaGrafa+'-'+trenutniZadatak.tip);
-        //if(prethodniZadatak) console.log(prethodniZadatak.gradivo+'-'+prethodniZadatak.tezina+'-'+prethodniZadatak.vrstaGrafa+'-'+prethodniZadatak.tip);
-        if(prethodniZadatak && 
-            trenutniZadatak.gradivo === prethodniZadatak.gradivo && 
-            trenutniZadatak.tezina === prethodniZadatak.tezina &&
-            trenutniZadatak.vrstaGrafa === prethodniZadatak.vrstaGrafa &&
-            trenutniZadatak.tip === prethodniZadatak.tip) {
-                console.log("Rerenerate!");
-                isDobarGraf = false;
+        // Nevaljane runde (nije nadjen dobar graf) nemaju što oblikovati - faze su
+        // tada ostatak zadnjeg odbaćenog pokušaja i mogu nedostajati kinematika.
+        if (isDobarGraf) {
+            trenutniZadatak = { vrstaGrafa, faze, gradivo, tezina, pitaniTip, kandidati };
+            if (tezina === 6) {
+                trenutniZadatak.tocanOdgovor = kandidati.findIndex(k => k.ispravan) + 1; // 1-4, ne 0-3
+            }
+
+            oblikujPitanjeIZadatak(trenutniZadatak);
+            //console.log(trenutniZadatak.gradivo+'-'+trenutniZadatak.tezina+'-'+trenutniZadatak.vrstaGrafa+'-'+trenutniZadatak.tip);
+            //if(prethodniZadatak) console.log(prethodniZadatak.gradivo+'-'+prethodniZadatak.tezina+'-'+prethodniZadatak.vrstaGrafa+'-'+prethodniZadatak.tip);
+            if(prethodniZadatak &&
+                trenutniZadatak.gradivo === prethodniZadatak.gradivo &&
+                trenutniZadatak.tezina === prethodniZadatak.tezina &&
+                trenutniZadatak.vrstaGrafa === prethodniZadatak.vrstaGrafa &&
+                trenutniZadatak.tip === prethodniZadatak.tip) {
+                    console.log("Rerenerate!");
+                    isDobarGraf = false;
+            }
         }
 
     }  // vanjska petlja (5 pokušaja da se dobije različit zadatak od prethodnog)
@@ -2066,6 +2080,10 @@ function generirajSiroveFaze(trajanja, vrstaGrafa, gradivo, tezina) {
     // - ostalo (v/t+jednoliko, a/t): kreće od 0
     if (vrstaGrafa === 's/t') {
         yTrenutno = Math.floor(Math.random() * 5) * 2;
+    } else if (vrstaGrafa === 's/t-krivo' && tezina === 3) {
+        // "Kada se tijelo zaustavilo?": početak iz mirovanja (v = 0 u t = 0) tek
+        // povremeno, da odgovor "0" ostaje moguć ali ne previše čest
+        yTrenutno = (Math.random() < 0.15) ? 0 : slucajan([1, -1, 2, -2, 3, -3]);
     } else if (vrstaGrafa === 'v/t' && gradivo !== 'jednoliko') {
         yTrenutno = (Math.random() < 0.5) ? 0 : (Math.floor(Math.random() * 9) - 2);
     } else {
@@ -2226,6 +2244,32 @@ function izracunajKinematikuZaFaze(faze, vrstaGrafa) {
     });
 }
 
+// Sva trenutka u kojima je brzina (y0/y1 faza - komadno-linearna funkcija) jednaka 0.
+// Vraća null ako brzina nije 0 samo u izoliranim točkama nego na cijelom intervalu
+// (faza mirovanja) ili ako neki "proboj kroz nulu" ne padne na cijelu sekundu.
+function nuleBrzine(faze) {
+    const nule = [];
+    for (const f of faze) {
+        if (f.y0 === 0 && f.y1 === 0) return null;
+        if (f.y0 === 0) nule.push(f.t0);
+        if (f.y1 === 0) nule.push(f.t1);
+        if (f.y0 * f.y1 < 0) {
+            const dt = f.t1 - f.t0;
+            const num = dt * Math.abs(f.y0);
+            const den = Math.abs(f.y1 - f.y0);
+            if (num % den !== 0) return null;
+            nule.push(f.t0 + num / den);
+        }
+    }
+    return [...new Set(nule)].sort((a, b) => a - b);
+}
+
+// |brzina| u trenutku t (za s/t-krivo i v/t: y0/y1 su brzine, linearne unutar faze)
+function iznosBrzineU(faze, t) {
+    const f = faze.find(ff => t >= ff.t0 && t <= ff.t1) || faze[faze.length - 1];
+    return Math.abs(f.y0 + ((f.y1 - f.y0) / (f.t1 - f.t0)) * (t - f.t0));
+}
+
 function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivost = true) {
     // Najviše jedna faza smije biti "mirovanje" (brzina i akceleracija cijelo vrijeme 0)
     const brojMirovanja = faze.filter(f => Math.abs(f.kinematika.v0) < 1e-9 && Math.abs(f.kinematika.a) < 1e-9).length;
@@ -2249,6 +2293,25 @@ function provjeriValjanostKinematike(faze, vrstaGrafa, tezina, provjeriCitljivos
             const aAbs = Math.abs(f.kinematika.a);
             if (!((dt >= 3) || (dt >= 2 && aAbs >= 2))) return false;
         }
+    }
+
+    // s/t-krivo + težina 3 ("Kada se tijelo zaustavilo?" / "Kada je brzina bila najveća?"):
+    // točno JEDNA izolirana točka v = 0 koja pada na cijelu sekundu, te jedinstveni
+    // maksimum |v| na granicama faza ({0, t1, t2, kraj}) da oba pitanja imaju
+    // jednoznačan odgovor.
+    if (vrstaGrafa === 's/t-krivo' && tezina === 3) {
+        const nule = nuleBrzine(faze);
+        if (!nule || nule.length !== 1 || !Number.isInteger(nule[0])) return false;
+
+        // Zadatak koji kreće iz mirovanja ima svoju jedinu nulu brzine "gratis" na
+        // t = 0 pa prolazi validaciju puno lakše od ostalih - bez ovog izbacivanja
+        // odgovor "0" bio bi prečest. Odbaci oko polovicu takvih zadataka.
+        if (nule[0] === 0 && Math.random() < 0.5) return false;
+
+        const cvorovi = [faze[0].t0, faze[0].t1, faze[1].t1, faze[2].t1];
+        const iznosi = cvorovi.map(t => iznosBrzineU(faze, t));
+        const maks = Math.max(...iznosi);
+        if (iznosi.filter(v => Math.abs(v - maks) < 1e-9).length > 1) return false;
     }
 
     return true;
@@ -2535,6 +2598,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         //   ---------- DIREKTNO ---------------
         
     } else if (tezina === 1) {
+        zadatak.interakcija = 'direktno';
         let jedinstveniY = [];
         
         
@@ -2764,6 +2828,48 @@ function oblikujPitanjeIZadatak(zadatak) {
                     tip = 'max';
                 }
             }
+        } else if (vrstaGrafa === 's/t-krivo') {
+            // ZAKRIVLJENI s–t: "Kada se tijelo zaustavilo?" ili "Kada je brzina bila najveća?"
+            // (faze su već provjerene u provjeriValjanostKinematike: točno jedna izolirana
+            // nula brzine koja pada na cijelu sekundu + jedinstveni maksimum |v| na granicama)
+            zadatak.interakcija = '';
+            const nuleTrenutka = nuleBrzine(faze);
+            if (!nuleTrenutka || nuleTrenutka.length !== 1) {
+                // Nevaljane faze (među-pokušaj unutar retry petlje generirajZadatak,
+                // koja ovu funkciju zove i prije nego što je graf prihvaćen) - ništa
+                // ne postavljaj, runda se ionako odbacuje.
+                return;
+            }
+            const tNula = nuleTrenutka[0];
+            oznaciDio = 5;
+            if (Math.random() < 0.5) {
+                // KADA SE TIJELO ZAUSTAVILO? (brojčani unos + klik po x-osi kao pomoć)
+                tip = 'zaustavljanje';
+                zadatak.interakcija = 'direktno';
+                tekst = `Kada se <b>tijelo zaustavilo</b>, tj. u kojoj je sekundi njegova brzina bila <b>0 m/s</b>?`;
+                tocanOdgovor = tNula;
+                infoObjasnjene = `Nagib linije u <span class='x-t'>s–t</span> grafu predstavlja brzinu gibanja. Ako se u zadatku traži trenutak kada se tijelo zaustavilo (brzina je bila nula) tada tražimo na krivulji mjesto gdje je linija postala vodoravna. To na to će na našoj zakrivljenoj liniji biti ili na vrhu brda ili na dnu dola. U ovom konkretnom slučaju, tijelo se zaustavilo u <b>${tNula}. sekundi</b>.<br>Ako pratite plavu liniju koja pokazuje točan nagib krivulje u trenutnoj točki, primijetiti ćete da je taj nagib vodoravan jedino u ${tNula}. sekundi.`;
+                zadatak.pomocData = { tip: 'direktno', xVal: tNula, yVal: null };
+                svgs.push('strmije');
+            } else {
+                // KADA JE BRZINA BILA NAJVEĆA? (brojčani unos + klik po x-osi kao pomoć;
+                // jedinstveni maksimum |v| jamči provjeriValjanostKinematike)
+                tip = 'maxbrzina';
+                zadatak.interakcija = 'direktno';
+                const cvorovi = [faze[0].t0, faze[0].t1, faze[1].t1, faze[2].t1];
+                let maksV = -1;
+                let tMax = cvorovi[0];
+                for (const t of cvorovi) {
+                    const iznos = iznosBrzineU(faze, t);
+                    if (iznos > maksV) { maksV = iznos; tMax = t; }
+                }
+                tocanOdgovor = tMax;
+                tekst = `Kada je tijelo imalo <b><u>najveću brzinu</u></b> (po iznosu), tj. u kojoj je sekundi?`;
+                infoObjasnjene = `Brzina na zakrivljenom <span class='x-t'>s–t</span> grafu jednaka je <b>nagibu krivulje</b> u dotičnoj točki - što je krivulja strmija, tijelo se kreće brže. Krivulja je najstrmija bila u <b>${tMax}. sekundi</b>, kada je brzina (po iznosu) iznosila <b>${maksV} m/s</b>.<br>Ako pratite plavu liniju koja pokazuje točan nagib krivulje u trenutnoj točki, primijetiti ćete da je taj nagib najveći upravo u ${tMax}. sekundi.`;
+                zadatak.pomocData = { tip: 'direktno', xVal: tMax, yVal: null };
+                svgs.push('u-desno');
+                svgs.push('strmije');
+            }
         } else {
             // 50% šanse za novo pitanje: promjena akceleracije na granici faza (v/t graf)
             if (Math.random() < 0.5) {
@@ -2799,9 +2905,11 @@ function oblikujPitanjeIZadatak(zadatak) {
             }
         }
         //zadatak.pomocData = null;
-        zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0 };
-        svgs.push('u-desno');
-        svgs.push('strmije');
+        if (vrstaGrafa !== 's/t-krivo') {
+            zadatak.pomocData = { tip: 'usporedi_nagibe', t0: 0, t1: 0, y0: 0, y1: 0 };
+            svgs.push('u-desno');
+            svgs.push('strmije');
+        }
     }
     
     // -------------------------  NAGIB  -------------------
@@ -3056,7 +3164,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         else if (vrstaGrafa === 'v/t') jedinicaText = 'm/s';
         else jedinicaText = 's';
     } 
-    else if (tezina === 3) jedinicaText = ""; // Samo broj faze
+    else if (tezina === 3) jedinicaText = (vrstaGrafa === 's/t-krivo') ? 's' : ""; // inače samo broj faze
     else if (tezina === 4) jedinicaText = (vrstaGrafa === 's/t') ? 'm/s' : 'm/s²';
     else if (tezina === 5) jedinicaText = (vrstaGrafa === 'v/t') ? 'm' : 'm/s';
     else if (tezina === 6) jedinicaText = ""; // Samo redni broj grafa
@@ -3099,6 +3207,11 @@ function provjeriOdgovor() {
     //btnOstaliGrafovi.style.display = 'block';
 
     danOdgovor = 1;
+
+    if (trenutniZadatak?.interakcija === 'direktno') {
+        vizualnaPomocState = null;
+        if (chartInstance) chartInstance.update('none');
+    }
 
     if (trenutniZadatak?.interakcija === 'faza') {
         if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
@@ -3203,8 +3316,19 @@ function provjeriOdgovor() {
                 odabrani_krajolik = nivo;
                 generirajNoviKrajolik();
                 triggerLevelUpConfetti();
+                spremiPostavke();
             }
             updateStarDisplay();
+            spremiPostavke();
+        }
+
+        // Vizualna oznaka na grafu i nakon TOČNOG odgovora - samo za 'direktno'
+        // tip ("Kada se tijelo zaustavilo?" / "Kada je brzina bila najveća?"),
+        // da se ne mijenja ponašanje ostalih razina (one crtaju svoja pojašnjenja
+        // tek nakon netočnog odgovora).
+        if (trenutniZadatak.pomocData && trenutniZadatak.pomocData.tip === 'direktno') {
+            vizualnaPomocState = trenutniZadatak.pomocData;
+            chartInstance.update();
         }
 
         } else {
@@ -3218,6 +3342,7 @@ function provjeriOdgovor() {
         if (!levelMastered[currentLevelKey]) {
             levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 3);
             updateStarDisplay();
+            spremiPostavke();
         }
         
         let tocno = "";
@@ -3267,6 +3392,7 @@ function provjeriOdgovor() {
         odabrani_krajolik = nivo;
         generirajNoviKrajolik();
         triggerLevelUpConfetti();
+        spremiPostavke();
     }
 }    
     
@@ -3673,6 +3799,37 @@ const vizualniAsistentPlugin = {
                 crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--primary'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
+            }
+        }
+
+        if (state.tip === 'direktno') {
+            const podrucje = chart.chartArea;
+            ctx.lineWidth = 2;
+
+            if (state.xVal != null) {
+                const xPixelDirektno = xAxis.getPixelForValue(state.xVal);
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(xPixelDirektno, podrucje.top);
+                ctx.lineTo(xPixelDirektno, podrucje.bottom);
+                ctx.strokeStyle = cssVar('--crvena');
+                ctx.stroke();
+                ctx.setLineDash([]);
+                crtajDiskSVrijednosti(xPixelDirektno, yNula + DISK_OFFSET, cssVar('--crvena'), '');
+                dopisiYVrijednost(xPixelDirektno, yNula + DISK_OFFSET, 'white', state.xVal);
+            }
+
+            if (state.yVal != null) {
+                const yPixelDirektno = yAxis.getPixelForValue(state.yVal);
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(podrucje.left, yPixelDirektno);
+                ctx.lineTo(podrucje.right, yPixelDirektno);
+                ctx.strokeStyle = cssVar('--primary');
+                ctx.stroke();
+                ctx.setLineDash([]);
+                crtajDiskSVrijednosti(xNula - DISK_OFFSET, yPixelDirektno, cssVar('--primary'), '');
+                dopisiYVrijednost(xNula - DISK_OFFSET, yPixelDirektno, 'white', state.yVal);
             }
         }
 
@@ -4509,6 +4666,7 @@ function selectKrajolik(index) {
     odabrani_krajolik = index;
     generirajNoviKrajolik();
     closeKrajolikOverlay();
+    spremiPostavke();
 }
 
 krajolikBackdrop?.addEventListener('click', closeKrajolikOverlay);
@@ -4917,6 +5075,71 @@ function procesirajKlikNaGrafove(e) {
             }
         }
     }
+
+    // Click-to-read aid for interakcija === 'direktno' (tezina 1: axis reading;
+    // tezina 3 + s/t-krivo: samo x-os, za pitanje "Kada se tijelo zaustavilo?")
+    if (!danOdgovor && e && trenutniZadatak?.interakcija === 'direktno'
+        && chartInstance
+        && (trenutniZadatak.tezina === 1 ||
+            (trenutniZadatak.tezina === 3 && trenutniZadatak.vrstaGrafa === 's/t-krivo'))) {
+        const canvas = document.getElementById('gibanjaChart');
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+            const xOs = chartInstance.scales.x;
+            const yOs = chartInstance.scales.y;
+            const xNulaPx = xOs.getPixelForValue(0);
+            const yNulaPx = yOs.getPixelForValue(0);
+            const odmakOdXosi = cy - yNulaPx;
+            const odmakOdYosi = cx - xNulaPx;
+            const XOSI_OD = -10, XOSI_DO = 25;
+            const YOSI_OD = -25, YOSI_DO = 10;
+            const REF_XOSI = 15, REF_YOSI = -15;
+            const uXosiZoni = odmakOdXosi >= XOSI_OD && odmakOdXosi <= XOSI_DO;
+            const uYosiZoni = odmakOdYosi >= YOSI_OD && odmakOdYosi <= YOSI_DO;
+            let naXosi = false, naYosi = false;
+            if (uXosiZoni && uYosiZoni) {
+                const udaljenostDoRefXosi = Math.abs(odmakOdXosi - REF_XOSI);
+                const udaljenostDoRefYosi = Math.abs(odmakOdYosi - REF_YOSI);
+                if (udaljenostDoRefXosi <= udaljenostDoRefYosi) naXosi = true;
+                else naYosi = true;
+            } else {
+                naXosi = uXosiZoni;
+                naYosi = !naXosi && uYosiZoni;
+            }
+
+            if (naXosi || (naYosi && trenutniZadatak.tezina === 1)) {
+                let stanje = vizualnaPomocState;
+                if (!stanje || stanje.tip !== 'direktno') {
+                    stanje = vizualnaPomocState = { tip: 'direktno', xVal: null, yVal: null };
+                }
+                if (naXosi) {
+                    const tVrijednost = Math.round(xOs.getValueForPixel(cx));
+                    const tClamp = Math.max(0, Math.min(trenutniZadatak.faze[2].t1, tVrijednost));
+                    if (stanje.xVal === tClamp) {
+                        stanje.xVal = null;
+                        if (parseFloat(inputOdgovor.value) === tClamp) inputOdgovor.value = '';
+                    } else {
+                        stanje.xVal = tClamp;
+                        inputOdgovor.value = String(tClamp);
+                    }
+                } else {
+                    const yVrijednost = Math.round(yOs.getValueForPixel(cy));
+                    const yClamp = Math.min(yOs.max, Math.max(yOs.min ?? yVrijednost, yVrijednost));
+                    if (stanje.yVal === yClamp) {
+                        stanje.yVal = null;
+                        if (parseFloat(inputOdgovor.value) === yClamp) inputOdgovor.value = '';
+                    } else {
+                        stanje.yVal = yClamp;
+                        inputOdgovor.value = String(yClamp);
+                    }
+                }
+                chartInstance.update('none');
+                return;
+            }
+        }
+    }
     
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 
@@ -4985,13 +5208,30 @@ document.getElementById('tezinaSelect').addEventListener('change', () => {
     spremiPostavke();
 });
 
+function provjeriIDatum() {
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = localStorage.getItem('gibanjeLastDate');
+    if (lastDate !== today) {
+        localStorage.removeItem('gibanjeLevelStars');
+        localStorage.removeItem('gibanjeLevelMastered');
+        localStorage.removeItem('gibanjeNivo');
+        localStorage.removeItem('gibanjeOdabraniKrajolik');
+        localStorage.setItem('gibanjeLastDate', today);
+    }
+}
+
 function spremiPostavke() {
     localStorage.setItem('gibanjeGradivo', gradivoSelect.value);
     localStorage.setItem('gibanjeTezina', tezinaSelect.value);
     localStorage.setItem('gibanjeLakse', chkLakse.dataset.active);
+    localStorage.setItem('gibanjeLevelStars', JSON.stringify(levelStars));
+    localStorage.setItem('gibanjeLevelMastered', JSON.stringify(levelMastered));
+    localStorage.setItem('gibanjeNivo', String(nivo));
+    localStorage.setItem('gibanjeOdabraniKrajolik', String(odabrani_krajolik));
 }
 
 function ucitajPostavke() {
+    provjeriIDatum();
     const gradivo = localStorage.getItem('gibanjeGradivo');
     const tezina = localStorage.getItem('gibanjeTezina');
     const lakse = localStorage.getItem('gibanjeLakse');
@@ -5002,6 +5242,14 @@ function ucitajPostavke() {
         chkLakse.classList.toggle('active', lakse === 'true');
         chkLakse.innerHTML = lakse === 'true' ? "sve do" : "samo";
     }
+    const savedStars = localStorage.getItem('gibanjeLevelStars');
+    const savedMastered = localStorage.getItem('gibanjeLevelMastered');
+    const savedNivo = localStorage.getItem('gibanjeNivo');
+    const savedKrajolik = localStorage.getItem('gibanjeOdabraniKrajolik');
+    if (savedStars) levelStars = JSON.parse(savedStars);
+    if (savedMastered) levelMastered = JSON.parse(savedMastered);
+    if (savedNivo) nivo = parseInt(savedNivo, 10);
+    if (savedKrajolik) odabrani_krajolik = parseInt(savedKrajolik, 10);
 }
 
 ucitajPostavke();
