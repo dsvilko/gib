@@ -2832,14 +2832,15 @@ function oblikujPitanjeIZadatak(zadatak) {
                 return;
             }
             const tNula = nuleTrenutka[0];
-
+            oznaciDio = 5;
             if (Math.random() < 0.5) {
                 // KADA SE TIJELO ZAUSTAVILO? (brojčani unos + klik po x-osi kao pomoć)
                 tip = 'zaustavljanje';
                 zadatak.interakcija = 'direktno';
                 tekst = `Kada se <b>tijelo zaustavilo</b>, tj. u kojoj je sekundi njegova brzina bila <b>0 m/s</b>?`;
                 tocanOdgovor = tNula;
-                infoObjasnjene = `Na zakrivljenom <span class='x-t'>s–t</span> grafu nagib krive se stalno mijenja, pa brzina ovdje nije "jedan nagib" cijelog dijela kao kod ravnih linija. Tijelo se zaustavlja upravo onda kada kriva ima <b>vodoravnu tangentu</b> - jer samo tada je njen nagib (brzina) jednak nuli.<br>Kriva na našem grafu ima vodoravnu tangentu u <b>${tNula}. sekundi</b>, pa je tada brzina iznosila <b>0 m/s</b>.<p>U simulaciji to prati autić: u ${tNula}. sekundi mu brzinomjer padne na nulu i položaj se trenutak ne mijenja - zato je kriva upravo tamo "pregibna", poput vrha brda ili dna udoline.`;
+                infoObjasnjene = `Nagib linije u <span class='x-t'>s–t</span> grafu predstavlja brzinu gibanja. Ako se u zadatku traži trenutak kada se tijelo zaustavilo (brzina je bila nula) tada tražimo na krivulji mjesto gdje je linija postala vodoravna. To na to će na našoj zakrivljenoj liniji biti ili na vrhu brda ili na dnu dola. U ovom konkretnom slučaju, tijelo se zaustavilo u <b>${tNula}. sekundi</b>.<br>Ako pratite plavu liniju koja pokazuje točan nagib krivulje u trenutnoj točki, primijetiti ćete da je taj nagib vodoravan jedino u ${tNula}. sekundi.`;
+                zadatak.pomocData = { tip: 'direktno', xVal: tNula, yVal: null };
                 svgs.push('strmije');
             } else {
                 // KADA JE BRZINA BILA NAJVEĆA? (brojčani unos + klik po x-osi kao pomoć;
@@ -2855,7 +2856,8 @@ function oblikujPitanjeIZadatak(zadatak) {
                 }
                 tocanOdgovor = tMax;
                 tekst = `Kada je tijelo imalo <b><u>najveću brzinu</u></b> (po iznosu), tj. u kojoj je sekundi?`;
-                infoObjasnjene = `Brzina na zakrivljenom <span class='x-t'>s–t</span> grafu jednaka je <b>nagibu krive</b> u dotičnoj točki (po iznosu) - što je kriva strmija, tijelo se kreće brže. Kriva je najstrmija bila u <b>${tMax}. sekundi</b>, kada je brzina (po iznosu) iznosila <b>${maksV} m/s</b>.<p>Oprez: u ${tNula}. sekundi se tijelo <b>zaustavilo</b> (brzina 0) - to je upravo trenutak najmanje brzine, ne najveće! Najveća brzina je tamo gdje je graf najstrmiji, bez obzira kamo se tijelo gibalo.`;
+                infoObjasnjene = `Brzina na zakrivljenom <span class='x-t'>s–t</span> grafu jednaka je <b>nagibu krivulje</b> u dotičnoj točki - što je krivulja strmija, tijelo se kreće brže. Krivulja je najstrmija bila u <b>${tMax}. sekundi</b>, kada je brzina (po iznosu) iznosila <b>${maksV} m/s</b>.<br>Ako pratite plavu liniju koja pokazuje točan nagib krivulje u trenutnoj točki, primijetiti ćete da je taj nagib najveći upravo u ${tMax}. sekundi.`;
+                zadatak.pomocData = { tip: 'direktno', xVal: tMax, yVal: null };
                 svgs.push('u-desno');
                 svgs.push('strmije');
             }
@@ -3309,6 +3311,15 @@ function provjeriOdgovor() {
             }
             updateStarDisplay();
             spremiPostavke();
+        }
+
+        // Vizualna oznaka na grafu i nakon TOČNOG odgovora - samo za 'direktno'
+        // tip ("Kada se tijelo zaustavilo?" / "Kada je brzina bila najveća?"),
+        // da se ne mijenja ponašanje ostalih razina (one crtaju svoja pojašnjenja
+        // tek nakon netočnog odgovora).
+        if (trenutniZadatak.pomocData && trenutniZadatak.pomocData.tip === 'direktno') {
+            vizualnaPomocState = trenutniZadatak.pomocData;
+            chartInstance.update();
         }
 
         } else {
