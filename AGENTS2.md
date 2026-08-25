@@ -69,7 +69,7 @@ answer is wrong", look at `kinematika`, not `y0/y1`.**
 | 0 | recognize vrsta/smjer of one phase | `{vrsta, smjer}` strings |
 | 1 | direct graph reading | number |
 | 2 | change between phases | number |
-| 3 | which phase has max slope | number (phase index, 1-based in text) |
+| 3 | max slope; **gradivo 'krivo' → s/t-krivo instead**: "Kada se tijelo zaustavilo?" or "Kada je brzina bila najveća?" — both numeric seconds with `interakcija='direktno'` x-axis click aid; faze validated by `provjeriValjanostKinematike` (`nuleBrzine` helper): exactly one isolated v=0 instant on an integer second + unique \|v\| max | number (second) |
 | 4 | slope/nagib value | number |
 | 5 | area under curve (displacement) | number |
 | 6 | pick matching graph, 4 candidates | number 1-4, index into `kandidati` |
@@ -85,7 +85,9 @@ by `procesirajKlikNaGrafove()` (the chartContainer click handler) and by
   highlight in `nacrtajOznakeFaza`).
 - `'direktno'` — tezina 1 only: axis-reading aid, **no auto-submit**. A click
   inside a band along an axis writes that rounded value into `inputOdgovor`
-  and stores `{tip:'direktno', xVal, yVal}` in global `vizualnaPomocState`,
+  (also used at tezina 3 + `s/t-krivo`, x-axis band only, for "Kada se tijelo
+  zaustavilo?" — see gate inside `procesirajKlikNaGrafove`) and stores
+  `{tip:'direktno', xVal, yVal}` in global `vizualnaPomocState`,
   which `vizualniAsistentPlugin` draws: x-axis band (canvas-y within
   −10…+25 px of y=0; asymmetric because tick numbers sit below the axis) →
   red (`--crvena`) dashed vertical line + value disk below the axis;
