@@ -1800,21 +1800,30 @@ function generirajZadatak() {
         
         let dopusteniGrafovi = [];
         if (gradivo === 'jednoliko') {
-            if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
+            // Jednolika gibanja: nema akceleracije, pa ni a/t grafa ni s/t-krivo
+                 if (tezina === 0 || tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t'];
             else if (tezina === 3 || tezina === 4) dopusteniGrafovi = ['s/t'];
             else if (tezina === 5) dopusteniGrafovi = ['v/t'];
             else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];
-        } else {
-            if (tezina === 0) { 
-                if(gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];
-                else dopusteniGrafovi = ['s/t', 'v/t', 'a/t']; 
-            }
-            else if (tezina === 1 || tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];
-            else if (tezina === 3 || tezina === 4) dopusteniGrafovi = (gradivo === 'krivo' && tezina === 3) ? ['s/t-krivo'] : ['s/t', 'v/t'];
-            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];
-            else if (tezina === 6) dopusteniGrafovi = 
-                            (gradivo === 'krivo') ? ['v/t', 's/t-krivo'] : ['s/t', 'v/t'];
-            //else if (gradivo === 'krivo') dopusteniGrafovi = ['s/t-krivo'];   // NOVO
+        } else if (gradivo === 'sva') {
+            // Sva gibanja: jednoliko, ubrzano i usporeno - klasični ravnocrtni grafovi
+                 if (tezina === 0) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // vrsta
+            else if (tezina === 1) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // direktno
+            else if (tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // delta
+            else if (tezina === 3) dopusteniGrafovi = ['s/t', 'v/t'];           // usporedba
+            else if (tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];           // nagib
+            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];           // površina
+            else if (tezina === 6) dopusteniGrafovi = ['s/t', 'v/t'];           // pretvori
+        } else { // gradivo === 'krivo'
+            // "Zakrivljena" gibanja: s/t graf sa stvarnom akceleracijom (generira se
+            // iz v/t podataka, y0/y1 su brzine)
+                 if (tezina === 0) dopusteniGrafovi = ['s/t-krivo'];            // vrsta
+            else if (tezina === 1) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // direktno
+            else if (tezina === 2) dopusteniGrafovi = ['s/t', 'v/t', 'a/t'];    // delta
+            else if (tezina === 3) dopusteniGrafovi = ['s/t-krivo'];            // usporedba    
+            else if (tezina === 4) dopusteniGrafovi = ['s/t', 'v/t'];           // nagib
+            else if (tezina === 5) dopusteniGrafovi = ['v/t', 'a/t'];           // površina
+            else if (tezina === 6) dopusteniGrafovi = ['v/t', 's/t-krivo'];     // pretvori
         }
 
         const vrstaGrafa = dopusteniGrafovi[Math.floor(Math.random() * dopusteniGrafovi.length)];
