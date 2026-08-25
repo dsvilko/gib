@@ -2535,6 +2535,7 @@ function oblikujPitanjeIZadatak(zadatak) {
         //   ---------- DIREKTNO ---------------
         
     } else if (tezina === 1) {
+        zadatak.interakcija = 'direktno';
         let jedinstveniY = [];
         
         
@@ -3100,6 +3101,11 @@ function provjeriOdgovor() {
 
     danOdgovor = 1;
 
+    if (trenutniZadatak?.interakcija === 'direktno') {
+        vizualnaPomocState = null;
+        if (chartInstance) chartInstance.update('none');
+    }
+
     if (trenutniZadatak?.interakcija === 'faza') {
         if (trenutniZadatak.odgovorTip === 'visestruki-izbor') {
             tocnaFaza = trenutniZadatak.tocanOdgovor;
@@ -3203,8 +3209,10 @@ function provjeriOdgovor() {
                 odabrani_krajolik = nivo;
                 generirajNoviKrajolik();
                 triggerLevelUpConfetti();
+                spremiPostavke();
             }
             updateStarDisplay();
+            spremiPostavke();
         }
 
         } else {
@@ -3218,6 +3226,7 @@ function provjeriOdgovor() {
         if (!levelMastered[currentLevelKey]) {
             levelStars[currentLevelKey] = Math.max(0, (levelStars[currentLevelKey] || 0) - 3);
             updateStarDisplay();
+            spremiPostavke();
         }
         
         let tocno = "";
@@ -3267,6 +3276,7 @@ function provjeriOdgovor() {
         odabrani_krajolik = nivo;
         generirajNoviKrajolik();
         triggerLevelUpConfetti();
+        spremiPostavke();
     }
 }    
     
@@ -3673,6 +3683,37 @@ const vizualniAsistentPlugin = {
                 crtajDiskSVrijednosti(xPixel, yNula+DISK_OFFSET, cssVar('--primary'), '');
                 dopisiYVrijednost(xNula-DISK_OFFSET, yPixel, 'white', state.yVal);
                 dopisiYVrijednost(xPixel, yNula+DISK_OFFSET, 'white', state.xVal);
+            }
+        }
+
+        if (state.tip === 'direktno') {
+            const podrucje = chart.chartArea;
+            ctx.lineWidth = 2;
+
+            if (state.xVal != null) {
+                const xPixelDirektno = xAxis.getPixelForValue(state.xVal);
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(xPixelDirektno, podrucje.top);
+                ctx.lineTo(xPixelDirektno, podrucje.bottom);
+                ctx.strokeStyle = cssVar('--crvena');
+                ctx.stroke();
+                ctx.setLineDash([]);
+                crtajDiskSVrijednosti(xPixelDirektno, yNula + DISK_OFFSET, cssVar('--crvena'), '');
+                dopisiYVrijednost(xPixelDirektno, yNula + DISK_OFFSET, 'white', state.xVal);
+            }
+
+            if (state.yVal != null) {
+                const yPixelDirektno = yAxis.getPixelForValue(state.yVal);
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(podrucje.left, yPixelDirektno);
+                ctx.lineTo(podrucje.right, yPixelDirektno);
+                ctx.strokeStyle = cssVar('--primary');
+                ctx.stroke();
+                ctx.setLineDash([]);
+                crtajDiskSVrijednosti(xNula - DISK_OFFSET, yPixelDirektno, cssVar('--primary'), '');
+                dopisiYVrijednost(xNula - DISK_OFFSET, yPixelDirektno, 'white', state.yVal);
             }
         }
 
@@ -4509,6 +4550,7 @@ function selectKrajolik(index) {
     odabrani_krajolik = index;
     generirajNoviKrajolik();
     closeKrajolikOverlay();
+    spremiPostavke();
 }
 
 krajolikBackdrop?.addEventListener('click', closeKrajolikOverlay);
@@ -4917,6 +4959,68 @@ function procesirajKlikNaGrafove(e) {
             }
         }
     }
+
+    // Click-to-read aid for interakcija === 'direktno' (tezina 1: axis reading)
+    if (!danOdgovor && e && trenutniZadatak?.interakcija === 'direktno'
+        && trenutniZadatak.tezina === 1 && chartInstance) {
+        const canvas = document.getElementById('gibanjaChart');
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+            const xOs = chartInstance.scales.x;
+            const yOs = chartInstance.scales.y;
+            const xNulaPx = xOs.getPixelForValue(0);
+            const yNulaPx = yOs.getPixelForValue(0);
+            const odmakOdXosi = cy - yNulaPx;
+            const odmakOdYosi = cx - xNulaPx;
+            const XOSI_OD = -10, XOSI_DO = 25;
+            const YOSI_OD = -25, YOSI_DO = 10;
+            const REF_XOSI = 15, REF_YOSI = -15;
+            const uXosiZoni = odmakOdXosi >= XOSI_OD && odmakOdXosi <= XOSI_DO;
+            const uYosiZoni = odmakOdYosi >= YOSI_OD && odmakOdYosi <= YOSI_DO;
+            let naXosi = false, naYosi = false;
+            if (uXosiZoni && uYosiZoni) {
+                const udaljenostDoRefXosi = Math.abs(odmakOdXosi - REF_XOSI);
+                const udaljenostDoRefYosi = Math.abs(odmakOdYosi - REF_YOSI);
+                if (udaljenostDoRefXosi <= udaljenostDoRefYosi) naXosi = true;
+                else naYosi = true;
+            } else {
+                naXosi = uXosiZoni;
+                naYosi = !naXosi && uYosiZoni;
+            }
+
+            if (naXosi || naYosi) {
+                let stanje = vizualnaPomocState;
+                if (!stanje || stanje.tip !== 'direktno') {
+                    stanje = vizualnaPomocState = { tip: 'direktno', xVal: null, yVal: null };
+                }
+                if (naXosi) {
+                    const tVrijednost = Math.round(xOs.getValueForPixel(cx));
+                    const tClamp = Math.max(0, Math.min(trenutniZadatak.faze[2].t1, tVrijednost));
+                    if (stanje.xVal === tClamp) {
+                        stanje.xVal = null;
+                        if (parseFloat(inputOdgovor.value) === tClamp) inputOdgovor.value = '';
+                    } else {
+                        stanje.xVal = tClamp;
+                        inputOdgovor.value = String(tClamp);
+                    }
+                } else {
+                    const yVrijednost = Math.round(yOs.getValueForPixel(cy));
+                    const yClamp = Math.min(yOs.max, Math.max(yOs.min ?? yVrijednost, yVrijednost));
+                    if (stanje.yVal === yClamp) {
+                        stanje.yVal = null;
+                        if (parseFloat(inputOdgovor.value) === yClamp) inputOdgovor.value = '';
+                    } else {
+                        stanje.yVal = yClamp;
+                        inputOdgovor.value = String(yClamp);
+                    }
+                }
+                chartInstance.update('none');
+                return;
+            }
+        }
+    }
     
     if(danOdgovor) { 
         if(prikazaniDodatniGrafovi) { 
@@ -4985,13 +5089,30 @@ document.getElementById('tezinaSelect').addEventListener('change', () => {
     spremiPostavke();
 });
 
+function provjeriIDatum() {
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = localStorage.getItem('gibanjeLastDate');
+    if (lastDate !== today) {
+        localStorage.removeItem('gibanjeLevelStars');
+        localStorage.removeItem('gibanjeLevelMastered');
+        localStorage.removeItem('gibanjeNivo');
+        localStorage.removeItem('gibanjeOdabraniKrajolik');
+        localStorage.setItem('gibanjeLastDate', today);
+    }
+}
+
 function spremiPostavke() {
     localStorage.setItem('gibanjeGradivo', gradivoSelect.value);
     localStorage.setItem('gibanjeTezina', tezinaSelect.value);
     localStorage.setItem('gibanjeLakse', chkLakse.dataset.active);
+    localStorage.setItem('gibanjeLevelStars', JSON.stringify(levelStars));
+    localStorage.setItem('gibanjeLevelMastered', JSON.stringify(levelMastered));
+    localStorage.setItem('gibanjeNivo', String(nivo));
+    localStorage.setItem('gibanjeOdabraniKrajolik', String(odabrani_krajolik));
 }
 
 function ucitajPostavke() {
+    provjeriIDatum();
     const gradivo = localStorage.getItem('gibanjeGradivo');
     const tezina = localStorage.getItem('gibanjeTezina');
     const lakse = localStorage.getItem('gibanjeLakse');
@@ -5002,6 +5123,14 @@ function ucitajPostavke() {
         chkLakse.classList.toggle('active', lakse === 'true');
         chkLakse.innerHTML = lakse === 'true' ? "sve do" : "samo";
     }
+    const savedStars = localStorage.getItem('gibanjeLevelStars');
+    const savedMastered = localStorage.getItem('gibanjeLevelMastered');
+    const savedNivo = localStorage.getItem('gibanjeNivo');
+    const savedKrajolik = localStorage.getItem('gibanjeOdabraniKrajolik');
+    if (savedStars) levelStars = JSON.parse(savedStars);
+    if (savedMastered) levelMastered = JSON.parse(savedMastered);
+    if (savedNivo) nivo = parseInt(savedNivo, 10);
+    if (savedKrajolik) odabrani_krajolik = parseInt(savedKrajolik, 10);
 }
 
 ucitajPostavke();

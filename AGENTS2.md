@@ -28,6 +28,7 @@ The single source of truth for "the current question". Shape:
   pitaniTip,         // for tezina 6: which graph type the question shows ('s/t'|'v/t'|'a/t')
   kandidati,         // for tezina 6: array of {faze, ispravan, razinaOdbacivanja} - the 4 candidate graphs
   tocanOdgovor,      // correct answer; shape depends on tezina (number, {vrsta,smjer}, or 1-4 index)
+  interakcija,       // 'faza' | 'direktno' | '' — main-chart click behavior (see below)
   simulacijaProps,   // {minS, maxS, maxBrzina, maxAkceleracija} - set after graph built, drives scene scaling
   papirTrakaConfig,  // output of izracunajPapirTrakaConfig() - paper-tape tick layout
 }
@@ -72,6 +73,30 @@ answer is wrong", look at `kinematika`, not `y0/y1`.**
 | 4 | slope/nagib value | number |
 | 5 | area under curve (displacement) | number |
 | 6 | pick matching graph, 4 candidates | number 1-4, index into `kandidati` |
+
+### Chart click interactions (`zadatak.interakcija`)
+Set per-task inside `oblikujPitanjeIZadatak` (search `interakcija =`); consumed
+by `procesirajKlikNaGrafove()` (the chartContainer click handler) and by
+`provjeriOdgovor()`. Values:
+- `'faza'` — click on the main graph picks the phase under the cursor and
+  **auto-submits** it (writes 1/2/3 into `inputOdgovor`, or sets
+  `selectVisestruki`). Used for tezina 3 and one tezina-5 variant. Also makes
+  `provjeriOdgovor()` fill `tocnaFaza`/`odabranaFaza` (drives the phase
+  highlight in `nacrtajOznakeFaza`).
+- `'direktno'` — tezina 1 only: axis-reading aid, **no auto-submit**. A click
+  inside a band along an axis writes that rounded value into `inputOdgovor`
+  and stores `{tip:'direktno', xVal, yVal}` in global `vizualnaPomocState`,
+  which `vizualniAsistentPlugin` draws: x-axis band (canvas-y within
+  −10…+25 px of y=0; asymmetric because tick numbers sit below the axis) →
+  red (`--crvena`) dashed vertical line + value disk below the axis;
+  y-axis band (canvas-x within −25…+10 px of x=0) → blue (`--primary`) dashed
+  horizontal line + disk left of the axis. One marker per axis, both may
+  coexist; re-clicking a marker's exact rounded value dismisses it (and clears
+  `inputOdgovor` only if it held exactly that value). Markers are cleared at
+  the top of `provjeriOdgovor()` (on correct answers the task's `pomocData`
+  `'ocitavanje'` overlay replaces them) and reset to null per task by
+  `generirajZadatak()`.
+- `''` / undefined — clicks only toggle the "other graphs" reveal.
 
 ### Level/progress state (persisted per-level, not per-task)
 ```js
@@ -215,6 +240,9 @@ and evaluates `kinematika` at `t`, then `azurirajAuto(t)` and
 - Wrong Croatian question text or wrong correct-answer for a specific
   difficulty → the matching `tezina === N` branch inside `oblikujPitanjeIZadatak`.
 - Answer checking accepts/rejects incorrectly → `provjeriOdgovor`.
+- Chart click interactions (phase pick / axis-reading aid) behave wrong →
+  `procesirajKlikNaGrafove` + the `vizualniAsistentPlugin` `'direktno'` block;
+  see the "Chart click interactions" section above.
 - Graph rendering/axes/colors wrong → `prikaziGraf` + the three Chart.js
   plugin blocks (search "CHART.JS PLUGIN").
 - Level 6 candidate graphs too similar/too different → `odaberiCiljaneRazine`,
