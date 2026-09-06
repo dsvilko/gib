@@ -18,6 +18,9 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
   - `tests/core.test.js` — invariant suite, run with `node tests/core.test.js`
   - `tests/debug.js` — deterministic task reproduction CLI
   - `tests/harness.js` — vm-sandbox loader (stubs browser APIs, seeds Math.random)
+  - `tests/frequency.test.js` — tip-frequency scan across all gradivo×tezina combos (worker-based, watchdog)
+  - `tests/hangdetect.test.js` — simple one-seed-per-worker hang search
+  - `tests/hangdetect2.test.js` — harness-reuse hang search with per-seed timeout; also detects "GENERATION FAILED" logs when outer loop exhausts 5 attempts
 - `svg/` — SVG assets for UI icons
 - `pozadine/` — background/foreground images for road scenes
 - `vozila/` — vehicle PNGs
@@ -59,6 +62,8 @@ node tests/core.test.js                 # invariant suite, all gradivo x tezina 
 N=200 node tests/core.test.js           # more iterations per combo
 node tests/debug.js --gradivo krivo --tezina 6 --seed 42 --dump   # reproduce one task
 node tests/debug.js --n 1000 --find "z.tocanOdgovor === 0"        # hunt for cases
+node tests/frequency.test.js            # tip frequencies per combo (N=200 default)
+node tests/hangdetect2.test.js --gradivo jednoliko --tezina 4 --max-seeds 400  # find hangs & GENERATION FAILED
 ```
 
 - Failures print `combo seed=N` — replay with `tests/debug.js --seed N`.
@@ -66,20 +71,13 @@ node tests/debug.js --n 1000 --find "z.tocanOdgovor === 0"        # hunt for cas
 - `index.html` is loaded UNCHANGED; `GIB_INDEX=/path/to/other.html` runs the
   suite against a different file (mutation testing).
 - Each combo runs in a worker thread with a hang watchdog: if generation wedges,
-  it is reported as `HANG` (see Known Bugs) instead of blocking the suite.
+  it is reported as `HANG` instead of blocking the suite.
 - For visual/chart/simulation/UI issues use the browser instead (chrome-devtools
   MCP: serve the folder, then evaluate `generirajZadatak()`, read console, screenshot).
 
 ## Gotchas
 - All JS is in `index.html` — search there first
 - No lint/typecheck commands exist; tests are plain Node (`node tests/core.test.js`)
-
-## Known Bugs (do not "fix" casually — ask first)
-- `vanjskiPokusaj` in `generirajZadatak()` is declared but never incremented:
-  if the duplicate-task check keeps rejecting, generation loops forever
-  (browser tab freeze). Reproduce headlessly:
-  `SEED=42 STRIDE=1 N=400 node tests/core.test.js` → jednoliko/t4, jednoliko/t5,
-  krivo/t6 hang. Minimal fix would be incrementing it in the outer loop body.
 
 ## More technical details
 - see AGENTS2.md

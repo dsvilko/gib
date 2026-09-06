@@ -122,9 +122,9 @@ function makeLocalStorage() {
 }
 
 /**
- * @param {{seed?: number, quiet?: boolean, indexPath?: string, globals?: object}} opts
+ * @param {{seed?: number, quiet?: boolean, indexPath?: string, globals?: object, onConsole?: (level: string, args: any[]) => void}} opts
  */
-function createHarness({ seed = 1, quiet = true, indexPath = process.env.GIB_INDEX || DEFAULT_INDEX, globals = {} } = {}) {
+function createHarness({ seed = 1, quiet = true, indexPath = process.env.GIB_INDEX || DEFAULT_INDEX, globals = {}, onConsole } = {}) {
     const html = fs.readFileSync(indexPath, 'utf8');
     const source = extractAppScript(html);
 
@@ -148,8 +148,11 @@ function createHarness({ seed = 1, quiet = true, indexPath = process.env.GIB_IND
     const sandbox = {};
 
     const consoleStub = {
-        log() {}, info() {}, debug() {}, warn() {},
-        error: (...a) => console.error('[page]', ...a),
+        log: (...a) => { if (onConsole) onConsole('log', a); },
+        info: (...a) => { if (onConsole) onConsole('info', a); },
+        debug: (...a) => { if (onConsole) onConsole('debug', a); },
+        warn: (...a) => { if (onConsole) onConsole('warn', a); },
+        error: (...a) => { console.error('[page]', ...a); if (onConsole) onConsole('error', a); },
     };
 
     // Browsers expose elements as window.<id> globals (e.g. `pitanjeGraf1`).

@@ -1978,8 +1978,13 @@ function generirajZadatak() {
                     isDobarGraf = false;
             }
         }
+        vanjskiPokusaj++;
 
     }  // vanjska petlja (5 pokušaja da se dobije različit zadatak od prethodnog)
+
+    if (!isDobarGraf) {
+        console.error("GENERATION FAILED: Unable to produce valid chart data after 5 outer attempts for " + gradivo + "/t" + tezina);
+    }
 
     if(pokusaji2>1) 
         console.warn("Zadatak generiran iz "+pokusaji2+". pokušaja.");
@@ -2421,7 +2426,7 @@ function oblikujPitanjeIZadatak(zadatak) {
 
     const yJedinica = (vrstaGrafa === 's/t') ? 'm' : (vrstaGrafa === 'v/t' ? 'm/s' : 'm/s²');
 
-    const nefizikalno = '<p><div class="nefizikalno">Napomena: ovakvo nejednoliko gibanje, sastavljeno od jednolikih gibanja, u stvarnosti je nemoguće jer tijelo ne može u trenutku promijeniti svoju brzinu na neku drugu - to bi značilo da je u tom trenutku akceleracijom bila beskonačna. U stvarnosti, promjena brzine uvijek je postupna  (<i>s</i>-<i>t</i> graf je uvijek gladak, bez pregiba, a <span class="x-t">v–t</span> graf nema skokova ("stepenica"). Radi jednostavnosti zadataka mi se samo pravimo da je ovakvo gibanje moguće.</div>'; 
+    const nefizikalno = '<p><div class="nefizikalno">Napomena: ovakvo nejednoliko gibanje, sastavljeno od jednolikih gibanja, u stvarnosti je nemoguće jer tijelo ne može u trenutku promijeniti svoju brzinu na neku drugu - to bi značilo da je u tom trenutku akceleracijom bila beskonačna. U stvarnosti, promjena brzine uvijek je postupna  (<span class="x-t">s–t</span> graf je uvijek gladak, bez pregiba, a <span class="x-t">v–t</span> graf nema skokova  - "stepenica"). Radi jednostavnosti zadataka mi se samo pravimo da je ovakvo gibanje moguće.</div>'; 
     
         // --------------- VRSTA --------------
     
@@ -3299,6 +3304,20 @@ function provjeriOdgovor() {
     }
 
     // Prikaz povratne informacije
+    const prikaziObjasnjenje = () => {
+        const imgTags = svgs.map(name => `<img src="${svgPath(name)}" alt="${name}" />`).join('\n  ');
+        let overlay='';
+        if (svgHide !== '')  overlay = `<div class="svg-overlay svg-overlay-${svgHide}"></div>`;
+        if (isMobile) {
+            const svgBox = `<div class="svg-column-mobile">${overlay}${imgTags}</div>`;
+            explanationBox.innerHTML = `${svgBox}${trenutniZadatak.tekstObjasnjena}`;
+        } else {
+            const svgBox = `<div class="svg-column">${overlay}${imgTags}</div>`;
+            explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
+        }
+        explanationBox.style.display = "flow-root";
+    };
+
     if (isCorrect) {
         feedbackBox.textContent = "Bravo! To je točan odgovor!";
         feedbackBox.className = "feedback correct";
@@ -3323,14 +3342,13 @@ function provjeriOdgovor() {
             spremiPostavke();
         }
 
-        // Vizualna oznaka na grafu i nakon TOČNOG odgovora - samo za 'direktno'
-        // tip ("Kada se tijelo zaustavilo?" / "Kada je brzina bila najveća?"),
-        // da se ne mijenja ponašanje ostalih razina (one crtaju svoja pojašnjenja
-        // tek nakon netočnog odgovora).
-        if (trenutniZadatak.pomocData && trenutniZadatak.pomocData.tip === 'direktno') {
+        // Osvježi graf s vizualnim pojašnjenjima (ako postoje) - isto kao nakon netočnog odgovora
+        if (trenutniZadatak.pomocData) {
             vizualnaPomocState = trenutniZadatak.pomocData;
             chartInstance.update();
         }
+
+        prikaziObjasnjenje();
 
         } else {
         feedbackBox.innerHTML = "";
@@ -3374,17 +3392,7 @@ function provjeriOdgovor() {
             chartInstance.update(); 
         }
 
-        const imgTags = svgs.map(name => `<img src="${svgPath(name)}" alt="${name}" />`).join('\n  ');
-        let overlay='';
-        if (svgHide !== '')  overlay = `<div class="svg-overlay svg-overlay-${svgHide}"></div>`;
-        if (isMobile) {
-            const svgBox = `<div class="svg-column-mobile">${overlay}${imgTags}</div>`;
-            explanationBox.innerHTML = `${svgBox}${trenutniZadatak.tekstObjasnjena}`;
-        } else {
-            const svgBox = `<div class="svg-column">${overlay}${imgTags}</div>`;
-            explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
-        }
-        explanationBox.style.display = "flow-root";
+        prikaziObjasnjenje();
     }
 
     // Debug: fire confetti on every answer if debug_confetti is true
