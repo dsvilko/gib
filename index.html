@@ -2636,9 +2636,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             tip = 'obrnut';
             svgs.push('dir2');
             let pt = jedinstveniY[Math.floor(Math.random() * jedinstveniY.length)];
-            if (vrstaGrafa === 's/t') tekst = `U kojoj sekundi je tijelo došlo do <span class="highlight-blue">${pt.y}. ${yJedinica}</span>?`;
-            else if (vrstaGrafa === 'v/t') tekst = `U kojoj sekundi je tijelo imalo brzinu <span class="highlight-blue">${pt.y} ${yJedinica}</span>?`;
-            else tekst = `U kojoj sekundi je tijelo imalo akceleraciju <span class="highlight-blue">${pt.y} ${yJedinica}</span>?`;
+            if (vrstaGrafa === 's/t') tekst = `U kojoj sekundi je tijelo došlo do <span class="highlight-blue">${pt.y}. ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
+            else if (vrstaGrafa === 'v/t') tekst = `U kojoj sekundi je tijelo imalo brzinu <span class="highlight-blue">${pt.y} ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
+            else tekst = `U kojoj sekundi je tijelo imalo akceleraciju <span class="highlight-blue">${pt.y} ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
             
             tocanOdgovor = pt.t;
             infoObjasnjene = `Pronađi zadanu vrijednost (<span class="highlight-blue">${pt.y}</span>) na y-osi, povuci vodoravnu liniju do grafa, te se od te točke spusti okomito na vremensku (x) os. Tamo je točan odgovor: <span class="highlight-red">${pt.t}. sekunda</span>.`;
@@ -2649,9 +2649,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             const yCilj = getYAtT(faze, tCilj);
             svgs.push('dir1');
 
-            if (vrstaGrafa === 's/t') tekst = `Gdje se tijelo nalazi u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
-            else if (vrstaGrafa === 'v/t') tekst = `Koliku je brzinu tijelo imalo u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
-            else tekst = `Kolika je akceleracija tijela u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
+            if (vrstaGrafa === 's/t') tekst = `Gdje se tijelo nalazi u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
+            else if (vrstaGrafa === 'v/t') tekst = `Koliku je brzinu tijelo imalo u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
+            else tekst = `Kolika je akceleracija tijela u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
             
             tocanOdgovor = yCilj;
             infoObjasnjene = `Pronađi broj <span class="highlight-blue">${tCilj}</span> na vremenskoj (x) osi, povuci vertikalni pravac do linije grafa, te od te točke skreni vodoravno ulijevo prema y-osi. Tamo se nalazi točan odgovor: <span class="highlight-red">${yCilj}</span>.`;
@@ -4864,7 +4864,7 @@ function azurirajAuto(t) {
 }
 
     function azurirajStrelicuAkceleracije(akceleracija, maxAkceleracija) {
-            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+25;
+            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+50;
             const smjer = akceleracija >= 0 ? 1 : -1;
             const vrhX = 100 + smjer * duljina;
 
