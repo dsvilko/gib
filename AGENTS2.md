@@ -263,9 +263,15 @@ and evaluates `kinematika` at `t`, then `azurirajAuto(t)` and
 ## Notes for agents
 - Croatian variable/function names are the norm throughout; don't rename them
   when patching — mixed-language diffs make future greps harder.
-- There is no test suite. After any generator-logic change, manually run
-  `generirajZadatak()` in-browser many times (or via console) for every
-  `gradivo`/`tezina` combo — the retry loop can silently mask a broken
-  constraint by just picking a different random task each time.
-- `analyze.py` (see AGENTS.md) can re-list current function/variable
-  locations if line numbers here have drifted after edits.
+- There IS a headless test suite now (see AGENTS.md "Testing / Headless Core
+  Logic"): `node tests/core.test.js` after any generator/validation/question
+  change. The retry loop can still silently mask a broken constraint by just
+  picking a different random task each time — the suite checks invariants, not
+  intent, so review diffs of `oblikujPitanjeIZadatak` wording carefully.
+- Line numbers in this file drift after edits; re-run `analyze.py` for current
+  function locations if they look stale.
+- Question text is NOT stored on `trenutniZadatak.tekst` — it goes straight to
+  the DOM (`tekstPitanja.innerHTML`, end of `oblikujPitanjeIZadatak`).
+- For tezina 6, `zadatak.tip` is never assigned (stays undefined) — relevant
+  to the duplicate-task check in `generirajZadatak` and its infinite-loop bug
+  (see AGENTS.md "Known Bugs").
