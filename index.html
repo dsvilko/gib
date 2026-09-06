@@ -1978,8 +1978,13 @@ function generirajZadatak() {
                     isDobarGraf = false;
             }
         }
+        vanjskiPokusaj++;
 
     }  // vanjska petlja (5 pokušaja da se dobije različit zadatak od prethodnog)
+
+    if (!isDobarGraf) {
+        console.error("GENERATION FAILED: Unable to produce valid chart data after 5 outer attempts for " + gradivo + "/t" + tezina);
+    }
 
     if(pokusaji2>1) 
         console.warn("Zadatak generiran iz "+pokusaji2+". pokušaja.");
@@ -2421,7 +2426,7 @@ function oblikujPitanjeIZadatak(zadatak) {
 
     const yJedinica = (vrstaGrafa === 's/t') ? 'm' : (vrstaGrafa === 'v/t' ? 'm/s' : 'm/s²');
 
-    const nefizikalno = '<p><div class="nefizikalno">Napomena: ovakvo nejednoliko gibanje, sastavljeno od jednolikih gibanja, u stvarnosti je nemoguće jer tijelo ne može u trenutku promijeniti svoju brzinu na neku drugu - to bi značilo da je u tom trenutku akceleracijom bila beskonačna. U stvarnosti, promjena brzine uvijek je postupna  (<i>s</i>-<i>t</i> graf je uvijek gladak, bez pregiba, a <span class="x-t">v–t</span> graf nema skokova ("stepenica"). Radi jednostavnosti zadataka mi se samo pravimo da je ovakvo gibanje moguće.</div>'; 
+    const nefizikalno = '<p><div class="nefizikalno">Napomena: ovakvo nejednoliko gibanje, sastavljeno od jednolikih gibanja, u stvarnosti je nemoguće jer tijelo ne može u trenutku promijeniti svoju brzinu na neku drugu - to bi značilo da je u tom trenutku akceleracijom bila beskonačna. U stvarnosti, promjena brzine uvijek je postupna  (<span class="x-t">s–t</span> graf je uvijek gladak, bez pregiba, a <span class="x-t">v–t</span> graf nema skokova  - "stepenica"). Radi jednostavnosti zadataka mi se samo pravimo da je ovakvo gibanje moguće.</div>'; 
     
         // --------------- VRSTA --------------
     
@@ -2631,9 +2636,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             tip = 'obrnut';
             svgs.push('dir2');
             let pt = jedinstveniY[Math.floor(Math.random() * jedinstveniY.length)];
-            if (vrstaGrafa === 's/t') tekst = `U kojoj sekundi je tijelo došlo do <span class="highlight-blue">${pt.y}. ${yJedinica}</span>?`;
-            else if (vrstaGrafa === 'v/t') tekst = `U kojoj sekundi je tijelo imalo brzinu <span class="highlight-blue">${pt.y} ${yJedinica}</span>?`;
-            else tekst = `U kojoj sekundi je tijelo imalo akceleraciju <span class="highlight-blue">${pt.y} ${yJedinica}</span>?`;
+            if (vrstaGrafa === 's/t') tekst = `U kojoj sekundi je tijelo došlo do <span class="highlight-blue">${pt.y}. ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
+            else if (vrstaGrafa === 'v/t') tekst = `U kojoj sekundi je tijelo imalo brzinu <span class="highlight-blue">${pt.y} ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
+            else tekst = `U kojoj sekundi je tijelo imalo akceleraciju <span class="highlight-blue">${pt.y} ${yJedinica}</span>? <i>(možete kliknuti na os grafa)</i>`;
             
             tocanOdgovor = pt.t;
             infoObjasnjene = `Pronađi zadanu vrijednost (<span class="highlight-blue">${pt.y}</span>) na y-osi, povuci vodoravnu liniju do grafa, te se od te točke spusti okomito na vremensku (x) os. Tamo je točan odgovor: <span class="highlight-red">${pt.t}. sekunda</span>.`;
@@ -2644,9 +2649,9 @@ function oblikujPitanjeIZadatak(zadatak) {
             const yCilj = getYAtT(faze, tCilj);
             svgs.push('dir1');
 
-            if (vrstaGrafa === 's/t') tekst = `Gdje se tijelo nalazi u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
-            else if (vrstaGrafa === 'v/t') tekst = `Koliku je brzinu tijelo imalo u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
-            else tekst = `Kolika je akceleracija tijela u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja?`;
+            if (vrstaGrafa === 's/t') tekst = `Gdje se tijelo nalazi u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
+            else if (vrstaGrafa === 'v/t') tekst = `Koliku je brzinu tijelo imalo u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
+            else tekst = `Kolika je akceleracija tijela u <span class="highlight-blue">${tCilj}. sekundi</span> gibanja? <i>(možete kliknuti na os grafa)</i>`;
             
             tocanOdgovor = yCilj;
             infoObjasnjene = `Pronađi broj <span class="highlight-blue">${tCilj}</span> na vremenskoj (x) osi, povuci vertikalni pravac do linije grafa, te od te točke skreni vodoravno ulijevo prema y-osi. Tamo se nalazi točan odgovor: <span class="highlight-red">${yCilj}</span>.`;
@@ -3299,6 +3304,20 @@ function provjeriOdgovor() {
     }
 
     // Prikaz povratne informacije
+    const prikaziObjasnjenje = () => {
+        const imgTags = svgs.map(name => `<img src="${svgPath(name)}" alt="${name}" />`).join('\n  ');
+        let overlay='';
+        if (svgHide !== '')  overlay = `<div class="svg-overlay svg-overlay-${svgHide}"></div>`;
+        if (isMobile) {
+            const svgBox = `<div class="svg-column-mobile">${overlay}${imgTags}</div>`;
+            explanationBox.innerHTML = `${svgBox}${trenutniZadatak.tekstObjasnjena}`;
+        } else {
+            const svgBox = `<div class="svg-column">${overlay}${imgTags}</div>`;
+            explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
+        }
+        explanationBox.style.display = "flow-root";
+    };
+
     if (isCorrect) {
         feedbackBox.textContent = "Bravo! To je točan odgovor!";
         feedbackBox.className = "feedback correct";
@@ -3323,14 +3342,13 @@ function provjeriOdgovor() {
             spremiPostavke();
         }
 
-        // Vizualna oznaka na grafu i nakon TOČNOG odgovora - samo za 'direktno'
-        // tip ("Kada se tijelo zaustavilo?" / "Kada je brzina bila najveća?"),
-        // da se ne mijenja ponašanje ostalih razina (one crtaju svoja pojašnjenja
-        // tek nakon netočnog odgovora).
-        if (trenutniZadatak.pomocData && trenutniZadatak.pomocData.tip === 'direktno') {
+        // Osvježi graf s vizualnim pojašnjenjima (ako postoje) - isto kao nakon netočnog odgovora
+        if (trenutniZadatak.pomocData) {
             vizualnaPomocState = trenutniZadatak.pomocData;
             chartInstance.update();
         }
+
+        prikaziObjasnjenje();
 
         } else {
         feedbackBox.innerHTML = "";
@@ -3374,17 +3392,7 @@ function provjeriOdgovor() {
             chartInstance.update(); 
         }
 
-        const imgTags = svgs.map(name => `<img src="${svgPath(name)}" alt="${name}" />`).join('\n  ');
-        let overlay='';
-        if (svgHide !== '')  overlay = `<div class="svg-overlay svg-overlay-${svgHide}"></div>`;
-        if (isMobile) {
-            const svgBox = `<div class="svg-column-mobile">${overlay}${imgTags}</div>`;
-            explanationBox.innerHTML = `${svgBox}${trenutniZadatak.tekstObjasnjena}`;
-        } else {
-            const svgBox = `<div class="svg-column">${overlay}${imgTags}</div>`;
-            explanationBox.innerHTML = `${svgBox}<h3>Objašnjenje zadatka:</h3>${trenutniZadatak.tekstObjasnjena}`;
-        }
-        explanationBox.style.display = "flow-root";
+        prikaziObjasnjenje();
     }
 
     // Debug: fire confetti on every answer if debug_confetti is true
@@ -4856,7 +4864,7 @@ function azurirajAuto(t) {
 }
 
     function azurirajStrelicuAkceleracije(akceleracija, maxAkceleracija) {
-            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+25;
+            const duljina = (Math.abs(akceleracija) / maxAkceleracija) * MAX_DULJINA_STRELICE_AKC+50;
             const smjer = akceleracija >= 0 ? 1 : -1;
             const vrhX = 100 + smjer * duljina;
 
