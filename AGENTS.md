@@ -22,6 +22,10 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
   - `tests/hangdetect.test.js` — simple one-seed-per-worker hang search
   - `tests/hangdetect2.test.js` — harness-reuse hang search with per-seed timeout; also detects "GENERATION FAILED" logs when outer loop exhausts 5 attempts
 - `svg/` — SVG assets for UI icons
+- `svg/x/` — auto-generated x-mode twins (`s`→`x` text swap); DO NOT edit by hand
+- `svg_to_xmode.py` — regenerates `svg/x/` + `svg/x/DM/` from `svg/` + `svg/DM/`
+- Global `S` in `index.html` (`'s'`|`'x'`) switches the position label in all UI
+  text, chart axes and SVG hints (`svgPath()` resolves `svg/[x/][DM/]<name>.svg`)
 - `pozadine/` — background/foreground images for road scenes
 - `vozila/` — vehicle PNGs
 
@@ -50,6 +54,8 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
 - Modify graph generation logic: see `generirajZadatak()`, `generirajSiroveFaze()`, `izracunajKinematikuZaFaze()`
 - Adjust validation: `provjeriValjanostKinematike()`, `provjeriZanimljivost()`
 - Change UI: edit control panel (`.control-panel`), chart containers, or simulation scene (`.gib-scena`)
+- Edit SVGs: change `svg/*.svg` (or `svg/DM/` via `svg_to_darkmode.py`), then
+  regenerate x-mode twins with `python3 svg_to_xmode.py`
 - Add backgrounds/vehicles: drop files in `pozadine/<name>/bg.jpg` + `fg.png`, `vozila/<name>.png`
 
 ## Testing / Headless Core Logic

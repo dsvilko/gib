@@ -1212,7 +1212,7 @@
                             </tr>
                             <tr>
                                 <td>"zakrivljena"</td>
-                                <td><span class='x-t'>s-t</span> grafovi kod ubrzanih gibanja.</td>
+                                <td><span class='x-t' id='helpSTLabel'>s-t</span> grafovi kod ubrzanih gibanja.</td>
                             </tr>
                         </table><br>
                        <p>... kao i jednu od sedam vještina, na odabranoj vrsti gibanja:</p>
@@ -1349,6 +1349,23 @@
 
 
 <script>
+    // Oznaka položaja na y-osi s/t grafova: 's' ili 'x' (ovisno o školi).
+    // Mijenja SAMO prikaz (axis labels + tekst pitanja/objašnjenja), ne logiku:
+    // interni ključevi ('s/t', 's/t-krivo'), kinematika (s0/s1) i mjerne jedinice ostaju.
+    let S = 'x';
+
+    // Zamijeni prikaznu oznaku položaja u gotovom HTML-u: s–t -> S–t, <i>s</i> -> <i>S</i>.
+    // Namjerno cilja samo kurzivno <i>s</i> (fizikalna veličina) pa obični 's'
+    // za sekunde (jedinice, t-os) ostaje netaknut. Za S='s' je no-op.
+    function primijeniOznakuPolozaja(html) {
+        if (S === 's' || html == null) return html;
+        return String(html)
+            .split("<span class='x-t'>s–t</span>").join(`<span class='x-t'>${S}–t</span>`)
+            .split('<span class="x-t">s–t</span>').join(`<span class="x-t">${S}–t</span>`)
+            .split("<span class='x-t'>s-t</span>").join(`<span class='x-t'>${S}-t</span>`)
+            .split('<i>s</i>').join(`<i>${S}</i>`);
+    }
+
     let chartInstance = null;
     let trenutniZadatak = null;
     let prethodniZadatak = null;
@@ -1465,7 +1482,8 @@
     let DM = 0; // Dark mode flag (0 = light, 1 = dark)
 
     function svgPath(name) {
-        return `svg/${DM ? 'DM/' : ''}${name}.svg`;
+        // Prikazna oznaka položaja (S='s'/'x') bira mapu; DM bira temu.
+        return `svg/${S === 's' ? '' : S + '/'}${DM ? 'DM/' : ''}${name}.svg`;
     }
 
     function updateSimulationColors() {
@@ -2070,7 +2088,9 @@ function getYAtT(faze, t) {
 
 
 function formatirajVrstuGrafa(vrsta) {
-    return '<i>' + vrsta.replace('/', '</i>–<i>') + '</i>';
+    // Prikazna oznaka položaja je S ('s' ili 'x'); interni ključ ostaje 's/t'.
+    const prikaz = (vrsta === 's/t' || vrsta === 's/t-krivo') ? vrsta.replace(/^s/, S) : vrsta;
+    return '<i>' + prikaz.replace('/', '</i>–<i>') + '</i>';
 }
 
 
@@ -3134,7 +3154,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 svgs.push('v-a');
                 infoObjasnjene += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><span class='x-t'>v–t</span></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije iznad nule u <b><span class='x-t'>a–t</span></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije ispod nule u <b><span class='x-t'>a–t</span></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> tamo gdje je veći nagib u <b><span class='x-t'>v–t</span></b> grafu (veća akceleracija), vodoravna linija u <b><span class='x-t'>a–t</span></b> grafu mora biti dalje od x-osi (nule)."+odbaceni(3);
             } else {   //  u s-t (ubrzana gibanja)
-                svgs.push('s-v-jednoliko');
+                svgs.push('s-v-jednolika');
                 svgs.push('s-v');
                 infoObjasnjene += "<span class='redni-broj'>1.</span> Pogledamo ima li negdje <span class='naprijed'>jednoliko gibanje naprijed</span> ili <span class='naprijed'>jednoliko gibanje unazad</span> (vodoravne linije u <b><span class='x-t'>v–t</span></b> grafu koje postaju kose linije u <b><span class='x-t'>s–t</span></b> grafu."+odbaceni(1)+"<span class='redni-broj'>2.</span> Tamo gdje je brzina pozitivna (linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti uzlazna.<br>Tamo gdje je brzina negativna (linija ispod nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti silazna."+odbaceni(2)+"<span class='redni-broj'>3.</span> Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta prema nuli (usporeno gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje manje strma. <br>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta od nule (ubrzano gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje strmija."+odbaceni(3);
             }
@@ -3150,7 +3170,8 @@ function oblikujPitanjeIZadatak(zadatak) {
     if(zadatak.gradivo === 'jednoliko' || vrstaGrafa === 's/t') { infoObjasnjene += nefizikalno; }
 
     // SPREMANJE PODATAKA U OBJEKT ZADATKA
-    zadatak.tekstObjasnjena = infoObjasnjene;
+    // Prikazna oznaka položaja (S='s'/'x') primjenjuje se ovdje, na jednom mjestu.
+    zadatak.tekstObjasnjena = primijeniOznakuPolozaja(infoObjasnjene);
     zadatak.tip = tip;
     
     // Za razinu 0 već smo spremili objekt s vrstom i smjerom, 
@@ -3177,7 +3198,7 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     mjernaJedinica.textContent = jedinicaText;
     //tekstPitanja.innerHTML = `${tekst}`;
-    tekstPitanja.innerHTML = `<span class="question-text">${tekst}</span>`;
+    tekstPitanja.innerHTML = `<span class="question-text">${primijeniOznakuPolozaja(tekst)}</span>`;
     
 }
 
@@ -3511,7 +3532,7 @@ const skolskaOsPlugin = {
         let simbolY = chart.options.plugins?.skolskaOs?.simbol;
         let jedinicaY = chart.options.plugins?.skolskaOs?.jedinica;
         if (!simbolY) {
-            simbolY = 's'; jedinicaY = '(m)';
+            simbolY = S; jedinicaY = '(m)';
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'v/t') { simbolY = 'v'; jedinicaY = '(m/s)'; }
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'a/t') { simbolY = 'a'; jedinicaY = '(m/s²)'; }
         }
@@ -3640,7 +3661,7 @@ const minimalnaOsPlugin = {
         let simbolY = chart.options.plugins?.minimalnaOs?.simbol;
         let jedinicaY = chart.options.plugins?.minimalnaOs?.jedinica;
         if (!simbolY) {
-            simbolY = 's'; jedinicaY = '';
+            simbolY = S; jedinicaY = '';
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'v/t') { simbolY = 'v'; jedinicaY = '(m/s)'; }
             if (trenutniZadatak && trenutniZadatak.vrstaGrafa === 'a/t') { simbolY = 'a'; jedinicaY = '(m/s²)'; }
         }
@@ -3878,7 +3899,7 @@ const vizualniAsistentPlugin = {
             }
             if (state.prikaziDy) {
                 const startX = state.prikaziDx ? px1 : px0;
-                const oznakaSlovo = state.vrstaGrafa === 's/t' ? 's' : 'v';
+                const oznakaSlovo = state.vrstaGrafa === 's/t' ? S : 'v';
                 const mjernaJedi = state.vrstaGrafa === 's/t' ? 'm' : 'm/s';
                 //crtajStrelicu(startX, py0, startX, py1, '#dc2626', [
                 //    { t: 'Δ', i: false }, { t: oznakaSlovo, i: true }, { t: ` = ${state.y1 - state.y0} ${mjernaJedi}`, i: false }
@@ -4119,7 +4140,7 @@ const simulacijaPlugin = {
         const hasAcceleration = trenutniZadatak?.faze?.some(f => Math.abs(f.kinematika.a) > 1e-9);
         const isSorTChart = chart.canvas.id === 'gibanjaChart' 
             ? trenutniZadatak?.vrstaGrafa === 's/t-krivo'
-            : chart.config.options.plugins?.skolskaOs?.simbol === 's';
+            : chart.config.options.plugins?.skolskaOs?.simbol === S;
             
         if (!hasAcceleration || !isSorTChart) return;
 
@@ -4301,7 +4322,7 @@ function izracunajTockeZaGraf(faze, vrsta, brojTocaka = 50) {
 function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
     const ctx = document.getElementById(canvasId).getContext('2d');
     const podaci = izracunajTockeZaGraf(zadatak.faze, vrsta);
-    const simbolY = vrsta === 's/t' ? 's' : (vrsta === 'v/t' ? 'v' : 'a');
+    const simbolY = vrsta === 's/t' ? S : (vrsta === 'v/t' ? 'v' : 'a');
     const jedinicaY = vrsta === 's/t' ? '(m)' : (vrsta === 'v/t' ? '(m/s)' : '(m/s²)');
 
     let natpis = '';
@@ -4378,13 +4399,13 @@ function nacrtajMiniGraf(canvasId, zadatak, vrsta) {
 function nacrtajPitanjeGraf(broj, zadatak, vrsta) {
     const ctx = document.getElementById('pitanjeGraf'+broj).getContext('2d');
     const podaci = izracunajTockeZaGraf(zadatak.faze, vrsta);
-    const simbolY = vrsta === 's/t' ? 's' : (vrsta === 'v/t' ? 'v' : 'a');
+    const simbolY = vrsta === 's/t' ? S : (vrsta === 'v/t' ? 'v' : 'a');
     const jedinicaY = '';
 
     let natpis = '';
     let natpis2 = '';
     
-    if(simbolY === 's') natpis = 'v = nagib!';
+    if(simbolY === S) natpis = 'v = nagib!';
     if(simbolY === 'a' && (gradivoSelect.value === 'jednoliko' || zadatak.vrstaGrafa === 's/t') ) natpis2 = "NEFIZIKALNO!";
     else if(simbolY === 'v' && zadatak.gradivo === 'sva') natpis = 'a = nagib!';
     
@@ -4552,6 +4573,8 @@ const helpCloseBtn = helpOverlay?.querySelector('.help-close-btn');
 const shalabahterBtn = document.getElementById('shalabahterBtn');
 
 function openHelpOverlay() {
+    // Statički help-tekst uskladi s prikaznom oznakom položaja (S='s'/'x').
+    document.getElementById('helpSTLabel').textContent = `${S}-t`;
     helpOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     helpOverlay.querySelector('.help-body')?.scrollTo({ top: 0, behavior: 'instant' });
