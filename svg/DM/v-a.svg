@@ -7,7 +7,7 @@
    viewBox="0 0 189.29684 101.01591"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="v-a.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,18 +24,20 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.91276595"
-     inkscape:cx="293.61306"
-     inkscape:cy="331.95804"
-     inkscape:window-width="3750"
-     inkscape:window-height="2096"
+     inkscape:cx="474.38229"
+     inkscape:cy="155.5711"
+     inkscape:window-width="2203"
+     inkscape:window-height="1219"
      inkscape:window-x="0"
-     inkscape:window-y="64"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0" />
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs2">
     <marker
@@ -396,7 +398,7 @@
      transform="translate(-15.947182,-16.602721)">
     <path
        style="fill:none;stroke:#00b9b9;stroke-width:2.35344;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 29.189106,90.759359 91.524618,53.702207"
+       d="M 31.033826,66.777993 93.369338,29.720841"
        id="path22732-4-43"
        sodipodi:nodetypes="cc" />
     <path
@@ -413,11 +415,6 @@
        style="fill:none;fill-opacity:1;stroke:#bd5af9;stroke-width:2.46984;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 29.276988,43.329151 91.781405,84.30582"
        id="path22732-4-4-7-08"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#f9904e;stroke-width:2.21081;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 42.340211,86.223413 44.97532,-0.06785"
-       id="path22732-4-4-7-0-8"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#f9904e;stroke-width:2.21081;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -468,15 +465,10 @@
        id="text21167-70"
        transform="matrix(0.95928886,-0.00103348,9.5104538e-4,1.0424379,0,0)"><tspan
          sodipodi:role="line"
-         id="tspan21165-4"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.1524px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00b9b9;fill-opacity:1;stroke:none;stroke-width:0.253812;stroke-opacity:1"
          x="139.27376"
-         y="25.492844">  USPORENO</tspan><tspan
-         sodipodi:role="line"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.1524px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00b9b9;fill-opacity:1;stroke:none;stroke-width:0.253812;stroke-opacity:1"
-         x="139.27376"
-         y="38.183342"
-         id="tspan30225">  unazad</tspan></text>
+         y="25.492844"
+         id="tspan30225">  UBRZANO</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.1524px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f9904e;fill-opacity:1;stroke:none;stroke-width:0.253812;stroke-opacity:1"
@@ -502,15 +494,10 @@
        id="text21167-70-5"
        transform="rotate(-0.0568034)"><tspan
          sodipodi:role="line"
-         id="tspan21165-4-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00b9b9;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
          x="33.294708"
-         y="26.462965">UBRZANO     ili </tspan><tspan
-         sodipodi:role="line"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00b9b9;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
-         x="33.294708"
-         y="39.692089"
-         id="tspan33190">naprijed</tspan></text>
+         y="26.462965"
+         id="tspan33190">UBRZANO </tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#bd5af9;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
@@ -519,15 +506,10 @@
        id="text21167-70-5-3"
        transform="rotate(-0.0568034)"><tspan
          sodipodi:role="line"
-         id="tspan21165-4-0-3"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#bd5af9;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
          x="34.24514"
-         y="101.89757">USPORENO               ili UBRZANO </tspan><tspan
-         sodipodi:role="line"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#bd5af9;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
-         x="34.24514"
-         y="115.12669"
-         id="tspan33190-8">naprijed                         unazad</tspan></text>
+         y="101.89757"
+         id="tspan33190-8">USPORENO               USPORENO</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f9904e;fill-opacity:1;stroke:none;stroke-width:0.264583"
@@ -542,8 +524,13 @@
          y="105.39335" /></text>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1.92636;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send)"
-       d="M 16.946855,68.005518 H 102.72001"
+       d="M 21.733608,86.203964 H 107.50677"
        id="path857" />
+    <path
+       style="fill:none;stroke:#f9904e;stroke-width:2.21081;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 42.340211,86.223413 44.97532,-0.06785"
+       id="path22732-4-4-7-0-8"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#f9904e;stroke-width:2.52957;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 42.219251,67.878908 44.975664,0.0575"
