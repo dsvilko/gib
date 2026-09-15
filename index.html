@@ -2744,12 +2744,13 @@ function oblikujPitanjeIZadatak(zadatak) {
     
     else if (tezina === 2) {
         if (vrstaGrafa === 's/t') {
+            let startIdx, endIdx;
             if(S === 'x') {
-                let startIdx = Math.floor(Math.random() * 3);
-                let endIdx = startIdx + Math.floor(Math.random() * (3 - startIdx));
+                startIdx = Math.floor(Math.random() * 3);
+                endIdx = startIdx + Math.floor(Math.random() * (3 - startIdx));
             } else {
-                let startIdx = Math.floor(Math.random() * 2)+1;
-                let endIdx = startIdx + Math.floor(Math.random() * (3 - startIdx));
+                startIdx = Math.floor(Math.random() * 2)+1;
+                endIdx = startIdx + Math.floor(Math.random() * (3 - startIdx));
             }
             let tPoc = faze[startIdx].t0; let tKraj = faze[endIdx].t1;
             let sPoc = faze[startIdx].y0; let sKraj = faze[endIdx].y1;
