@@ -144,6 +144,7 @@ function createHarness({ seed = 1, quiet = true, indexPath = process.env.GIB_IND
     getElementById('gradivoSelect').value = 'sva';
     getElementById('tezinaSelect').value = '3';
     getElementById('chkLakse').dataset.active = 'false';
+    getElementById('chkXorS').dataset.active = 'false';
 
     const sandbox = {};
 
@@ -209,10 +210,16 @@ function createHarness({ seed = 1, quiet = true, indexPath = process.env.GIB_IND
 ;globalThis.__gib = {
     get zadatak() { return typeof trenutniZadatak !== 'undefined' ? trenutniZadatak : null; },
     get prethodni() { return prethodniZadatak; },
-    postaviPostavke(gradivo, tezina, lakse) {
+    get S() { return (typeof S !== 'undefined') ? S : null; },
+    set S(v) { S = v; },
+    postaviPostavke(gradivo, tezina, lakse, xorS) {
         if (gradivo != null) gradivoSelect.value = String(gradivo);
         if (tezina != null) tezinaSelect.value = String(tezina);
         chkLakse.dataset.active = lakse ? 'true' : 'false';
+        if (xorS != null) {
+            chkXorS.dataset.active = xorS ? 'true' : 'false';
+            S = xorS ? 's' : 'x';
+        }
     },
     api: {
         generirajZadatak,

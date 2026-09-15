@@ -22,8 +22,7 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
   - `tests/hangdetect.test.js` — simple one-seed-per-worker hang search
   - `tests/hangdetect2.test.js` — harness-reuse hang search with per-seed timeout; also detects "GENERATION FAILED" logs when outer loop exhausts 5 attempts
 - `svg/` — SVG assets for UI icons
-- `svg/x/` — auto-generated x-mode twins (`s`→`x` text swap); DO NOT edit by hand
-- `svg_to_xmode.py` — regenerates `svg/x/` + `svg/x/DM/` from `svg/` + `svg/DM/`
+- `svg/x/` — x-mode twins, maintained separately by hand (may differ from `svg/` beyond the `s`→`x` text swap)
 - Global `S` in `index.html` (`'s'`|`'x'`) switches the position label in all UI
   text, chart axes and SVG hints (`svgPath()` resolves `svg/[x/][DM/]<name>.svg`)
 - `pozadine/` — background/foreground images for road scenes
@@ -37,7 +36,7 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
 - Simulation state managed in global vars (`trenutniZadatak`, `isSimulacijaAktivna`, etc.)
 
 ## Difficulty Levels (tezinaSelect)
-0. Recognize motion type (vrsta/smjer)
+0. Recognize motion type (vrsta; smjer too, except in s-mode where v>=0 so only vrsta)
 1. Direct reading from graph
 2. Changes between phases
 3. Maximum slope
@@ -54,8 +53,8 @@ Static educational web app (HTML + inline JS) for practicing motion graphs (s/t,
 - Modify graph generation logic: see `generirajZadatak()`, `generirajSiroveFaze()`, `izracunajKinematikuZaFaze()`
 - Adjust validation: `provjeriValjanostKinematike()`, `provjeriZanimljivost()`
 - Change UI: edit control panel (`.control-panel`), chart containers, or simulation scene (`.gib-scena`)
-- Edit SVGs: change `svg/*.svg` (or `svg/DM/` via `svg_to_darkmode.py`), then
-  regenerate x-mode twins with `python3 svg_to_xmode.py`
+- Edit SVGs: edit `svg/*.svg` and `svg/x/` twins separately by hand
+  (plus `svg/DM/` and `svg/x/DM/` dark variants, also by hand)
 - Add backgrounds/vehicles: drop files in `pozadine/<name>/bg.jpg` + `fg.png`, `vozila/<name>.png`
 
 ## Testing / Headless Core Logic
@@ -87,3 +86,7 @@ node tests/hangdetect2.test.js --gradivo jednoliko --tezina 4 --max-seeds 400  #
 
 ## More technical details
 - see AGENTS2.md
+
+## Notes
+- 2026-09: position label switchable via global `S` (`'s'`/`'x'`) in `index.html`; s-mode and x-mode SVGs (`svg/` vs `svg/x/`, plus `DM/` dark variants) are maintained separately by hand.
+- 2026-09: `chkXorS` toggle (x-t/s-t, before `chkLakse`) sets `S` + persists `gibanjeXorS`; stars stay shared across modes. S-mode (`S='s'`) constrains generation: `s(0)=0`, `v>=0` everywhere (conditioned `a` sampling in `generirajSiroveFaze`, gate in `provjeriValjanostKinematike`, tezina-6 levels `[1,3,3]`); x-t paths unchanged. `generirajZadatak` keeps the previous task on `GENERATION FAILED` instead of rendering kinematika-less faze. Headless s-mode: `postaviPostavke(g, t, lakse, true)`. Tezina 0 in s-mode asks `vrsta` only (`selectSmjer` hidden, smjer not checked); x-mode still asks vrsta+smjer.

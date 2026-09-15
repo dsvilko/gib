@@ -7,7 +7,7 @@
    viewBox="0 0 190.23236 92.339645"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="jednoliko.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,18 +24,20 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.8255319"
-     inkscape:cx="147.9021"
+     inkscape:cx="371.94639"
      inkscape:cy="140.2331"
-     inkscape:window-width="3750"
-     inkscape:window-height="2096"
+     inkscape:window-width="2203"
+     inkscape:window-height="1219"
      inkscape:window-x="0"
-     inkscape:window-y="64"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0" />
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs2">
     <marker
@@ -395,24 +397,18 @@
      id="layer1"
      transform="translate(-15.011664,-16.165891)">
     <path
-       style="fill:none;stroke:#00b9b9;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 35.308049,88.246122 106.48534,41.448003"
-       id="path22732-4"
-       sodipodi:nodetypes="cc" />
+       style="fill:none;stroke:#000000;stroke-width:1.92636;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send)"
+       d="M 20.425293,85.977449 H 106.19845"
+       id="path857" />
     <path
        style="fill:none;stroke:#00b9b9;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 29.966202,27.108567 107.81575,61.68739"
-       id="path22732-4-43"
+       d="M 29.220782,84.767684 100.39807,37.969565"
+       id="path22732-4"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#00b9b9;stroke-width:2.46766;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 143.13376,43.53468 56.69236,-0.01095"
        id="path22732-4-4"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#00b9b9;stroke-width:2.46984;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 127.44547,84.479979 56.47733,-0.06519"
-       id="path22732-4-4-7"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#f9904e;stroke-width:2.46984;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -508,10 +504,6 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#f9904e;fill-opacity:1;stroke-width:0.264583"
          x="44.802864"
          y="105.178">MIROVANJE</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.92636;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send)"
-       d="M 16.946855,68.005518 H 102.72001"
-       id="path857" />
     <path
        style="fill:none;stroke:#f9904e;stroke-width:2.52957;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 30.04841,67.878908 44.975664,0.0575"
