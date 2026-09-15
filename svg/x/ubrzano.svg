@@ -7,7 +7,7 @@
    viewBox="0 0 190.23236 92.339645"
    version="1.1"
    id="svg5"
-   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="ubrzano.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,19 +25,17 @@
      showgrid="false"
      inkscape:zoom="1.8255319"
      inkscape:cx="343.46154"
-     inkscape:cy="191.72494"
-     inkscape:window-width="2203"
-     inkscape:window-height="1219"
+     inkscape:cy="60.256411"
+     inkscape:window-width="3750"
+     inkscape:window-height="2096"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="64"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g101850"
+     inkscape:current-layer="layer1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:showpageshadow="2"
-     inkscape:deskcolor="#d1d1d1" />
+     fit-margin-bottom="0" />
   <defs
      id="defs2">
     <marker
@@ -391,10 +389,20 @@
          id="path22732-6"
          sodipodi:nodetypes="cc" />
       <path
+         style="fill:none;stroke:#00bd68;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker19317-8)"
+         d="M 132.76541,91.549016 181.54623,73.630968"
+         id="path22732-6-8"
+         sodipodi:nodetypes="cc" />
+      <path
          style="fill:none;stroke:#ff00ff;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker19297)"
          d="M 133.14333,61.739281 181.98886,32.195477"
          id="path22732-4"
          sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;stroke:#ff00ff;stroke-width:2.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker19297-2)"
+         d="m 146.36553,73.686526 3.06537,1.170679 36.65005,13.996815"
+         id="path22732-4-8"
+         sodipodi:nodetypes="ccc" />
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
@@ -441,22 +449,22 @@
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00bd68;fill-opacity:1;stroke:none;stroke-width:0.264583"
-         x="131.56187"
-         y="88.044037"
+         x="135.84474"
+         y="105.5972"
          id="text21167-7-8"
          transform="rotate(-0.21286225)"><tspan
            sodipodi:role="line"
            id="tspan21165-2-0"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.5833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00bd68;fill-opacity:1;stroke-width:0.264583"
-           x="131.56187"
-           y="88.044037">USPORENO</tspan></text>
+           x="135.84474"
+           y="105.5972">USPORENO</tspan></text>
     </g>
     <g
        id="g101868"
        transform="translate(0.49060743,0.39235068)">
       <path
          style="fill:none;stroke:#000000;stroke-width:1.92636;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send)"
-         d="M 24.338536,94.23874 H 110.11169"
+         d="M 16.946855,68.005518 H 102.72001"
          id="path857" />
       <path
          style="fill:none;stroke:#000000;stroke-width:2.10417;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Send-6)"
@@ -484,50 +492,60 @@
            id="tspan5273-0"
            style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.1667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
            x="14.778831"
-           y="27.934576">s</tspan></text>
+           y="27.934576">x</tspan></text>
+      <path
+         style="fill:none;stroke:#00bd68;stroke-width:1.665;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 38.964979,57.317778 C 45.018051,70.495135 59.650978,79.951695 95.270211,80.30719"
+         id="path22732-4-1-8-0"
+         sodipodi:nodetypes="cc" />
       <path
          style="fill:none;stroke:#ff00ff;stroke-width:1.665;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 31.27053,77.281552 C 51.369138,73.070715 71.706844,69.411743 83.647158,46.370702"
+         d="M 47.793112,62.20832 C 67.89172,57.997483 88.229426,54.338511 100.16974,31.29747"
          id="path22732-4-1-8-0-3-3"
          sodipodi:nodetypes="cc" />
       <path
+         style="fill:none;stroke:#ff00ff;stroke-width:1.665;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 32.915171,43.773415 c 18.938428,7.938582 38.216078,15.380529 45.579866,40.26497"
+         id="path22732-4-1-8-0-3-3-3"
+         sodipodi:nodetypes="cc" />
+      <path
          style="fill:none;stroke:#00bd68;stroke-width:1.665;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 33.32448,91.455545 C 43.34784,73.990298 52.50449,55.868204 77.810754,49.985496"
+         d="M 37.527593,102.18073 C 47.550953,84.715483 56.707603,66.593389 82.013867,60.710681"
          id="path22732-4-1-8-0-8"
          sodipodi:nodetypes="cc" />
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#fc00ff;fill-opacity:1;stroke:#ff00ff;stroke-width:0.264583;stroke-opacity:1"
-         x="52.888702"
-         y="78.8741"
+         x="38.737679"
+         y="25.81386"
          id="text21167-70-3"
          transform="rotate(-0.0568034)"><tspan
            sodipodi:role="line"
            id="tspan21165-4-8"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.81944px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#fc00ff;fill-opacity:1;stroke:#ff00ff;stroke-width:0.264583;stroke-opacity:1"
-           x="52.888702"
-           y="78.8741">nagib se</tspan><tspan
+           x="38.737679"
+           y="25.81386">nagib se</tspan><tspan
            sodipodi:role="line"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.81944px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#fc00ff;fill-opacity:1;stroke:#ff00ff;stroke-width:0.264583;stroke-opacity:1"
-           x="52.888702"
-           y="92.103226"
+           x="38.737679"
+           y="39.042984"
            id="tspan82345">povećava</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00bd68;fill-opacity:1;stroke:none;stroke-width:0.264583"
-         x="33.793858"
-         y="36.461311"
+         x="50.405758"
+         y="92.567627"
          id="text21167-70-3-8"
          transform="rotate(-0.0568034)"><tspan
            sodipodi:role="line"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.81944px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00bd68;fill-opacity:1;stroke-width:0.264583"
-           x="33.793858"
-           y="36.461311"
+           x="50.405758"
+           y="92.567627"
            id="tspan82345-0">nagib se </tspan><tspan
            sodipodi:role="line"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.81944px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#00bd68;fill-opacity:1;stroke-width:0.264583"
-           x="33.793858"
-           y="49.690437"
+           x="50.405758"
+           y="105.79675"
            id="tspan90214">smanjuje</tspan></text>
     </g>
   </g>

@@ -66,7 +66,7 @@ answer is wrong", look at `kinematika`, not `y0/y1`.**
 ### Difficulty (`tezina`) → answer shape
 | tezina | meaning | `tocanOdgovor` shape |
 |---|---|---|
-| 0 | recognize vrsta/smjer of one phase | `{vrsta, smjer}` strings |
+| 0 | recognize vrsta (+smjer, except s-mode: vrsta only) of one phase | `{vrsta, smjer}` strings |
 | 1 | direct graph reading | number |
 | 2 | change between phases | number |
 | 3 | max slope; **gradivo 'krivo' → s/t-krivo instead**: "Kada se tijelo zaustavilo?" or "Kada je brzina bila najveća?" — both numeric seconds with `interakcija='direktno'` x-axis click aid; faze validated by `provjeriValjanostKinematike` (`nuleBrzine` helper): exactly one isolated v=0 instant on an integer second + unique \|v\| max | number (second) |
