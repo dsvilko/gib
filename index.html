@@ -2810,7 +2810,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 tip = 'sekundi';
                 tekst = `Koliko je <b>sekundi trajao (Δ<i>t</i>)</b> <span class="highlight-blue">${faze.indexOf(f) + 1}. dio</span> gibanja?`;
                 tocanOdgovor = f.t1 - f.t0;
-                infoObjasnjenje = `Trajanje pojedinog dijela gibanja očitavamo na vremenskoj, x-osi.<br>Ovaj dio započinje u ${f.t0}. sekundi, a završava u ${f.t1}. sekundi.<br>Proteklo vrijeme zato iznosi:<br>&ensp;&emsp;<span class='naprijed'>Δ<i>t</i> = <i>t</i>₂ - <i>t</i>₁ = ${f.t1} s - ${f.t0} s = <b>${tocanOdgovor} s</b></span><p>Za razliku od pomaka (Δ<i>s</i>) ili promjene brzine (Δ<i>v</i>), proteklo vrijeme (Δ<i>t</i>) može biti jedino pozitivno. Bez vremeplova, ne možemo se vratiti nazad u vremenu, kao što se možemo vratiti nazad u prostoru ili kao što možemo smanjiti svoju brzinu.`;
+                infoObjasnjenje = `Trajanje pojedinog dijela gibanja očitavamo na vremenskoj, x-osi.<br>Ovaj dio započinje u ${f.t0}. sekundi, a završava u ${f.t1}. sekundi.<br>Proteklo vrijeme zato iznosi:<br>&ensp;&emsp;<span class='naprijed'>Δ<i>t</i> = <i>t</i>₂ - <i>t</i>₁ = ${f.t1} s - ${f.t0} s = <b>${tocanOdgovor} s</b></span><p>Za razliku od pomaka (Δ<i>s</i>) ili promjene brzine (Δ<i>v</i>), proteklo vrijeme (Δ<i>t</i>) može biti jedino pozitivno. Bez vremeplova, ne možemo se vratiti nazad u vremenu${S === 'x' ? ', kao što se možemo vratiti nazad u prostoru' : ''} ili kao što možemo smanjiti svoju brzinu.`;
                 zadatak.pomocData = { tip: 'nagib_ili_delta', t0: f.t0, t1: f.t1, y0: f.y0, y1: f.y0, prikaziDx: true, prikaziDy: false, vrstaGrafa };
                 svgs.push('dx');
             } else {
@@ -2848,6 +2848,21 @@ function oblikujPitanjeIZadatak(zadatak) {
         oznaciDio = 4;
         zadatak.interakcija = 'faza';
         if (vrstaGrafa === 's/t') {
+            // Lokalni helper: sufiks "planina" objašnjenja prati stvarne faze.
+            // Vraća '' kad se ništa ne izuzima (sve faze pozitivne), inače
+            // navodi samo ono što je stvarno izuzeto (mirovanje / vraćanje).
+            const sufiksPlanina = (slopes) => {
+                const nPoz = slopes.filter(s => s > 0).length;
+                if (nPoz >= slopes.length) return '';
+                const nNula = slopes.filter(s => s === 0).length;
+                const nNeg = slopes.filter(s => s < 0).length;
+                if (S === 'x') {
+                    if (nNula > 0 && nNeg > 0) return ' U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).';
+                    if (nNeg > 0) return ' U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?), samo dva dijela gdje se uspinjao (gibao naprijed).';
+                    return ' U obzir nismo uzeli dio gdje je planinar mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).';
+                }
+                return ' U obzir nismo uzeli dio gdje je planinar mirovao, samo dva dijela gdje se uspinjao.';
+            };
             let positiveCount = signedSlopes.filter(s => s > 0).length;
             if (positiveCount >= 2 && Math.random() < 0.6) {
                 const traziNajstrmije = Math.random() < 0.5;
@@ -2855,7 +2870,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 if (traziNajstrmije) {
                     tip = 'planina';
                     tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najstrmija</b>?`;
-                    infoObjasnjenje = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrmiji dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                    infoObjasnjenje = `Ovako razmišljamo: tamo gdje je planina bila najstrmija, planinaru je bilo najteže penjati se pa mu je tamo brzina vjerojatno bila najmanja. Najmanju brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najmanjem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najmanji nagib vjerojatno pokazuje najstrmiji dio planine!${sufiksPlanina(signedSlopes)}`;
                     infoObjasnjenje += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
                     
                     let minAbs = Infinity;
@@ -2873,7 +2888,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 } else {
                     tip = 'planina';
                     tekst = `Ako graf predstavlja uspinjanje planinara na planinu, u kojem je dijelu vjerojatno <b>planina bila najmanje strma</b>?`;
-                    infoObjasnjenje = `Ovako razmišljamo: tamo gdje je planina bila najmanje strma, planinaru je bilo najlakše penjati se pa mu je tamo brzina vjerojatno bila najveća. Najveću brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najvećem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najveći nagib vjerojatno pokazuje najmanje strmi dio planine! U obzir nismo uzeli dio gdje se planinar možda gibao unatrag (spuštao?) niti gdje je mirovao, samo dva dijela gdje se uspinjao (gibao naprijed).`;
+                    infoObjasnjenje = `Ovako razmišljamo: tamo gdje je planina bila najmanje strma, planinaru je bilo najlakše penjati se pa mu je tamo brzina vjerojatno bila najveća. Najveću brzinu u <span class='x-t'>s–t</span> grafu lako prepoznamo po najvećem nagibu linije.<br>Dakle, u <span class='x-t'>s–t</span> grafu, najveći nagib vjerojatno pokazuje najmanje strmi dio planine!${sufiksPlanina(signedSlopes)}`;
                     infoObjasnjenje += '<p>Visina crvenih trokuta dodanih u gornji graf predstavlja pomak tijela u jednoj sekundi, u tom dijelu gibanja - a to je upravo brzina odnosno nagib te linije!'; 
                     
                     let maxAbs = -Infinity;
@@ -3119,12 +3134,12 @@ function oblikujPitanjeIZadatak(zadatak) {
                 if(Math.random(1)<0.5) {
                     tekst = `Koliko se završni položaj razlikuje od početnog, ako promatramo cijelo prikazano gibanje?`;
                     tocanOdgovor = (faze[0].y1)*(faze[0].t1-faze[0].t0)+(faze[1].y1)*(faze[1].t1-faze[1].t0)+(faze[2].y1)*(faze[2].t1-faze[2].t0);
-                    infoObjasnjenje = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <span class='x-t'>v–t</span> grafa</b> (površini između linije i x-osi) - ovdje se radi o nizu površina pravokutnika. Površine iznad x-osi (zelena boja) odgovaraju pomacima naprijed (pozitivan pomak) dok površine ispod x-osi (ljubičasta boja) odgovaraju pomacima unazad (negativni pomaci). <br>Konačan odgovor na postavljeno pitanje dobijemo ako zbrojimo sve te površine, pazeći na njihove predznake.`;
+                    infoObjasnjenje = `Pomak (Δ<i>s</i>) je jednak <b>površini ispod <span class='x-t'>v–t</span> grafa</b> (površini između linije i x-osi) - ovdje se radi o nizu površina pravokutnika${S === 'x' ? '. Površine iznad x-osi (zelena boja) odgovaraju pomacima naprijed (pozitivan pomak) dok površine ispod x-osi (ljubičasta boja) odgovaraju pomacima unazad (negativni pomaci). <br>Konačan odgovor na postavljeno pitanje dobijemo ako zbrojimo sve te površine, pazeći na njihove predznake.' : ' iznad x-osi (zelena boja). <br>Konačan odgovor na postavljeno pitanje dobijemo ako zbrojimo sve te površine.'}`;
                     tip = 'ukupan_pomak';
                 } else {
                     tekst = `Koliki je <b>ukupan put</b> tijelo prešlo (koju promjenu bi odometar automobila pokazao)?`;
                     tocanOdgovor = Math.abs(faze[0].y1)*(faze[0].t1-faze[0].t0)+Math.abs(faze[1].y1)*(faze[1].t1-faze[1].t0)+Math.abs(faze[2].y1)*(faze[2].t1-faze[2].t0);
-                    infoObjasnjenje = `Ukupan prijeđen put ovdje je jednak zbroju svih površina obojanih pravokutnika. Da se pitalo o pomaku (udaljenosti konačnog mjesto od početnog), morali bismo uzeti u obzir i predznake - ljubičaste pravokutnike bismo oduzimali. Kako nam u ovom zadatku nije bitan smjer gibanja (odometar sve to bilježi kao gibanje), sve površine samo zbrojimo kao pozitivne.`;
+                    infoObjasnjenje = `Ukupan prijeđen put ovdje je jednak zbroju svih površina obojanih pravokutnika.${S === 'x' ? ' Da se pitalo o pomaku (udaljenosti konačnog mjesto od početnog), morali bismo uzeti u obzir i predznake - ljubičaste pravokutnike bismo oduzimali. Kako nam u ovom zadatku nije bitan smjer gibanja (odometar sve to bilježi kao gibanje), sve površine samo zbrojimo kao pozitivne.' : ' Sve površine samo zbrojimo kao pozitivne.'}`;
                     tip = 'odometar';
                 }
                 infoObjasnjenje += `<details><summary>Zašto baš površina?</summary>Znamo da je<br>&ensp;&emsp;<b>Δ<i>s</i> = <i>v</i> · Δ<i>t</i></b><br>Ovdje je <b><i>v</i></b> upravo "visina" pravokutnika (${f.y0} m/s), a Δ<i>t</i> njegova "širina" (${dt} s) - vidi pravokutnik docrtan na graf. Vidimo da množeći visinu i širinu pojedinog pravokutnika, dakle kao da računamo površinu, mi zapravo računamo pomak tijela kod ovakvog niza jednolikih gibanja.</details>`;
@@ -3175,7 +3190,7 @@ function oblikujPitanjeIZadatak(zadatak) {
                 tip = 'poz_promjena';
                 if (tocanOdgovor < 0) {
                     tip = 'neg_promjena'; 
-                    negText = "Ako je akceleracija negativna (ispod x-osi, usporavanje ili ubrzavanje unazad), kao u ovom slučaju, promjena brzina će također biti negativna "; 
+                    negText = S === 'x' ? "Ako je akceleracija negativna (ispod x-osi, usporavanje ili ubrzavanje unazad), kao u ovom slučaju, promjena brzina će također biti negativna " : "Ako je akceleracija negativna (ispod x-osi, usporavanje), kao u ovom slučaju, promjena brzina će također biti negativna "; 
                 }
                 infoObjasnjenje = `Promjena brzine na <span class='x-t'>a–t</span> grafu odgovara <b>površini ispod grafa</b> (površini pravokutnika između linije koja predstavlja gibanje i x-osi).<br>Ta je površina ovdje:<br>&ensp;&emsp;<b>P = ${dy} · ${dt} = ${P}</b><br>${negText} pa je <br>&ensp;&emsp;<b>Δ<i>v</i> = ${tocanOdgovor} m/s</b>`;
                 infoObjasnjenje += `<details><summary>Zašto baš površina?</summary>Iz osnovne formule za akceleraciju:<br>&ensp;&emsp;<b><i>a</i> = Δ<i>v</i> / Δ<i>t</i></b><br>... formula za promjenu brzine je:<br>&ensp;&emsp;<b>Δ<i>v</i> = <i>a</i> · Δ<i>t</i></b><br>Računajući površinu pravokutnika (gore označenog drugom bojom) mi upravo množimo te dvije veličine ("visina" je iznos akceleracije, a "širina" je proteklo vrijeme) pa tako zapravo računamo promjenu brzine!</details>`;
@@ -3190,49 +3205,116 @@ function oblikujPitanjeIZadatak(zadatak) {
         tekst = `Koji od 4 prikazana <b>${formatirajVrstuGrafa(pitaniTip)}</b> grafa ispravno prikazuje isto gibanje kao gornji graf?`;
         infoObjasnjenje = "<b>Kako razmišljamo:</b><br>(od jednostavnijeg)<p>";
         //infoObjasnjenje += "DEBUG: "+zadatak.kandidati[0].razinaOdbacivanja+","+zadatak.kandidati[1].razinaOdbacivanja+","+zadatak.kandidati[2].razinaOdbacivanja+","+zadatak.kandidati[3].razinaOdbacivanja+"<p>";
+        // Pomoćno za tezinu 6: imaOdbacenih(r) kaže je li ijedan kandidat odbačen
+        // na razini r, a rb daje zbijenu numeraciju prikazanih odlomaka (1., 2., ...).
+        const imaOdbacenih = (r) => zadatak.kandidati.some(k => k.razinaOdbacivanja === r);
+        let rb = 1;
         if(zadatak.vrstaGrafa == 's/t') {  // s/t - jednolika gibanja
             if(zadatak.pitaniTip == 'v/t') {  // u v/t
                 svgs.push('jednoliko');
-                svgs.push('smjer');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> <span class='mirovanje'>pogledamo gdje su vodoravne linije u s/t grafu (mirovanje). U tom dijelu (i samo tamo) treba biti linija na nuli u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(1);
-                infoObjasnjenje += "<span class='redni-broj'>2.</span> <span class='naprijed'>pogledamo gdje je linija uzlazna u <b><span class='x-t'>s–t</span></b> grafu (gibanje naprijed). U tom dijelu treba biti vodoravna linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu.</span> <span class='unazad'>Ako je u <b><span class='x-t'>s–t</span></b> grafu linija silazna, brzina je negativna (ispod nule u <b><span class='x-t'>v–t</span></b> grafu).</span>"+odbaceni(2);
-                infoObjasnjenje += "Ako niti to nije dovoljno... <p><span class='redni-broj'>3.</span> veći nagib u <b><span class='x-t'>s–t</span></b> grafu (veća brzina) znači odmaknutija vodoravna linija od x-osi u <b><span class='x-t'>v–t</span></b> grafu."+odbaceni(3);
+                if(S==='x') { svgs.push('smjer'); }
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span class='mirovanje'>pogledamo gdje su vodoravne linije u s/t grafu (mirovanje). U tom dijelu (i samo tamo) treba biti linija na nuli u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(1);
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span class='naprijed'>pogledamo gdje je linija uzlazna u <b><span class='x-t'>s–t</span></b> grafu (gibanje naprijed). U tom dijelu treba biti vodoravna linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu.</span> <span class='unazad'>Ako je u <b><span class='x-t'>s–t</span></b> grafu linija silazna, brzina je negativna (ispod nule u <b><span class='x-t'>v–t</span></b> grafu).</span>"+odbaceni(2);
+                }
+                if (imaOdbacenih(3)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> veći nagib u <b><span class='x-t'>s–t</span></b> grafu (veća brzina) znači odmaknutija vodoravna linija od x-osi u <b><span class='x-t'>v–t</span></b> grafu."+odbaceni(3);
+                }
             }
         } else if(zadatak.vrstaGrafa == 's/t-krivo') {  // s/t za ubrzana gibanja
             if(zadatak.pitaniTip == 'v/t') {  //   u v/t
                 svgs.push('jednoliko');
                 svgs.push('s-v');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> Pogledamo ima li dijelova gdje je tijelo mirovalo (vodoravna linija u <b><span class='x-t'>s–t</span></b> grafu). Tamo mora biti linija na nuli u <b><span class='x-t'>v–t</span></b> grafu!<p>";
-                infoObjasnjenje += "<span class='redni-broj'>2.</span> Pogledamo ima li dijelova gdje imamo kosu liniju u <b><span class='x-t'>s–t</span></b> grafu (jednoliko gibanje). Samo tamo mora biti vodoravna linija u <b><span class='x-t'>v–t</span></b> grafu!<br>Zakrivljene linije u <b><span class='x-t'>s–t</span></b> grafu postaju kose linije u <b><span class='x-t'>v–t</span></b> grafu.<p>";
-                infoObjasnjenje += "<span class='redni-broj'>3.</span> Sve uzlazne linije (gibanje naprijed) moraju biti linije iznad nule u <b><span class='x-t'>v–t</span></b> grafu! Silazne linije u <b><span class='x-t'>s–t</span></b> grafu moraju biti ispod x-osi u <b><span class='x-t'>v–t</span></b> grafu.<br>";
+                // Razine se ovdje računaju u v/t prostoru (1 = mirovanje/nula,
+                // 2 = predznak brzine, 3 = iznos brzine): zato 2. odlomak
+                // (jednoliko/zakrivljeno) pripada razini 3, a 3. odlomak (smjer) razini 2.
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Pogledamo ima li dijelova gdje je tijelo mirovalo (vodoravna linija u <b><span class='x-t'>s–t</span></b> grafu). Tamo mora biti linija na nuli u <b><span class='x-t'>v–t</span></b> grafu!<p>";
+                }
+                if (imaOdbacenih(3)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Pogledamo ima li dijelova gdje imamo kosu liniju u <b><span class='x-t'>s–t</span></b> grafu (jednoliko gibanje). Samo tamo mora biti vodoravna linija u <b><span class='x-t'>v–t</span></b> grafu!<br>Zakrivljene linije u <b><span class='x-t'>s–t</span></b> grafu postaju kose linije u <b><span class='x-t'>v–t</span></b> grafu.<p>";
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Sve uzlazne linije (gibanje naprijed) moraju biti linije iznad nule u <b><span class='x-t'>v–t</span></b> grafu! Silazne linije u <b><span class='x-t'>s–t</span></b> grafu moraju biti ispod x-osi u <b><span class='x-t'>v–t</span></b> grafu.<br>";
+                }
             } else {  //    u a/t graf
                 svgs.push('s-a2');
                 svgs.push('akc');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> Gledamo ima li negdje u <b><span class='x-t'>s–t</span></b> grafu vodoravna (mirovanje) ili kosa linija (jednoliko gibanje). Za oba slučaja akceleracija je nula (linija na nuli u <b><span class='x-t'>a–t</span></b> grafu).<p><span class='redni-broj'>2.</span> Gledamo na koju se stranu linija savija u <b><span class='x-t'>s–t</span></b> grafu. <span style='color: #FF00FF'>Ako se savija prema gore, akceleracija je pozitivna (žuta strelica na simulaciji pokazuje u desno). To može značiti da ubrzavamo naprijed ili usporavamo unazad.</span><br><span style='color: #00BD68'>Ako se linija savija prema dolje, akceleracija je negativna (žuta strelica pokazuje u lijevo). To može značiti da ubrzavamo unazad ili usporavamo naprijed.</span>";
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Gledamo ima li negdje u <b><span class='x-t'>s–t</span></b> grafu vodoravna (mirovanje) ili kosa linija (jednoliko gibanje). Za oba slučaja akceleracija je nula (linija na nuli u <b><span class='x-t'>a–t</span></b> grafu).<p>";
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Gledamo na koju se stranu linija savija u <b><span class='x-t'>s–t</span></b> grafu. <span style='color: #FF00FF'>Ako se savija prema gore, akceleracija je pozitivna (žuta strelica na simulaciji pokazuje u desno). To može značiti da ubrzavamo naprijed ili usporavamo unazad.</span><br><span style='color: #00BD68'>Ako se linija savija prema dolje, akceleracija je negativna (žuta strelica pokazuje u lijevo). To može značiti da ubrzavamo unazad ili usporavamo naprijed.</span>";
+                }
             }
         } else if (zadatak.vrstaGrafa == 'v/t') {
             if (zadatak.pitaniTip == 's/t') {
                 if(zadatak.gradivo == 'sva') {  // u s-t za ubrzana gibanja
                     svgs.push('s-v-jednolika');
                     svgs.push('s-v2');
-                    infoObjasnjenje += "<span class='redni-broj'>1.</span> Prvo pogledamo imamo li vodoravnih linija u <b><span class='x-t'>v–t</span></b> grafu (jednolika gibanja). Tamo moraju biti kose linije u <b><span class='x-t'>s–t</span></b> grafu (nisu zakrivljene) - stalna brzina znači stalan nagib linije u <b><span class='x-t'>s–t</span></b> grafu.<p><span class='redni-broj'>2.</span> <span class='naprijed'>Sve linije iznad nule u <b><span class='x-t'>v–t</span></b> grafu, su uzlazne linije u <b><span class='x-t'>s–t</span></b> grafu.</span><b><span class='unazad'>Sve linije ispod nule u <b><span class='x-t'>v–t</span></b> grafu su silazne linije u <b><span class='x-t'>s–t</span></b> grafu.</span><p><span class='redni-broj'>3.</span> <span style='color: #FF00FF'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu (pozitivna akceleracija) su linije koje zavijaju prema gore u <b><span class='x-t'>s–t</span></b> grafu.</span><br><span style='color: #00BD68'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu (negativna akceleracija) su linije koje zavijaju prema dolje u <b><span class='x-t'>s–t</span></b> grafu.</span>";
+                    // Razine se ovdje računaju u s/t-krivo prostoru (1 = mirovanje,
+                    // 2 = smjer, 3 = jednoliko/ubrzano + predznak akceleracije):
+                    // 1. odlomak (vodoravne linije) pokriva razine 1 i 3.
+                    if (imaOdbacenih(1) || imaOdbacenih(3)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Prvo pogledamo imamo li vodoravnih linija u <b><span class='x-t'>v–t</span></b> grafu (jednolika gibanja). Tamo moraju biti kose linije u <b><span class='x-t'>s–t</span></b> grafu (nisu zakrivljene) - stalna brzina znači stalan nagib linije u <b><span class='x-t'>s–t</span></b> grafu.<p>";
+                    }
+                    if (imaOdbacenih(2)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span class='naprijed'>Sve linije iznad nule u <b><span class='x-t'>v–t</span></b> grafu, su uzlazne linije u <b><span class='x-t'>s–t</span></b> grafu.</span><b><span class='unazad'>Sve linije ispod nule u <b><span class='x-t'>v–t</span></b> grafu su silazne linije u <b><span class='x-t'>s–t</span></b> grafu.</span><p>";
+                    }
+                    if (imaOdbacenih(3)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span style='color: #FF00FF'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu (pozitivna akceleracija) su linije koje zavijaju prema gore u <b><span class='x-t'>s–t</span></b> grafu.</span><br><span style='color: #00BD68'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu (negativna akceleracija) su linije koje zavijaju prema dolje u <b><span class='x-t'>s–t</span></b> grafu.</span>";
+                    }
                 } else {
                     svgs.push('jednoliko');
-                    svgs.push('smjer');
-                    infoObjasnjenje += "<span class='redni-broj'>1.</span> <span class='mirovanje'>Pogledamo imamo li negdje mirovanje (linija na nuli u <b><span class='x-t'>v–t</span></b> grafu). Tamo i samo tamo mora biti vodoravna linija u <b><span class='x-t'>s–t</span></b> grafu!</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span class='naprijed'>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija iznad nule, linija u <b><span class='x-t'>s–t</span></b> grafu mora se penjati prema gore (gibanja naprijed).</span><br><span class='unazad'>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija ispod nule, linija u <b><span class='x-t'>s–t</span></b> grafu mora biti silazna.</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> Tamo gdje je linija odmaknutija od nule u <b><span class='x-t'>v–t</span></b> grafu, nagib linije mora biti veći u <b><span class='x-t'>s–t</span></b> grafu."+odbaceni(3);
+                    if(S==='x') { svgs.push('smjer'); }
+                    if (imaOdbacenih(1)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span class='mirovanje'>Pogledamo imamo li negdje mirovanje (linija na nuli u <b><span class='x-t'>v–t</span></b> grafu). Tamo i samo tamo mora biti vodoravna linija u <b><span class='x-t'>s–t</span></b> grafu!</span>"+odbaceni(1);
+                    }
+                    if (imaOdbacenih(2)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span class='naprijed'>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija iznad nule, linija u <b><span class='x-t'>s–t</span></b> grafu mora se penjati prema gore (gibanja naprijed).</span><br><span class='unazad'>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija ispod nule, linija u <b><span class='x-t'>s–t</span></b> grafu mora biti silazna.</span>"+odbaceni(2);
+                    }
+                    if (imaOdbacenih(3)) {
+                        infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Tamo gdje je linija odmaknutija od nule u <b><span class='x-t'>v–t</span></b> grafu, nagib linije mora biti veći u <b><span class='x-t'>s–t</span></b> grafu."+odbaceni(3);
+                    }
                 }
             } else if(zadatak.pitaniTip == 'a/t') {
                 svgs.push('v-a');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><span class='x-t'>v–t</span></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije iznad nule u <b><span class='x-t'>a–t</span></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije ispod nule u <b><span class='x-t'>a–t</span></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> tamo gdje je veći nagib u <b><span class='x-t'>v–t</span></b> grafu (veća akceleracija), vodoravna linija u <b><span class='x-t'>a–t</span></b> grafu mora biti dalje od x-osi (nule)."+odbaceni(3);
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span style='color: #F9904E'>Pogledamo je li negdje linija u  <b><span class='x-t'>v–t</span></b> grafu vodoravna (mirovanje ili jednoliko gibanje). Tamo i samo tamo je akceleracija nula (vodoravna linija na nuli).</span>"+odbaceni(1);
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span style='color: #00B9B9'>Sve uzlazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije iznad nule u <b><span class='x-t'>a–t</span></b> grafu (pozitivna akceleracija). Ovdje strelica akceleracije gleda u desno (na simulaciji) i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span><br><span style='color: #BD5AF9'>Sve silazne linije u <b><span class='x-t'>v–t</span></b> grafu su vodoravne linije ispod nule u <b><span class='x-t'>a–t</span></b> grafu (negativna akceleracija). Ovdje strelica akceleracije gleda u lijevo i može značiti da usporavamo (ako se trenutno gibamo unazad) ili ubrzavamo (ako se gibamo naprijed).</span>"+odbaceni(2);
+                }
+                if (imaOdbacenih(3)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> tamo gdje je veći nagib u <b><span class='x-t'>v–t</span></b> grafu (veća akceleracija), vodoravna linija u <b><span class='x-t'>a–t</span></b> grafu mora biti dalje od x-osi (nule)."+odbaceni(3);
+                }
             } else {   //  u s-t (ubrzana gibanja)
                 svgs.push('s-v-jednolika');
                 svgs.push('s-v');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> Pogledamo ima li negdje <span class='naprijed'>jednoliko gibanje naprijed</span> ili <span class='naprijed'>jednoliko gibanje unazad</span> (vodoravne linije u <b><span class='x-t'>v–t</span></b> grafu koje postaju kose linije u <b><span class='x-t'>s–t</span></b> grafu."+odbaceni(1)+"<span class='redni-broj'>2.</span> Tamo gdje je brzina pozitivna (linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti uzlazna.<br>Tamo gdje je brzina negativna (linija ispod nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti silazna."+odbaceni(2)+"<span class='redni-broj'>3.</span> Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta prema nuli (usporeno gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje manje strma. <br>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta od nule (ubrzano gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje strmija."+odbaceni(3);
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Pogledamo ima li negdje <span class='naprijed'>jednoliko gibanje naprijed</span> ili <span class='naprijed'>jednoliko gibanje unazad</span> (vodoravne linije u <b><span class='x-t'>v–t</span></b> grafu koje postaju kose linije u <b><span class='x-t'>s–t</span></b> grafu."+odbaceni(1);
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Tamo gdje je brzina pozitivna (linija iznad nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti uzlazna.<br>Tamo gdje je brzina negativna (linija ispod nule u <b><span class='x-t'>v–t</span></b> grafu), u <b><span class='x-t'>s–t</span></b> grafu linija mora biti silazna."+odbaceni(2);
+                }
+                if (imaOdbacenih(3)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta prema nuli (usporeno gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje manje strma. <br>Tamo gdje je u <b><span class='x-t'>v–t</span></b> grafu linija nagnuta od nule (ubrzano gibanje), <b><span class='x-t'>s–t</span></b> graf je zakrivljena linija koja postaje strmija."+odbaceni(3);
+                }
             }
         } else {   // zadan a/t graf
             if(zadatak.pitaniTip == 'v/t') {
                 svgs.push('v-a');
-                infoObjasnjenje += "<span class='redni-broj'>1.</span> <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><span class='x-t'>a–t</span></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><span class='x-t'>v–t</span></b> grafu mora biti neka vodoravna linija.</span>"+odbaceni(1)+"<span class='redni-broj'>2.</span> <span style='color: #00B9B9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(2)+"<span class='redni-broj'>3.</span> Tamo gdje akceleracija ima veću vrijednost (linija u grafu je udaljenija od nule), kosa linija u <b><span class='x-t'>v–t</span></b> grafu mora imati veći nagib."+odbaceni(3);
+                if (imaOdbacenih(1)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span style='color: #F9904E'>Pogledamo je li negdje linija na nuli u <b><span class='x-t'>a–t</span></b> grafu. To može biti ili mirovanje ili jednoliko gibanje, dakle u <b><span class='x-t'>v–t</span></b> grafu mora biti neka vodoravna linija.</span>"+odbaceni(1);
+                }
+                if (imaOdbacenih(2)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> <span style='color: #00B9B9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija iznad nule (pozitivna akceleracija), to znači da tijelo ili ubrzava naprijed ili usporava unazad - u oba slučaja imamo uzlaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span><br><span style='color: #BD5AF9'>Ako je u <b><span class='x-t'>a–t</span></b> grafu linija ispod nule (negativna akceleracija), to znači da tijelo ili usporava naprijed ili ubrzava unazad - u oba slučaja imamo silaznu kosu liniju u <b><span class='x-t'>v–t</span></b> grafu.</span>"+odbaceni(2);
+                }
+                if (imaOdbacenih(3)) {
+                    infoObjasnjenje += "<span class='redni-broj'>" + (rb++) + ".</span> Tamo gdje akceleracija ima veću vrijednost (linija u grafu je udaljenija od nule), kosa linija u <b><span class='x-t'>v–t</span></b> grafu mora imati veći nagib."+odbaceni(3);
+                }
             }
         }
         
